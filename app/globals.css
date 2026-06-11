@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0f0e17;
+  --surface: #1a1830;
+  --surface-2: #241f3a;
+  --border: #2e2850;
+  --primary: #7c3aed;
+  --primary-light: #a855f7;
+  --accent: #f59e0b;
+  --accent-green: #10b981;
+  --accent-red: #ef4444;
+  --text: #e2e0ff;
+  --text-muted: #8b87b8;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+.glass {
+  background: rgba(26, 24, 48, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glow { box-shadow: 0 0 24px rgba(124, 58, 237, 0.35); }
+
+.progress-bar { height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-bounce-in { animation: bounce-in 0.4s ease forwards; }
+.animate-shake { animation: shake 0.4s ease; }
+.animate-float { animation: float 3s ease-in-out infinite; }
