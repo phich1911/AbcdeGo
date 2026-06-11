@@ -10,8 +10,9 @@ import Navbar from "@/components/Navbar";
 export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const lesson = getLesson(id);
-  if (!lesson) notFound();
+  const lessonData = getLesson(id);
+  if (!lessonData) notFound();
+  const lesson = lessonData;
 
   const course = getCourse(lesson.courseId);
   const [stepIndex, setStepIndex] = useState(0);
