@@ -5,12 +5,15 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { COURSES, getLessonsForCourse } from "@/lib/data";
 import { getProgress, getCourseProgress } from "@/lib/progress";
+import { submitScore } from "@/lib/supabase";
 
 export default function DashboardPage() {
   const [xp, setXp] = useState(0);
   const [streak, setStreak] = useState(1);
   const [completedCount, setCompletedCount] = useState(0);
   const [courseProgresses, setCourseProgresses] = useState<number[]>([]);
+  const [submitName, setSubmitName] = useState("");
+  const [submitState, setSubmitState] = useState<"idle" | "loading" | "done" | "error">("idle");
 
   useEffect(() => {
     const p = getProgress();
@@ -114,6 +117,43 @@ export default function DashboardPage() {
             >
               ดูคอร์สทั้งหมด →
             </Link>
+          </div>
+        )}
+
+        {/* Submit to leaderboard */}
+        {xp > 0 && (
+          <div className="glass rounded-2xl p-6 mt-8">
+            <h2 className="text-lg font-black mb-1">🏆 ส่งคะแนนขึ้น Leaderboard</h2>
+            <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>ใส่ชื่อเพื่อโชว์บนหน้าแรก — XP ของคุณ {xp.toLocaleString()} XP</p>
+            {submitState === "done" ? (
+              <p className="text-sm font-bold" style={{ color: "var(--accent-green)" }}>✓ ส่งคะแนนสำเร็จแล้ว!</p>
+            ) : (
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={submitName}
+                  onChange={(e) => setSubmitName(e.target.value)}
+                  placeholder="ชื่อของคุณ"
+                  maxLength={20}
+                  className="flex-1 rounded-xl px-4 py-2.5 text-sm outline-none"
+                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }}
+                />
+                <button
+                  disabled={!submitName.trim() || submitState === "loading"}
+                  onClick={async () => {
+                    if (!submitName.trim()) return;
+                    setSubmitState("loading");
+                    const ok = await submitScore(submitName.trim(), xp);
+                    setSubmitState(ok ? "done" : "error");
+                  }}
+                  className="px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 disabled:opacity-40"
+                  style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+                >
+                  {submitState === "loading" ? "..." : "ส่งคะแนน"}
+                </button>
+              </div>
+            )}
+            {submitState === "error" && <p className="text-xs mt-2" style={{ color: "#f87171" }}>เกิดข้อผิดพลาด ลองใหม่อีกครั้ง</p>}
           </div>
         )}
       </main>

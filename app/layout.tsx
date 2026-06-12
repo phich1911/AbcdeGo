@@ -3,6 +3,7 @@ import { Prompt } from "next/font/google";
 import "./globals.css";
 import StarField from "@/components/StarField";
 import ChatBot from "@/components/ChatBot";
+import VisitorTracker from "@/components/VisitorTracker";
 import { Analytics } from "@vercel/analytics/next";
 
 const prompt = Prompt({ subsets: ["latin", "thai"], weight: ["300", "400", "500", "600", "700", "800", "900"] });
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </div>
         <ChatBot />
+        <VisitorTracker />
         <Analytics />
       </body>
     </html>

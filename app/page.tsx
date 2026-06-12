@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import CourseIcon from "@/components/CourseIcon";
+import SiteStats from "@/components/SiteStats";
 import { COURSES } from "@/lib/data";
 
 const POPULAR_IDS = ["palad-amphoe", "asr-2497", "kp-general"];
@@ -164,6 +165,8 @@ export default function Home() {
             </Link>
           </div>
         </section>
+
+        <SiteStats />
 
         {/* Contact */}
         <section className="px-6 pb-20" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
