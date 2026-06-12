@@ -38,6 +38,19 @@ export async function submitScore(name: string, xp: number) {
   return !error;
 }
 
+export async function syncLeaderboard(xp: number) {
+  const { data } = await getClient().auth.getUser();
+  const user = data.user;
+  if (!user) return;
+  const name =
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.email?.split("@")[0] ||
+    "ผู้ใช้";
+  await getClient().from("leaderboard").delete().eq("name", name);
+  await getClient().from("leaderboard").insert({ name, xp });
+}
+
 // Auth
 export async function signUp(email: string, password: string) {
   const { data, error } = await getClient().auth.signUp({ email, password });

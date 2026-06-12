@@ -7,7 +7,7 @@ import { getLesson, getCourse, getLessonsForCourse, LESSONS } from "@/lib/data";
 import { completeLesson } from "@/lib/progress";
 import Navbar from "@/components/Navbar";
 import AuthModal from "@/components/AuthModal";
-import { getUser, onAuthChange } from "@/lib/supabase";
+import { getUser, onAuthChange, syncLeaderboard } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
 export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
@@ -45,7 +45,8 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setAnswered(false);
     setCorrect(false);
     if (stepIndex + 1 >= lesson.steps.length) {
-      completeLesson(lesson.id, lesson.xpReward);
+      const updated = completeLesson(lesson.id, lesson.xpReward);
+      syncLeaderboard(updated.xp);
       setDone(true);
     } else {
       setStepIndex((s) => s + 1);
