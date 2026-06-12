@@ -4,6 +4,9 @@ import CourseIcon from "@/components/CourseIcon";
 import SiteStatsWrapper from "@/components/SiteStatsWrapper";
 import { COURSES } from "@/lib/data";
 
+const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
+const totalXp = COURSES.reduce((s, c) => s + c.xpReward, 0);
+
 const POPULAR_IDS = ["palad-amphoe", "asr-2497", "kp-general"];
 
 export default function Home() {
@@ -67,17 +70,13 @@ export default function Home() {
             {/* Stats */}
             <div className="flex gap-8 mt-8 pt-8" style={{ borderTop: "1px solid var(--border)" }}>
               {[
-                { num: "3", label: "วิชา" },
-                { num: "9", label: "บทเรียน" },
-                { num: "750+", label: "XP รวม" },
+                { num: String(COURSES.length), label: "วิชา" },
+                { num: String(totalLessons), label: "บทเรียน" },
+                { num: `${totalXp.toLocaleString()}+`, label: "XP รวม" },
               ].map((s) => (
                 <div key={s.label} className="text-center">
-                  <div className="text-2xl font-black" style={{ color: "var(--primary-light)" }}>
-                    {s.num}
-                  </div>
-                  <div className="text-sm" style={{ color: "var(--text-muted)" }}>
-                    {s.label}
-                  </div>
+                  <div className="text-2xl font-black" style={{ color: "var(--primary-light)" }}>{s.num}</div>
+                  <div className="text-sm" style={{ color: "var(--text-muted)" }}>{s.label}</div>
                 </div>
               ))}
             </div>
