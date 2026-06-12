@@ -12,13 +12,22 @@ const fuse = new Fuse(COURSES, {
   threshold: 0.4,
 });
 
-const COURSE_ITEMS = [
-  { href: "/courses", label: "ดูทั้งหมด", group: null },
-  { href: "/course/palad-amphoe", label: "⚖️ ลักษณะปกครองท้องที่ 2457", group: "ปลัดอำเภอ" },
-  { href: "/course/asr-2497", label: "🛡️ กองอาสารักษาดินแดน", group: "ปลัดอำเภอ" },
-  { href: "/course/math-101", label: "📐 คณิตศาสตร์", group: "ทั่วไป" },
-  { href: "/course/eng-101", label: "🌏 English", group: "ทั่วไป" },
-  { href: "/course/code-101", label: "💻 Coding", group: "ทั่วไป" },
+const COURSE_GROUPS = [
+  {
+    label: "🏛️ ปลัดอำเภอ",
+    items: [
+      { href: "/course/palad-amphoe", label: "⚖️ ลักษณะปกครองท้องที่ 2457" },
+      { href: "/course/asr-2497", label: "🛡️ กองอาสารักษาดินแดน" },
+    ],
+  },
+  {
+    label: "📚 วิชาทั่วไป",
+    items: [
+      { href: "/course/math-101", label: "📐 คณิตศาสตร์" },
+      { href: "/course/eng-101", label: "🌏 English" },
+      { href: "/course/code-101", label: "💻 Coding" },
+    ],
+  },
 ];
 
 export default function Navbar() {
@@ -30,6 +39,7 @@ export default function Navbar() {
   const [coursesOpen, setCoursesOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -126,29 +136,43 @@ export default function Navbar() {
               </button>
 
               {coursesOpen && (
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 w-52 rounded-xl overflow-hidden"
+                <div className="absolute top-8 left-1/2 -translate-x-1/2 w-56 rounded-xl overflow-hidden"
                   style={{ background: "rgba(12,10,26,0.97)", border: "1px solid rgba(124,58,237,0.25)", backdropFilter: "blur(16px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-                  {(() => {
-                    let lastGroup: string | null = undefined as unknown as string;
-                    return COURSE_ITEMS.map((item, i) => {
-                      const showHeader = item.group !== null && item.group !== lastGroup;
-                      lastGroup = item.group ?? null;
-                      return (
-                        <div key={item.href}>
-                          {showHeader && (
-                            <div className="px-4 pt-3 pb-1 text-xs font-bold tracking-widest uppercase" style={{ color: "rgba(124,58,237,0.8)", borderTop: i > 0 ? "1px solid rgba(124,58,237,0.15)" : undefined }}>
-                              {item.group}
-                            </div>
-                          )}
-                          <Link href={item.href} onClick={() => setCoursesOpen(false)}
-                            className="flex items-center px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
-                            style={{ color: pathname === item.href ? "#fff" : "rgba(255,255,255,0.55)", borderTop: i === 1 ? "1px solid rgba(124,58,237,0.15)" : undefined, fontWeight: i === 0 ? 600 : 400, letterSpacing: i === 0 ? "0.1em" : "0.03em", fontSize: i === 0 ? "0.7rem" : "0.85rem" }}>
-                            {item.label}
-                          </Link>
+                  {/* ดูทั้งหมด */}
+                  <Link href="/courses" onClick={() => setCoursesOpen(false)}
+                    className="flex items-center px-4 py-3 text-xs font-bold tracking-widest transition-colors hover:bg-white/5"
+                    style={{ color: "rgba(255,255,255,0.5)", letterSpacing: "0.12em" }}>
+                    ดูทั้งหมด →
+                  </Link>
+                  <div style={{ height: 1, background: "rgba(124,58,237,0.15)" }} />
+                  {/* Accordion groups */}
+                  {COURSE_GROUPS.map((group, gi) => (
+                    <div key={group.label} style={{ borderTop: gi > 0 ? "1px solid rgba(124,58,237,0.1)" : undefined }}>
+                      <button
+                        onClick={() => setOpenGroup(openGroup === group.label ? null : group.label)}
+                        className="w-full flex items-center justify-between px-4 py-3 text-xs font-bold tracking-wide transition-colors hover:bg-white/5"
+                        style={{ color: openGroup === group.label ? "#c4b5fd" : "rgba(255,255,255,0.7)" }}
+                      >
+                        <span>{group.label}</span>
+                        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
+                          style={{ transition: "transform 0.2s", transform: openGroup === group.label ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.5 }}>
+                          <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                        </svg>
+                      </button>
+                      {openGroup === group.label && (
+                        <div style={{ background: "rgba(124,58,237,0.06)" }}>
+                          {group.items.map((item) => (
+                            <Link key={item.href} href={item.href}
+                              onClick={() => { setCoursesOpen(false); setOpenGroup(null); }}
+                              className="flex items-center px-6 py-2.5 text-sm transition-colors hover:bg-white/5"
+                              style={{ color: pathname === item.href ? "#fff" : "rgba(255,255,255,0.55)" }}>
+                              {item.label}
+                            </Link>
+                          ))}
                         </div>
-                      );
-                    });
-                  })()}
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -187,11 +211,27 @@ export default function Navbar() {
         {menuOpen && (
           <div className="md:hidden px-6 py-4 flex flex-col gap-1"
             style={{ background: "rgba(10,9,20,0.97)", borderTop: "1px solid rgba(124,58,237,0.1)" }}>
-            <p className="text-xs tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)", letterSpacing: "0.18em" }}>COURSES</p>
-            {COURSE_ITEMS.slice(1).map((item) => (
-              <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} className="py-2 pl-3 text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>
-                {item.label}
-              </Link>
+            <Link href="/courses" onClick={() => setMenuOpen(false)} className="text-xs font-bold tracking-widest py-2"
+              style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.18em" }}>COURSES — ดูทั้งหมด</Link>
+            {COURSE_GROUPS.map((group) => (
+              <div key={group.label}>
+                <button
+                  onClick={() => setOpenGroup(openGroup === group.label ? null : group.label)}
+                  className="w-full flex items-center justify-between py-2 pl-3 text-sm font-semibold"
+                  style={{ color: "rgba(255,255,255,0.7)" }}>
+                  <span>{group.label}</span>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
+                    style={{ transition: "transform 0.2s", transform: openGroup === group.label ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.4 }}>
+                    <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                  </svg>
+                </button>
+                {openGroup === group.label && group.items.map((item) => (
+                  <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}
+                    className="block py-2 pl-6 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             ))}
             <div style={{ height: 1, background: "rgba(124,58,237,0.15)", margin: "8px 0" }} />
             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="text-xs font-semibold tracking-widest py-2"
