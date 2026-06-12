@@ -5,7 +5,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { COURSES, getLessonsForCourse } from "@/lib/data";
 import { getProgress, getCourseProgress } from "@/lib/progress";
-import { submitScore, getUser } from "@/lib/supabase";
+import { submitScore, getUser, syncLeaderboard } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
 export default function DashboardPage() {
@@ -23,7 +23,10 @@ export default function DashboardPage() {
     setStreak(p.streak);
     setCompletedCount(p.completedLessons.length);
     setCourseProgresses(COURSES.map((c) => getCourseProgress(c.id, c.totalLessons)));
-    getUser().then(setUser);
+    getUser().then((u) => {
+      setUser(u);
+      if (u) syncLeaderboard(getProgress().xp);
+    });
   }, []);
 
   const totalLessons = COURSES.reduce((sum, c) => sum + c.totalLessons, 0);
