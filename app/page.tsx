@@ -129,16 +129,16 @@ export default function Home() {
             <h2 className="text-3xl font-black mb-12">เรียนอย่างไร?</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { icon: "📚", title: "เลือกวิชา", desc: "เลือกคอร์สที่สนใจ ไม่ต้องสมัครก็เริ่มได้เลย" },
-                { icon: "🎮", title: "เรียนทีละขั้น", desc: "บทเรียนสั้น ทำแบบฝึกหัดได้ทันที รับ feedback ทุกข้อ" },
-                { icon: "🏆", title: "เก็บ XP", desc: "ทำถูกได้ XP สะสมเลเวล แข่งกับตัวเองหรือคนอื่น" },
+                { icon: "📚", icon3d: "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Books/3D/books_3d.png", title: "เลือกวิชา", desc: "เลือกคอร์สที่สนใจ ไม่ต้องสมัครก็เริ่มได้เลย" },
+                { icon: "🎮", icon3d: "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Video game/3D/video_game_3d.png", title: "เรียนทีละขั้น", desc: "บทเรียนสั้น ทำแบบฝึกหัดได้ทันที รับ feedback ทุกข้อ" },
+                { icon: "🏆", icon3d: "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Trophy/3D/trophy_3d.png", title: "เก็บ XP", desc: "ทำถูกได้ XP สะสมเลเวล แข่งกับตัวเองหรือคนอื่น" },
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center gap-4">
                   <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
+                    className="w-16 h-16 rounded-full flex items-center justify-center"
                     style={{ background: "var(--surface-2)" }}
                   >
-                    {item.icon}
+                    <img src={item.icon3d} alt={item.icon} width={44} height={44} style={{ objectFit: "contain" }} />
                   </div>
                   <h3 className="font-bold text-lg">{item.title}</h3>
                   <p style={{ color: "var(--text-muted)" }}>{item.desc}</p>

@@ -12,34 +12,39 @@ const fuse = new Fuse(COURSES, {
   threshold: 0.4,
 });
 
+const CDN = "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets";
 const COURSE_GROUPS = [
   {
-    label: "📝 สอบ ก.พ.",
+    label: "สอบ ก.พ.",
+    icon3d: `${CDN}/Memo/3D/memo_3d.png`,
     items: [
-      { href: "/course/kp-general", label: "📝 ความรู้ทั่วไป (ก.พ.)" },
-      { href: "/course/kp-english", label: "🌐 ภาษาอังกฤษ (ก.พ.)" },
+      { href: "/course/kp-general", label: "ความรู้ทั่วไป (ก.พ.)", icon3d: `${CDN}/Memo/3D/memo_3d.png` },
+      { href: "/course/kp-english", label: "ภาษาอังกฤษ (ก.พ.)", icon3d: `${CDN}/Globe with meridians/3D/globe_with_meridians_3d.png` },
     ],
   },
   {
-    label: "🔎 เจ้าหน้าที่คดีพิเศษ (DSI)",
+    label: "เจ้าหน้าที่คดีพิเศษ (DSI)",
+    icon3d: `${CDN}/Right-pointing magnifying glass/3D/right-pointing_magnifying_glass_3d.png`,
     items: [
-      { href: "/course/dsi-2547", label: "🔎 การสอบสวนคดีพิเศษ" },
-      { href: "/course/dsi-criminal", label: "⚖️ คดีพิเศษและกฎหมายที่เกี่ยวข้อง" },
+      { href: "/course/dsi-2547", label: "การสอบสวนคดีพิเศษ", icon3d: `${CDN}/Right-pointing magnifying glass/3D/right-pointing_magnifying_glass_3d.png` },
+      { href: "/course/dsi-criminal", label: "คดีพิเศษและกฎหมายที่เกี่ยวข้อง", icon3d: `${CDN}/Balance scale/3D/balance_scale_3d.png` },
     ],
   },
   {
-    label: "🏛️ ปลัดอำเภอ",
+    label: "ปลัดอำเภอ",
+    icon3d: `${CDN}/Classical building/3D/classical_building_3d.png`,
     items: [
-      { href: "/course/palad-amphoe", label: "⚖️ ลักษณะปกครองท้องที่ 2457" },
-      { href: "/course/asr-2497", label: "🛡️ กองอาสารักษาดินแดน" },
+      { href: "/course/palad-amphoe", label: "ลักษณะปกครองท้องที่ 2457", icon3d: `${CDN}/Classical building/3D/classical_building_3d.png` },
+      { href: "/course/asr-2497", label: "กองอาสารักษาดินแดน", icon3d: `${CDN}/Shield/3D/shield_3d.png` },
     ],
   },
   {
-    label: "📚 วิชาทั่วไป",
+    label: "วิชาทั่วไป",
+    icon3d: `${CDN}/Books/3D/books_3d.png`,
     items: [
-      { href: "/course/math-101", label: "📐 คณิตศาสตร์" },
-      { href: "/course/eng-101", label: "🌏 English" },
-      { href: "/course/code-101", label: "💻 Coding" },
+      { href: "/course/math-101", label: "คณิตศาสตร์", icon3d: `${CDN}/Triangular ruler/3D/triangular_ruler_3d.png` },
+      { href: "/course/eng-101", label: "English", icon3d: `${CDN}/Globe showing Asia-Australia/3D/globe_showing_asia-australia_3d.png` },
+      { href: "/course/code-101", label: "Coding", icon3d: `${CDN}/Laptop/3D/laptop_3d.png` },
     ],
   },
 ];
@@ -167,7 +172,10 @@ export default function Navbar() {
                         className="w-full flex items-center justify-between px-4 py-3 text-xs font-bold tracking-wide transition-colors hover:bg-white/5"
                         style={{ color: openGroup === group.label ? "#c4b5fd" : "rgba(255,255,255,0.7)" }}
                       >
-                        <span>{group.label}</span>
+                        <span className="flex items-center gap-2">
+                          <img src={group.icon3d} alt="" width={18} height={18} style={{ objectFit: "contain" }} />
+                          {group.label}
+                        </span>
                         <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
                           style={{ transition: "transform 0.2s", transform: openGroup === group.label ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.5 }}>
                           <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
@@ -178,8 +186,9 @@ export default function Navbar() {
                           {group.items.map((item) => (
                             <Link key={item.href} href={item.href}
                               onClick={() => { setCoursesOpen(false); setOpenGroup(null); }}
-                              className="flex items-center px-6 py-2.5 text-sm transition-colors hover:bg-white/5"
+                              className="flex items-center gap-2.5 px-6 py-2.5 text-sm transition-colors hover:bg-white/5"
                               style={{ color: pathname === item.href ? "#fff" : "rgba(255,255,255,0.55)" }}>
+                              <img src={item.icon3d} alt="" width={16} height={16} style={{ objectFit: "contain", flexShrink: 0 }} />
                               {item.label}
                             </Link>
                           ))}
@@ -233,7 +242,10 @@ export default function Navbar() {
                   onClick={() => setOpenGroup(openGroup === group.label ? null : group.label)}
                   className="w-full flex items-center justify-between py-2 pl-3 text-sm font-semibold"
                   style={{ color: "rgba(255,255,255,0.7)" }}>
-                  <span>{group.label}</span>
+                  <span className="flex items-center gap-2">
+                    <img src={group.icon3d} alt="" width={18} height={18} style={{ objectFit: "contain" }} />
+                    {group.label}
+                  </span>
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
                     style={{ transition: "transform 0.2s", transform: openGroup === group.label ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.4 }}>
                     <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
@@ -241,7 +253,8 @@ export default function Navbar() {
                 </button>
                 {openGroup === group.label && group.items.map((item) => (
                   <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}
-                    className="block py-2 pl-6 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
+                    className="flex items-center gap-2 py-2 pl-6 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
+                    <img src={item.icon3d} alt="" width={16} height={16} style={{ objectFit: "contain" }} />
                     {item.label}
                   </Link>
                 ))}
