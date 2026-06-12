@@ -30,6 +30,11 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [done, setDone] = useState(false);
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [authOpen, setAuthOpen] = useState(false);
+  const [earnedXp, setEarnedXp] = useState(0);
+  const [stepEarned, setStepEarned] = useState(false);
+
+  const answerableCount = lesson.steps.filter((s) => s.type !== "info").length;
+  const xpPerStep = answerableCount > 0 ? Math.round(lesson.xpReward / answerableCount) : 0;
 
   useEffect(() => {
     getUser().then(setUser);
@@ -44,13 +49,22 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setFillInput("");
     setAnswered(false);
     setCorrect(false);
+    setStepEarned(false);
     if (stepIndex + 1 >= lesson.steps.length) {
-      const updated = completeLesson(lesson.id, lesson.xpReward);
+      const updated = completeLesson(lesson.id, earnedXp);
       syncLeaderboard(updated.xp);
       setDone(true);
     } else {
       setStepIndex((s) => s + 1);
     }
+  }
+
+  function retryStep() {
+    setSelected(null);
+    setFillInput("");
+    setAnswered(false);
+    setCorrect(false);
+    setStepEarned(false);
   }
 
   function checkQuiz(idx: number) {
@@ -59,6 +73,10 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setAnswered(true);
     if (step.type === "quiz" && idx === step.correct) {
       setCorrect(true);
+      if (!stepEarned) {
+        setEarnedXp((x) => x + xpPerStep);
+        setStepEarned(true);
+      }
     } else {
       setCorrect(false);
       setShake(true);
@@ -71,7 +89,12 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setAnswered(true);
     const isCorrect = fillInput.trim().toLowerCase() === step.answer.toLowerCase();
     setCorrect(isCorrect);
-    if (!isCorrect) {
+    if (isCorrect) {
+      if (!stepEarned) {
+        setEarnedXp((x) => x + xpPerStep);
+        setStepEarned(true);
+      }
+    } else {
       setShake(true);
       setTimeout(() => setShake(false), 500);
     }
@@ -139,7 +162,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xl font-black my-6"
               style={{ background: "rgba(245,158,11,0.15)", color: "var(--accent)" }}
             >
-              ⚡ +{lesson.xpReward} XP
+              ⚡ +{earnedXp} XP {earnedXp < lesson.xpReward && <span style={{ fontSize: "0.7em", opacity: 0.6 }}>/ {lesson.xpReward} XP</span>}
             </div>
             <div className="flex flex-col items-center gap-3 mt-4 w-full max-w-xs mx-auto">
               {nextLesson && (
@@ -276,19 +299,32 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     color: correct ? "var(--accent-green)" : "var(--accent-red)",
                   }}
                 >
-                  <p className="font-bold mb-1">{correct ? "✓ ถูกต้อง!" : "✗ ยังไม่ถูก"}</p>
+                  <p className="font-bold mb-1">
+                    {correct ? `✓ ถูกต้อง! +${xpPerStep} XP` : "✗ ยังไม่ถูก — ไม่ได้รับ XP"}
+                  </p>
                   <p className="text-sm opacity-90">{step.explanation}</p>
                 </div>
               )}
 
               {answered && (
-                <button
-                  onClick={nextStep}
-                  className="self-end px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
-                  style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
-                >
-                  ต่อไป →
-                </button>
+                <div className="flex gap-3 self-end">
+                  {!correct && (
+                    <button
+                      onClick={retryStep}
+                      className="px-6 py-3 rounded-full font-bold transition-all hover:scale-105"
+                      style={{ border: "1px solid var(--primary-light)", color: "var(--primary-light)" }}
+                    >
+                      ลองใหม่ →
+                    </button>
+                  )}
+                  <button
+                    onClick={nextStep}
+                    className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
+                    style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+                  >
+                    {correct ? "ต่อไป →" : "ข้ามไป"}
+                  </button>
+                </div>
               )}
             </div>
           )}
@@ -331,7 +367,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     color: correct ? "var(--accent-green)" : "var(--accent-red)",
                   }}
                 >
-                  {correct ? "✓ ถูกต้อง!" : `✗ คำตอบที่ถูกคือ: ${step.answer}`}
+                  {correct ? `✓ ถูกต้อง! +${xpPerStep} XP` : `✗ คำตอบที่ถูกคือ: ${step.answer} — ไม่ได้รับ XP`}
                 </div>
               )}
 
@@ -346,13 +382,22 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     ตรวจ
                   </button>
                 )}
+                {answered && !correct && (
+                  <button
+                    onClick={retryStep}
+                    className="px-6 py-3 rounded-full font-bold transition-all hover:scale-105"
+                    style={{ border: "1px solid var(--primary-light)", color: "var(--primary-light)" }}
+                  >
+                    ลองใหม่ →
+                  </button>
+                )}
                 {answered && (
                   <button
                     onClick={nextStep}
                     className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
                     style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
                   >
-                    ต่อไป →
+                    {correct ? "ต่อไป →" : "ข้ามไป"}
                   </button>
                 )}
               </div>
@@ -361,8 +406,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         </div>
 
         {/* XP preview */}
-        <div className="mt-4 text-right text-sm" style={{ color: "var(--text-muted)" }}>
-          ⚡ ทำเสร็จรับ {lesson.xpReward} XP
+        <div className="mt-4 flex justify-between text-sm" style={{ color: "var(--text-muted)" }}>
+          <span>ตอบถูกทุกข้อ = {lesson.xpReward} XP</span>
+          <span>⚡ สะสมแล้ว <strong style={{ color: "var(--accent)" }}>{earnedXp}</strong> XP</span>
         </div>
       </main>
     </>
