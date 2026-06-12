@@ -12,39 +12,39 @@ const fuse = new Fuse(COURSES, {
   threshold: 0.4,
 });
 
-const CDN = "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets";
+const A = "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64";
 const COURSE_GROUPS = [
   {
     label: "สอบ ก.พ.",
-    icon3d: `${CDN}/Memo/3D/memo_3d.png`,
+    icon3d: `${A}/1f4dd.png`,
     items: [
-      { href: "/course/kp-general", label: "ความรู้ทั่วไป (ก.พ.)", icon3d: `${CDN}/Memo/3D/memo_3d.png` },
-      { href: "/course/kp-english", label: "ภาษาอังกฤษ (ก.พ.)", icon3d: `${CDN}/Globe with meridians/3D/globe_with_meridians_3d.png` },
+      { href: "/course/kp-general", label: "ความรู้ทั่วไป (ก.พ.)", icon3d: `${A}/1f4dd.png` },
+      { href: "/course/kp-english", label: "ภาษาอังกฤษ (ก.พ.)", icon3d: `${A}/1f310.png` },
     ],
   },
   {
     label: "เจ้าหน้าที่คดีพิเศษ (DSI)",
-    icon3d: `${CDN}/Right-pointing magnifying glass/3D/right-pointing_magnifying_glass_3d.png`,
+    icon3d: `${A}/1f50e.png`,
     items: [
-      { href: "/course/dsi-2547", label: "การสอบสวนคดีพิเศษ", icon3d: `${CDN}/Right-pointing magnifying glass/3D/right-pointing_magnifying_glass_3d.png` },
-      { href: "/course/dsi-criminal", label: "คดีพิเศษและกฎหมายที่เกี่ยวข้อง", icon3d: `${CDN}/Balance scale/3D/balance_scale_3d.png` },
+      { href: "/course/dsi-2547", label: "การสอบสวนคดีพิเศษ", icon3d: `${A}/1f50e.png` },
+      { href: "/course/dsi-criminal", label: "คดีพิเศษและกฎหมายที่เกี่ยวข้อง", icon3d: `${A}/2696-fe0f.png` },
     ],
   },
   {
     label: "ปลัดอำเภอ",
-    icon3d: `${CDN}/Classical building/3D/classical_building_3d.png`,
+    icon3d: `${A}/1f3db-fe0f.png`,
     items: [
-      { href: "/course/palad-amphoe", label: "ลักษณะปกครองท้องที่ 2457", icon3d: `${CDN}/Classical building/3D/classical_building_3d.png` },
-      { href: "/course/asr-2497", label: "กองอาสารักษาดินแดน", icon3d: `${CDN}/Shield/3D/shield_3d.png` },
+      { href: "/course/palad-amphoe", label: "ลักษณะปกครองท้องที่ 2457", icon3d: `${A}/1f3db-fe0f.png` },
+      { href: "/course/asr-2497", label: "กองอาสารักษาดินแดน", icon3d: `${A}/1f6e1-fe0f.png` },
     ],
   },
   {
     label: "วิชาทั่วไป",
-    icon3d: `${CDN}/Books/3D/books_3d.png`,
+    icon3d: `${A}/1f4da.png`,
     items: [
-      { href: "/course/math-101", label: "คณิตศาสตร์", icon3d: `${CDN}/Triangular ruler/3D/triangular_ruler_3d.png` },
-      { href: "/course/eng-101", label: "English", icon3d: `${CDN}/Globe showing Asia-Australia/3D/globe_showing_asia-australia_3d.png` },
-      { href: "/course/code-101", label: "Coding", icon3d: `${CDN}/Laptop/3D/laptop_3d.png` },
+      { href: "/course/math-101", label: "คณิตศาสตร์", icon3d: `${A}/1f4d0.png` },
+      { href: "/course/eng-101", label: "English", icon3d: `${A}/1f30f.png` },
+      { href: "/course/code-101", label: "Coding", icon3d: `${A}/1f4bb.png` },
     ],
   },
 ];

@@ -129,9 +129,9 @@ export default function Home() {
             <h2 className="text-3xl font-black mb-12">เรียนอย่างไร?</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { icon: "📚", icon3d: "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Books/3D/books_3d.png", title: "เลือกวิชา", desc: "เลือกคอร์สที่สนใจ ไม่ต้องสมัครก็เริ่มได้เลย" },
-                { icon: "🎮", icon3d: "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Video game/3D/video_game_3d.png", title: "เรียนทีละขั้น", desc: "บทเรียนสั้น ทำแบบฝึกหัดได้ทันที รับ feedback ทุกข้อ" },
-                { icon: "🏆", icon3d: "https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Trophy/3D/trophy_3d.png", title: "เก็บ XP", desc: "ทำถูกได้ XP สะสมเลเวล แข่งกับตัวเองหรือคนอื่น" },
+                { icon: "📚", icon3d: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4da.png", title: "เลือกวิชา", desc: "เลือกคอร์สที่สนใจ ไม่ต้องสมัครก็เริ่มได้เลย" },
+                { icon: "🎮", icon3d: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f3ae.png", title: "เรียนทีละขั้น", desc: "บทเรียนสั้น ทำแบบฝึกหัดได้ทันที รับ feedback ทุกข้อ" },
+                { icon: "🏆", icon3d: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f3c6.png", title: "เก็บ XP", desc: "ทำถูกได้ XP สะสมเลเวล แข่งกับตัวเองหรือคนอื่น" },
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center gap-4">
                   <div
