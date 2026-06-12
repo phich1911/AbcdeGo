@@ -2,6 +2,8 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { COURSES } from "@/lib/data";
 
+const POPULAR_IDS = ["palad-amphoe", "asr-2497", "kp-general"];
+
 export default function Home() {
   return (
     <>
@@ -87,7 +89,7 @@ export default function Home() {
             เลือกหัวข้อที่คุณสนใจ แล้วเริ่มเลย
           </p>
           <div className="grid md:grid-cols-3 gap-6">
-            {COURSES.map((course) => (
+            {COURSES.filter((c) => POPULAR_IDS.includes(c.id)).sort((a, b) => POPULAR_IDS.indexOf(a.id) - POPULAR_IDS.indexOf(b.id)).map((course) => (
               <Link
                 key={course.id}
                 href={`/course/${course.id}`}
