@@ -244,12 +244,28 @@ export default function Navbar() {
                   {userEmail[0].toUpperCase()}
                 </button>
                 {userMenuOpen && (
-                  <div className="absolute top-10 right-0 rounded-xl overflow-hidden min-w-[160px]"
+                  <div className="absolute top-10 right-0 rounded-xl overflow-hidden min-w-[200px]"
                     style={{ background: "rgba(12,10,26,0.97)", border: "1px solid rgba(124,58,237,0.25)", backdropFilter: "blur(16px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-                    <p className="px-4 py-3 text-xs truncate" style={{ color: "rgba(255,255,255,0.4)", borderBottom: "1px solid rgba(124,58,237,0.1)" }}>{userEmail}</p>
+                    {/* Profile header */}
+                    <div className="px-4 py-3" style={{ borderBottom: "1px solid rgba(124,58,237,0.1)" }}>
+                      <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.4)" }}>{userEmail}</p>
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(245,158,11,0.12)", color: "var(--accent)" }}>⚡ {xp} XP</span>
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(124,58,237,0.12)", color: "var(--primary-light)" }}>Lv.{Math.floor(xp / 100) + 1}</span>
+                      </div>
+                    </div>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
+                      style={{ color: "rgba(255,255,255,0.65)" }}
+                    >
+                      📊 ความก้าวหน้า
+                    </Link>
+                    <div style={{ height: 1, background: "rgba(124,58,237,0.08)" }} />
                     <button
                       onClick={async () => { await signOut(); setUserMenuOpen(false); }}
-                      className="w-full text-left px-4 py-3 text-sm transition-colors hover:bg-white/5"
+                      className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
                       style={{ color: "#f87171" }}
                     >
                       ออกจากระบบ
