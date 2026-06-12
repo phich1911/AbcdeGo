@@ -46,7 +46,8 @@ export default function SiteStats() {
                   <div key={i} className="flex items-center gap-3 px-3 py-2.5 rounded-xl" style={{ background: i === 0 ? "rgba(245,158,11,0.1)" : "rgba(255,255,255,0.03)" }}>
                     <span className="text-lg w-7 text-center">{MEDALS[i] ?? `${i + 1}.`}</span>
                     <span className="flex-1 font-semibold text-sm truncate" style={{ color: "#fff" }}>{entry.name}</span>
-                    <span className="text-sm font-black" style={{ color: "var(--accent)" }}>⚡ {entry.xp.toLocaleString()} XP</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full mr-2" style={{ background: "rgba(124,58,237,0.15)", color: "var(--primary-light)" }}>Lv.{Math.floor(entry.xp / 100) + 1}</span>
+                    <span className="text-sm font-black" style={{ color: "var(--accent)" }}>⚡ {entry.xp.toLocaleString()}</span>
                   </div>
                 ))}
               </div>
