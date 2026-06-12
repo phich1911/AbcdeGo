@@ -46,5 +46,6 @@ export function isLessonCompleted(lessonId: string): boolean {
 export function getCourseProgress(courseId: string, totalLessons: number): number {
   const { completedLessons } = getProgress();
   const done = completedLessons.filter((id) => id.startsWith(courseId)).length;
+  if (totalLessons === 0) return 0;
   return Math.round((done / totalLessons) * 100);
 }
