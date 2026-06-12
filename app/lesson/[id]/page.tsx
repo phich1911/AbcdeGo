@@ -3,9 +3,12 @@
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
-import { getLesson, getCourse, LESSONS } from "@/lib/data";
+import { getLesson, getCourse, getLessonsForCourse, LESSONS } from "@/lib/data";
 import { completeLesson } from "@/lib/progress";
 import Navbar from "@/components/Navbar";
+import AuthModal from "@/components/AuthModal";
+import { getUser, onAuthChange } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -25,6 +28,13 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [correct, setCorrect] = useState(false);
   const [shake, setShake] = useState(false);
   const [done, setDone] = useState(false);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
+  const [authOpen, setAuthOpen] = useState(false);
+
+  useEffect(() => {
+    getUser().then(setUser);
+    return onAuthChange(setUser);
+  }, []);
 
   const step = lesson.steps[stepIndex];
   const progress = Math.round((stepIndex / lesson.steps.length) * 100);
@@ -65,6 +75,53 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
       setTimeout(() => setShake(false), 500);
     }
   }
+
+  const courseLessons = getLessonsForCourse(lesson.courseId);
+  const freeLimit = Math.ceil(courseLessons.length / 3);
+  const lessonIndex = courseLessons.findIndex((l) => l.id === lesson.id);
+  const isMemberOnly = user === null && lessonIndex >= freeLimit;
+
+  if (isMemberOnly) {
+    return (
+      <>
+        <Navbar />
+        {authOpen && (
+          <AuthModal
+            onClose={() => setAuthOpen(false)}
+            onSuccess={(email) => { setUser({ email } as User); setAuthOpen(false); }}
+          />
+        )}
+        <div className="flex flex-col items-center justify-center min-h-[80vh] px-6 text-center">
+          <div className="text-6xl mb-6">🔒</div>
+          <h1 className="text-3xl font-black mb-3">บทเรียนนี้สำหรับสมาชิก</h1>
+          <p className="mb-2" style={{ color: "var(--text-muted)" }}>
+            สมัครฟรีเพื่อเข้าถึงบทเรียนทั้งหมด
+          </p>
+          <p className="text-sm mb-8" style={{ color: "var(--text-muted)" }}>
+            ทดลองเรียน {freeLimit} บทเรียนแรกได้โดยไม่ต้องสมัคร
+          </p>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setAuthOpen(true)}
+              className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
+              style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+            >
+              สมัครสมาชิกฟรี →
+            </button>
+            <button
+              onClick={() => router.push(`/course/${lesson.courseId}`)}
+              className="px-8 py-3 rounded-full font-bold transition-all hover:scale-105"
+              style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+            >
+              กลับไปที่คอร์ส
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (user === undefined) return null;
 
   if (done) {
     return (
