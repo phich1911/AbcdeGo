@@ -7,7 +7,7 @@ import { getProgress } from "@/lib/progress";
 
 const COURSE_ITEMS = [
   { href: "/courses", label: "ดูทั้งหมด", group: null },
-  { href: "/course/palad-amphoe", label: "⚖️ ลักษณะปกครองท้องที่", group: "ปลัดอำเภอ" },
+  { href: "/course/palad-amphoe", label: "⚖️ ลักษณะปกครองท้องที่ 2457", group: "ปลัดอำเภอ" },
   { href: "/course/asr-2497", label: "🛡️ กองอาสารักษาดินแดน", group: "ปลัดอำเภอ" },
   { href: "/course/math-101", label: "📐 คณิตศาสตร์", group: "ทั่วไป" },
   { href: "/course/eng-101", label: "🌏 English", group: "ทั่วไป" },

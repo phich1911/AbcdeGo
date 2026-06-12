@@ -7,6 +7,7 @@ export type Course = {
   totalLessons: number;
   xpReward: number;
   tag: string;
+  category?: string;
 };
 
 export type Lesson = {
@@ -33,16 +34,18 @@ export const COURSES: Course[] = [
     totalLessons: 3,
     xpReward: 300,
     tag: "กฎหมายปกครอง",
+    category: "ปลัดอำเภอ",
   },
   {
     id: "palad-amphoe",
-    title: "ปลัดอำเภอ",
+    title: "ลักษณะปกครองท้องที่",
     description: "พ.ร.บ. ลักษณะปกครองท้องที่ พ.ศ. 2457 ทีละมาตรา พร้อมข้อสอบ",
     icon: "⚖️",
     color: "#0ea5e9",
     totalLessons: 4,
     xpReward: 400,
     tag: "กฎหมายปกครอง",
+    category: "ปลัดอำเภอ",
   },
   {
     id: "math-101",
