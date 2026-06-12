@@ -14,6 +14,13 @@ const fuse = new Fuse(COURSES, {
 
 const COURSE_GROUPS = [
   {
+    label: "📝 สอบ ก.พ.",
+    items: [
+      { href: "/course/kp-general", label: "📝 ความรู้ทั่วไป (ก.พ.)" },
+      { href: "/course/kp-english", label: "🌐 ภาษาอังกฤษ (ก.พ.)" },
+    ],
+  },
+  {
     label: "🔎 เจ้าหน้าที่คดีพิเศษ (DSI)",
     items: [
       { href: "/course/dsi-2547", label: "🔎 การสอบสวนคดีพิเศษ" },

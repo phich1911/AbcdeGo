@@ -8,6 +8,14 @@ import { useEffect, useMemo, useState } from "react";
 import Fuse from "fuse.js";
 
 const CATEGORY_META: Record<string, { icon: string; description: string; borderColor: string; badgeBg: string; badgeColor: string; badgeBorder: string }> = {
+  "สอบ ก.พ.": {
+    icon: "📝",
+    description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ.",
+    borderColor: "rgba(8,145,178,0.3)",
+    badgeBg: "rgba(8,145,178,0.12)",
+    badgeColor: "#67e8f9",
+    badgeBorder: "rgba(8,145,178,0.3)",
+  },
   "เจ้าหน้าที่คดีพิเศษ (DSI)": {
     icon: "🔎",
     description: "กฎหมายและกระบวนการสอบสวนคดีพิเศษ กรมสอบสวนคดีพิเศษ",
@@ -90,7 +98,7 @@ export default function CoursesPage() {
     return fuse.search(q).map((r) => r.item);
   }, [query]);
 
-  const categoryOrder = ["เจ้าหน้าที่คดีพิเศษ (DSI)", "ปลัดอำเภอ"];
+  const categoryOrder = ["สอบ ก.พ.", "เจ้าหน้าที่คดีพิเศษ (DSI)", "ปลัดอำเภอ"];
   const allCategories = categoryOrder.filter((cat) => results.some((c) => c.category === cat));
   const general = results.filter((c) => !c.category);
 

@@ -26,6 +26,28 @@ export type Step =
 
 export const COURSES: Course[] = [
   {
+    id: "kp-general",
+    title: "ความรู้ทั่วไป (ก.พ.)",
+    description: "วิชาความสามารถทั่วไป ตรรกะ คณิตศาสตร์ และภาษาไทย สำหรับสอบ ก.พ.",
+    icon: "📝",
+    color: "#0891b2",
+    totalLessons: 0,
+    xpReward: 0,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+  },
+  {
+    id: "kp-english",
+    title: "ภาษาอังกฤษ (ก.พ.)",
+    description: "ข้อสอบภาษาอังกฤษระดับ ก.พ. ไวยากรณ์ คำศัพท์ และการอ่านจับใจความ",
+    icon: "🌐",
+    color: "#0e7490",
+    totalLessons: 0,
+    xpReward: 0,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+  },
+  {
     id: "dsi-2547",
     title: "การสอบสวนคดีพิเศษ",
     description: "พ.ร.บ. การสอบสวนคดีพิเศษ พ.ศ. 2547 อำนาจ หน้าที่ และกระบวนการ DSI",
