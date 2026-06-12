@@ -14,7 +14,7 @@ const fuse = new Fuse(COURSES, {
 
 const COURSE_GROUPS = [
   {
-    label: "🔎 DSI",
+    label: "🔎 เจ้าหน้าที่คดีพิเศษ (DSI)",
     items: [
       { href: "/course/dsi-2547", label: "🔎 การสอบสวนคดีพิเศษ" },
       { href: "/course/dsi-criminal", label: "⚖️ คดีพิเศษและกฎหมายที่เกี่ยวข้อง" },

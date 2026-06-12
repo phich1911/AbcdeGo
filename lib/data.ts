@@ -34,7 +34,7 @@ export const COURSES: Course[] = [
     totalLessons: 8,
     xpReward: 800,
     tag: "กฎหมายพิเศษ",
-    category: "DSI",
+    category: "เจ้าหน้าที่คดีพิเศษ (DSI)",
   },
   {
     id: "dsi-criminal",
@@ -45,7 +45,7 @@ export const COURSES: Course[] = [
     totalLessons: 6,
     xpReward: 600,
     tag: "กฎหมายพิเศษ",
-    category: "DSI",
+    category: "เจ้าหน้าที่คดีพิเศษ (DSI)",
   },
   {
     id: "asr-2497",
