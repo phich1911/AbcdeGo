@@ -98,7 +98,7 @@ export default function Navbar() {
 
   const searchResults = searchQuery.trim()
     ? fuse.search(searchQuery).map((r) => r.item)
-    : COURSES;
+    : [];
 
   return (
     <>
