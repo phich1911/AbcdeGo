@@ -40,15 +40,21 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
   async function handleGoogle() {
     setOauthLoading("google");
     setError(null);
-    await signInWithGoogle();
-    setOauthLoading(null);
+    const err = await signInWithGoogle();
+    if (err) {
+      setError(err.includes("provider is not enabled") ? "Google login ยังไม่ได้เปิดใช้งาน — กรุณาตั้งค่าใน Supabase Dashboard ก่อน" : err);
+      setOauthLoading(null);
+    }
   }
 
   async function handleFacebook() {
     setOauthLoading("facebook");
     setError(null);
-    await signInWithFacebook();
-    setOauthLoading(null);
+    const err = await signInWithFacebook();
+    if (err) {
+      setError(err.includes("provider is not enabled") ? "Facebook login ยังไม่ได้เปิดใช้งาน — กรุณาตั้งค่าใน Supabase Dashboard ก่อน" : err);
+      setOauthLoading(null);
+    }
   }
 
   return (

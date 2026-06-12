@@ -81,20 +81,22 @@ export function onAuthChange(cb: (user: User | null) => void) {
   return () => data.subscription.unsubscribe();
 }
 
-export async function signInWithGoogle() {
+export async function signInWithGoogle(): Promise<string | null> {
   const sb = getClient();
-  if (!sb) return;
-  await sb.auth.signInWithOAuth({
+  if (!sb) return "ไม่สามารถเชื่อมต่อได้";
+  const { error } = await sb.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo: `${window.location.origin}/` },
   });
+  return error?.message ?? null;
 }
 
-export async function signInWithFacebook() {
+export async function signInWithFacebook(): Promise<string | null> {
   const sb = getClient();
-  if (!sb) return;
-  await sb.auth.signInWithOAuth({
+  if (!sb) return "ไม่สามารถเชื่อมต่อได้";
+  const { error } = await sb.auth.signInWithOAuth({
     provider: "facebook",
     options: { redirectTo: `${window.location.origin}/` },
   });
+  return error?.message ?? null;
 }
