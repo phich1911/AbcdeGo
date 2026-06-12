@@ -39,6 +39,7 @@ export async function submitScore(name: string, xp: number) {
 }
 
 export async function syncLeaderboard(xp: number) {
+  if (xp <= 0) return;
   const { data } = await getClient().auth.getUser();
   const user = data.user;
   if (!user) return;
@@ -47,8 +48,9 @@ export async function syncLeaderboard(xp: number) {
     user.user_metadata?.name ||
     user.email?.split("@")[0] ||
     "ผู้ใช้";
-  await getClient().from("leaderboard").delete().eq("name", name);
-  await getClient().from("leaderboard").insert({ name, xp });
+  const { error: delErr } = await getClient().from("leaderboard").delete().eq("name", name);
+  const { error: insErr } = await getClient().from("leaderboard").insert({ name, xp });
+  if (delErr || insErr) console.error("syncLeaderboard error", delErr, insErr);
 }
 
 // Auth
