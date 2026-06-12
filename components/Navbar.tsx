@@ -2,14 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getProgress } from "@/lib/progress";
+
+const COURSE_ITEMS = [
+  { href: "/courses", label: "ดูทั้งหมด" },
+  { href: "/course/palad-amphoe", label: "⚖️ ปลัดอำเภอ" },
+  { href: "/course/math-101", label: "📐 คณิตศาสตร์" },
+  { href: "/course/eng-101", label: "🌏 English" },
+  { href: "/course/code-101", label: "💻 Coding" },
+];
 
 export default function Navbar() {
   const pathname = usePathname();
   const [xp, setXp] = useState(0);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [coursesOpen, setCoursesOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setXp(getProgress().xp);
@@ -21,10 +31,15 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = [
-    { href: "/courses", label: "COURSES" },
-    { href: "/dashboard", label: "PROGRESS" },
-  ];
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setCoursesOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
     <nav
@@ -37,9 +52,9 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1 group">
+        <Link href="/" className="group">
           <span
-            className="text-xl font-black tracking-widest uppercase transition-opacity group-hover:opacity-80"
+            className="text-xl font-black uppercase transition-opacity group-hover:opacity-80"
             style={{ color: "#fff", letterSpacing: "0.15em" }}
           >
             ABCDE<span style={{ color: "var(--accent)" }}>GO</span>
@@ -48,19 +63,70 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-10">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="text-xs font-semibold tracking-widest transition-colors duration-200"
+
+          {/* COURSES dropdown */}
+          <div ref={dropdownRef} className="relative">
+            <button
+              onClick={() => setCoursesOpen((v) => !v)}
+              className="flex items-center gap-1.5 text-xs font-semibold tracking-widest transition-colors duration-200"
               style={{
-                color: pathname === l.href ? "#fff" : "rgba(255,255,255,0.45)",
+                color: pathname.startsWith("/course") ? "#fff" : "rgba(255,255,255,0.45)",
                 letterSpacing: "0.18em",
               }}
             >
-              {l.label}
-            </Link>
-          ))}
+              COURSES
+              <svg
+                width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
+                style={{ transition: "transform 0.2s", transform: coursesOpen ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.6 }}
+              >
+                <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+              </svg>
+            </button>
+
+            {coursesOpen && (
+              <div
+                className="absolute top-8 left-1/2 -translate-x-1/2 w-52 rounded-xl overflow-hidden"
+                style={{
+                  background: "rgba(12,10,26,0.97)",
+                  border: "1px solid rgba(124,58,237,0.25)",
+                  backdropFilter: "blur(16px)",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+                }}
+              >
+                {COURSE_ITEMS.map((item, i) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setCoursesOpen(false)}
+                    className="flex items-center px-4 py-3 text-sm transition-colors hover:bg-white/5"
+                    style={{
+                      color: pathname === item.href ? "#fff" : "rgba(255,255,255,0.55)",
+                      borderTop: i === 1 ? "1px solid rgba(124,58,237,0.15)" : undefined,
+                      fontWeight: i === 0 ? 600 : 400,
+                      letterSpacing: i === 0 ? "0.1em" : "0.03em",
+                      fontSize: i === 0 ? "0.7rem" : "0.85rem",
+                    }}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* PROGRESS */}
+          <Link
+            href="/dashboard"
+            className="text-xs font-semibold tracking-widest transition-colors duration-200"
+            style={{
+              color: pathname === "/dashboard" ? "#fff" : "rgba(255,255,255,0.45)",
+              letterSpacing: "0.18em",
+            }}
+          >
+            PROGRESS
+          </Link>
+
+          {/* XP badge */}
           <div
             className="text-xs font-bold px-3 py-1.5 rounded-full tracking-wider"
             style={{
@@ -79,48 +145,48 @@ export default function Navbar() {
           className="md:hidden flex flex-col gap-1.5 p-2"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          <span
-            className="block w-6 h-px transition-all duration-300"
-            style={{
-              background: "rgba(255,255,255,0.7)",
-              transform: menuOpen ? "rotate(45deg) translateY(4px)" : "none",
-            }}
-          />
-          <span
-            className="block w-6 h-px transition-all duration-300"
-            style={{
-              background: "rgba(255,255,255,0.7)",
-              opacity: menuOpen ? 0 : 1,
-            }}
-          />
-          <span
-            className="block w-6 h-px transition-all duration-300"
-            style={{
-              background: "rgba(255,255,255,0.7)",
-              transform: menuOpen ? "rotate(-45deg) translateY(-4px)" : "none",
-            }}
-          />
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="block w-6 h-px transition-all duration-300"
+              style={{
+                background: "rgba(255,255,255,0.7)",
+                transform: menuOpen && i === 0 ? "rotate(45deg) translateY(6px)" : menuOpen && i === 2 ? "rotate(-45deg) translateY(-6px)" : "none",
+                opacity: menuOpen && i === 1 ? 0 : 1,
+              }}
+            />
+          ))}
         </button>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
         <div
-          className="md:hidden px-6 py-4 flex flex-col gap-4"
-          style={{ background: "rgba(10,9,20,0.96)", borderTop: "1px solid rgba(124,58,237,0.1)" }}
+          className="md:hidden px-6 py-4 flex flex-col gap-1"
+          style={{ background: "rgba(10,9,20,0.97)", borderTop: "1px solid rgba(124,58,237,0.1)" }}
         >
-          {links.map((l) => (
+          <p className="text-xs tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.3)", letterSpacing: "0.18em" }}>COURSES</p>
+          {COURSE_ITEMS.slice(1).map((item) => (
             <Link
-              key={l.href}
-              href={l.href}
+              key={item.href}
+              href={item.href}
               onClick={() => setMenuOpen(false)}
-              className="text-xs font-semibold tracking-widest"
-              style={{ color: pathname === l.href ? "#fff" : "rgba(255,255,255,0.5)", letterSpacing: "0.18em" }}
+              className="py-2 pl-3 text-sm"
+              style={{ color: "rgba(255,255,255,0.6)" }}
             >
-              {l.label}
+              {item.label}
             </Link>
           ))}
-          <span className="text-xs font-bold" style={{ color: "var(--accent)" }}>⚡ {xp} XP</span>
+          <div style={{ height: 1, background: "rgba(124,58,237,0.15)", margin: "8px 0" }} />
+          <Link
+            href="/dashboard"
+            onClick={() => setMenuOpen(false)}
+            className="text-xs font-semibold tracking-widest py-2"
+            style={{ color: pathname === "/dashboard" ? "#fff" : "rgba(255,255,255,0.5)", letterSpacing: "0.18em" }}
+          >
+            PROGRESS
+          </Link>
+          <span className="text-xs font-bold pt-1" style={{ color: "var(--accent)" }}>⚡ {xp} XP</span>
         </div>
       )}
     </nav>
