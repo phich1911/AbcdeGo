@@ -29,8 +29,19 @@ export async function getLeaderboard(limit = 10) {
     .from("leaderboard")
     .select("name, xp")
     .order("xp", { ascending: false })
-    .limit(limit);
-  return data ?? [];
+    .limit(200);
+  if (!data) return [];
+  // deduplicate: keep highest xp per name
+  const seen = new Map<string, number>();
+  for (const row of data) {
+    if (!seen.has(row.name) || row.xp > seen.get(row.name)!) {
+      seen.set(row.name, row.xp);
+    }
+  }
+  return Array.from(seen.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([name, xp]) => ({ name, xp }));
 }
 
 export async function submitScore(name: string, xp: number) {
@@ -48,9 +59,7 @@ export async function syncLeaderboard(xp: number) {
     user.user_metadata?.name ||
     user.email?.split("@")[0] ||
     "ผู้ใช้";
-  const { error: delErr } = await getClient().from("leaderboard").delete().eq("name", name);
-  const { error: insErr } = await getClient().from("leaderboard").insert({ name, xp });
-  if (delErr || insErr) console.error("syncLeaderboard error", delErr, insErr);
+  await getClient().from("leaderboard").insert({ name, xp });
 }
 
 // Auth
