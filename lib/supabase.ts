@@ -55,11 +55,24 @@ export async function syncLeaderboard(xp: number) {
   const user = data.user;
   if (!user) return;
   const name =
+    user.user_metadata?.display_name ||
     user.user_metadata?.full_name ||
     user.user_metadata?.name ||
     user.email?.split("@")[0] ||
     "ผู้ใช้";
   await getClient().from("leaderboard").insert({ name, xp });
+}
+
+export async function setDisplayName(displayName: string): Promise<string | null> {
+  const { error } = await getClient().auth.updateUser({
+    data: { display_name: displayName },
+  });
+  return error?.message ?? null;
+}
+
+export async function getDisplayName(): Promise<string | null> {
+  const { data } = await getClient().auth.getUser();
+  return data.user?.user_metadata?.display_name ?? null;
 }
 
 // Auth

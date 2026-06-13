@@ -5,8 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { getProgress } from "@/lib/progress";
 import { COURSES } from "@/lib/data";
-import { onAuthChange, signOut } from "@/lib/supabase";
+import { onAuthChange, signOut, getDisplayName } from "@/lib/supabase";
 import AuthModal from "@/components/AuthModal";
+import DisplayNameModal from "@/components/DisplayNameModal";
 import Fuse from "fuse.js";
 
 const fuse = new Fuse(COURSES, {
@@ -64,6 +65,7 @@ export default function Navbar() {
   const [authOpen, setAuthOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [nameModalOpen, setNameModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -71,7 +73,16 @@ export default function Navbar() {
   useEffect(() => { setXp(getProgress().xp); }, [pathname]);
 
   useEffect(() => {
-    return onAuthChange((user) => setUserEmail(user?.email ?? null));
+    return onAuthChange((user) => {
+      setUserEmail(user?.email ?? null);
+      if (user && !user.user_metadata?.display_name) {
+        // OAuth users without a display name → prompt to set one
+        const provider = user.app_metadata?.provider;
+        if (provider === "google" || provider === "facebook") {
+          setNameModalOpen(true);
+        }
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -429,6 +440,10 @@ export default function Navbar() {
           onClose={() => setAuthOpen(false)}
           onSuccess={(email) => setUserEmail(email)}
         />
+      )}
+
+      {nameModalOpen && (
+        <DisplayNameModal onDone={() => setNameModalOpen(false)} />
       )}
     </>
   );
