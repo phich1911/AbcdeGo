@@ -49,18 +49,25 @@ export async function submitScore(name: string, xp: number) {
   return !error;
 }
 
-export async function syncLeaderboard(xp: number) {
+export async function syncLeaderboard(xp: number, oldName?: string) {
   if (xp <= 0) return;
-  const { data } = await getClient().auth.getUser();
-  const user = data.user;
-  if (!user) return;
+  const { data: { session } } = await getClient().auth.getSession();
+  if (!session) return;
+  const user = session.user;
   const name =
     user.user_metadata?.display_name ||
     user.user_metadata?.full_name ||
     user.user_metadata?.name ||
     user.email?.split("@")[0] ||
     "ผู้ใช้";
-  await getClient().from("leaderboard").insert({ name, xp });
+  await fetch("/api/sync-leaderboard", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ name, xp, oldName }),
+  });
 }
 
 export async function setDisplayName(displayName: string): Promise<string | null> {

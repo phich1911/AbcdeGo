@@ -23,7 +23,8 @@ export default function DisplayNameModal({ current, onDone, onClose }: Props) {
     const err = await setDisplayName(name.trim());
     if (err) { setError(err); setLoading(false); return; }
     const xp = getLocalProgress().xp;
-    if (xp > 0) await syncLeaderboard(xp);
+    // pass old name so server can delete the old leaderboard entry
+    if (xp > 0) await syncLeaderboard(xp, current || undefined);
     onDone(name.trim());
   }
 
