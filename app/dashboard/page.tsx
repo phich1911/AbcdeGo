@@ -139,9 +139,26 @@ export default function DashboardPage() {
             {user ? (
               <>
                 <h2 className="text-lg font-black mb-1">🏆 Leaderboard</h2>
-                <p className="text-sm" style={{ color: "var(--accent-green)" }}>
-                  ✓ คะแนนของคุณ ({xp.toLocaleString()} XP) อัปเดตขึ้น Leaderboard อัตโนมัติแล้ว
-                </p>
+                {submitState === "done" ? (
+                  <p className="text-sm font-bold" style={{ color: "var(--accent-green)" }}>✓ Sync สำเร็จแล้ว!</p>
+                ) : submitState === "error" ? (
+                  <p className="text-sm" style={{ color: "#f87171" }}>❌ Sync ไม่สำเร็จ ลองใหม่อีกครั้ง</p>
+                ) : (
+                  <p className="text-sm" style={{ color: "var(--text-muted)" }}>XP ของคุณ {xp.toLocaleString()} XP</p>
+                )}
+                <button
+                  onClick={async () => {
+                    setSubmitState("loading");
+                    const res = await syncLeaderboard(xp);
+                    console.log("sync result:", res);
+                    setSubmitState(res?.ok ? "done" : "error");
+                  }}
+                  disabled={submitState === "loading"}
+                  className="mt-3 px-5 py-2 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 disabled:opacity-40"
+                  style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+                >
+                  {submitState === "loading" ? "กำลัง Sync..." : "🔄 Sync Ranking"}
+                </button>
               </>
             ) : (
               <>
