@@ -23,9 +23,16 @@ export default function DashboardPage() {
     setStreak(p.streak);
     setCompletedCount(p.completedLessons.length);
     setCourseProgresses(COURSES.map((c) => getCourseProgress(c.id, c.totalLessons)));
-    getUser().then((u) => {
+    getUser().then(async (u) => {
       setUser(u);
-      if (u) syncLeaderboard(getProgress().xp);
+      if (u) {
+        const xp = getProgress().xp;
+        console.log("[dashboard] user:", u.email, "xp:", xp);
+        if (xp > 0) {
+          const res = await syncLeaderboard(xp);
+          console.log("[dashboard] sync result:", res);
+        }
+      }
     });
   }, []);
 

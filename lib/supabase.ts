@@ -50,9 +50,9 @@ export async function submitScore(name: string, xp: number) {
 }
 
 export async function syncLeaderboard(xp: number, oldName?: string) {
-  if (xp <= 0) return;
+  if (xp <= 0) return { error: "xp=0" };
   const { data: { session } } = await getClient().auth.getSession();
-  if (!session) return;
+  if (!session) return { error: "no session" };
   const user = session.user;
   const name =
     user.user_metadata?.display_name ||
@@ -60,14 +60,20 @@ export async function syncLeaderboard(xp: number, oldName?: string) {
     user.user_metadata?.name ||
     user.email?.split("@")[0] ||
     "ผู้ใช้";
-  await fetch("/api/sync-leaderboard", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.access_token}`,
-    },
-    body: JSON.stringify({ name, xp, oldName }),
-  });
+  try {
+    const res = await fetch("/api/sync-leaderboard", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ name, xp, oldName }),
+    });
+    const json = await res.json();
+    return json;
+  } catch (e) {
+    return { error: String(e) };
+  }
 }
 
 export async function setDisplayName(displayName: string): Promise<string | null> {
