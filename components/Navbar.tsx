@@ -64,6 +64,7 @@ export default function Navbar() {
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState<string | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [nameModalOpen, setNameModalOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -75,6 +76,7 @@ export default function Navbar() {
   useEffect(() => {
     return onAuthChange((user) => {
       setUserEmail(user?.email ?? null);
+      setDisplayName(user?.user_metadata?.display_name ?? null);
       if (user && !user.user_metadata?.display_name) {
         // OAuth users without a display name → prompt to set one
         const provider = user.app_metadata?.provider;
@@ -259,6 +261,7 @@ export default function Navbar() {
                     style={{ background: "rgba(12,10,26,0.97)", border: "1px solid rgba(124,58,237,0.25)", backdropFilter: "blur(16px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
                     {/* Profile header */}
                     <div className="px-4 py-3" style={{ borderBottom: "1px solid rgba(124,58,237,0.1)" }}>
+                      {displayName && <p className="text-sm font-bold truncate" style={{ color: "#fff" }}>{displayName}</p>}
                       <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.4)" }}>{userEmail}</p>
                       <div className="flex items-center gap-3 mt-2">
                         <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(245,158,11,0.12)", color: "var(--accent)" }}>⚡ {xp} XP</span>
@@ -443,7 +446,7 @@ export default function Navbar() {
       )}
 
       {nameModalOpen && (
-        <DisplayNameModal onDone={() => setNameModalOpen(false)} />
+        <DisplayNameModal onDone={(name) => { setDisplayName(name); setNameModalOpen(false); }} />
       )}
     </>
   );
