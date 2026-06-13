@@ -23,13 +23,24 @@ export async function POST(req: NextRequest) {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  // Delete all entries for this user (current name + old name if changed)
-  const namesToDelete = Array.from(new Set([name, oldName].filter(Boolean)));
-  for (const n of namesToDelete) {
+  // Collect all names ever used by this user
+  const previousNames: string[] = user.user_metadata?.previous_names ?? [];
+  const allNames = Array.from(new Set([name, oldName, ...previousNames].filter(Boolean)));
+
+  // Delete all leaderboard entries for any name this user has used
+  for (const n of allNames) {
     await admin.from("leaderboard").delete().eq("name", n);
   }
 
-  // Insert fresh entry
+  // Save updated name history back to user metadata
+  if (oldName && oldName !== name) {
+    const updatedHistory = Array.from(new Set([oldName, ...previousNames]));
+    await admin.auth.admin.updateUserById(user.id, {
+      user_metadata: { ...user.user_metadata, previous_names: updatedHistory },
+    });
+  }
+
+  // Insert fresh entry with current name only
   await admin.from("leaderboard").insert({ name, xp });
 
   return NextResponse.json({ ok: true });
