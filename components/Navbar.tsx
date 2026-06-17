@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { getProgress } from "@/lib/progress";
+import { getProgress, syncProgressFromCloud, pushProgressToCloud } from "@/lib/progress";
 import { COURSES } from "@/lib/data";
-import { onAuthChange, signOut, getDisplayName } from "@/lib/supabase";
+import { onAuthChange, signOut, getDisplayName, getUser, getSession, syncLeaderboard } from "@/lib/supabase";
+import { getAvatar } from "@/lib/avatar";
 import AuthModal from "@/components/AuthModal";
 import DisplayNameModal from "@/components/DisplayNameModal";
 import Fuse from "fuse.js";
@@ -17,39 +18,8 @@ const fuse = new Fuse(COURSES, {
 
 const A = "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64";
 const COURSE_GROUPS = [
-  {
-    label: "สอบ ก.พ.",
-    icon3d: `${A}/1f4dd.png`,
-    items: [
-      { href: "/course/kp-general", label: "ความรู้ทั่วไป (ก.พ.)", icon3d: `${A}/1f4dd.png` },
-      { href: "/course/kp-english", label: "ภาษาอังกฤษ (ก.พ.)", icon3d: `${A}/1f310.png` },
-    ],
-  },
-  {
-    label: "เจ้าหน้าที่คดีพิเศษ (DSI)",
-    icon3d: `${A}/1f50e.png`,
-    items: [
-      { href: "/course/dsi-2547", label: "การสอบสวนคดีพิเศษ", icon3d: `${A}/1f50e.png` },
-      { href: "/course/dsi-criminal", label: "คดีพิเศษและกฎหมายที่เกี่ยวข้อง", icon3d: `${A}/2696-fe0f.png` },
-    ],
-  },
-  {
-    label: "ปลัดอำเภอ",
-    icon3d: `${A}/1f3db-fe0f.png`,
-    items: [
-      { href: "/course/palad-amphoe", label: "ลักษณะปกครองท้องที่ 2457", icon3d: `${A}/1f3db-fe0f.png` },
-      { href: "/course/asr-2497", label: "กองอาสารักษาดินแดน", icon3d: `${A}/1f6e1-fe0f.png` },
-    ],
-  },
-  {
-    label: "วิชาทั่วไป",
-    icon3d: `${A}/1f4da.png`,
-    items: [
-      { href: "/course/math-101", label: "คณิตศาสตร์", icon3d: `${A}/1f4d0.png` },
-      { href: "/course/eng-101", label: "English", icon3d: `${A}/1f30f.png` },
-      { href: "/course/code-101", label: "Coding", icon3d: `${A}/1f4bb.png` },
-    ],
-  },
+  { label: "สอบ ก.พ.", slug: "kp", icon3d: `${A}/1f4dd.png` },
+  { label: "เจ้าหน้าที่คดีพิเศษ (DSI)", slug: "dsi", icon3d: `${A}/1f50e.png` },
 ];
 
 export default function Navbar() {
@@ -62,30 +32,75 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState(() => typeof window !== "undefined" ? getAvatar() : null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [nameModalOpen, setNameModalOpen] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const coursesCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const userMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    const dark = saved === "dark";
+    if (!saved) localStorage.setItem("theme", "light");
+    setIsDark(dark);
+    document.documentElement.classList.toggle("light", !dark);
+  }, []);
+
+  function toggleTheme() {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle("light", !next);
+    localStorage.setItem("theme", next ? "dark" : "light");
+  }
 
   useEffect(() => { setXp(getProgress().xp); }, [pathname]);
 
   useEffect(() => {
-    return onAuthChange((user) => {
+    let active = true;
+
+    // Read session from localStorage immediately (no network request)
+    getSession().then((session) => {
+      if (!active) return;
+      const user = session?.user ?? null;
+      if (user) {
+        setUserEmail(user.email ?? null);
+        setDisplayName(user.user_metadata?.display_name ?? null);
+        const currentXp = getProgress().xp;
+        setXp(currentXp);
+        // Guaranteed leaderboard sync on every page load when logged in
+        if (currentXp > 0) syncLeaderboard(currentXp);
+      }
+    });
+
+    const unsub = onAuthChange(async (user) => {
+      if (!active) return;
+      // Only update from null→user or on real sign-in/sign-out events
       setUserEmail(user?.email ?? null);
       setDisplayName(user?.user_metadata?.display_name ?? null);
-      if (user && !user.user_metadata?.display_name) {
-        // OAuth users without a display name → prompt to set one
-        const provider = user.app_metadata?.provider;
-        if (provider === "google" || provider === "facebook") {
-          setNameModalOpen(true);
+      if (user) {
+        await syncProgressFromCloud();
+        await pushProgressToCloud();
+        const currentXp = getProgress().xp;
+        setXp(currentXp);
+        if (currentXp > 0) syncLeaderboard(currentXp);
+        if (!user.user_metadata?.display_name) {
+          const provider = user.app_metadata?.provider;
+          if (provider === "google" || provider === "facebook") {
+            setNameModalOpen(true);
+          }
         }
       }
     });
+
+    return () => { active = false; unsub(); };
   }, []);
 
   useEffect(() => {
@@ -99,7 +114,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -114,7 +129,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // open search overlay with keyboard shortcut
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); openSearch(); }
@@ -139,185 +153,244 @@ export default function Navbar() {
     ? fuse.search(searchQuery).map((r) => r.item)
     : [];
 
+  const navLinkStyle = (active: boolean) => ({
+    color: active ? "var(--text)" : "var(--text-muted)",
+    fontSize: 14,
+    fontWeight: active ? 600 : 400,
+    textDecoration: "none",
+    transition: "color 0.15s",
+  });
+
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+        className="fixed top-0 left-0 right-0 z-50"
         style={{
-          background: scrolled ? "rgba(10, 9, 20, 0.92)" : "transparent",
-          backdropFilter: scrolled ? "blur(16px)" : "none",
-          borderBottom: scrolled ? "1px solid rgba(124,58,237,0.15)" : "1px solid transparent",
+          background: "var(--surface)",
+          borderBottom: "1px solid var(--border)",
+          height: 48,
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 h-full flex items-center gap-4">
           {/* Logo */}
-          <Link href="/" className="group">
-            <span className="text-xl font-black uppercase transition-opacity group-hover:opacity-80" style={{ color: "#fff", letterSpacing: "0.15em" }}>
-              ABCDE<span style={{ color: "var(--accent)" }}>GO</span>
-            </span>
+          <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+            <img src="/abcdego_no_slash.png" alt="AbcdeGo" className="logo-light" style={{ height: 36, width: "auto", objectFit: "contain" }} />
+            <img src="/abcdego_dark.png" alt="AbcdeGo" className="logo-dark" style={{ height: 36, width: "auto", objectFit: "contain" }} />
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-10">
+          <div style={{ width: 1, height: 20, background: "var(--border)", margin: "0 4px", flexShrink: 0 }} />
 
-            {/* SEARCH — first item */}
-            <button
-              onClick={openSearch}
-              className="flex items-center gap-2 text-xs font-semibold tracking-widest transition-colors duration-200"
-              style={{ color: "rgba(255,255,255,0.45)", letterSpacing: "0.18em" }}
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1 flex-1">
+
+            {/* HOME */}
+            <Link
+              href="/"
+              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+              style={{ color: pathname === "/" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M8.5 8.5L11.5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-              SEARCH
-              <span className="text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.25)", fontSize: "0.6rem", letterSpacing: "0.05em" }}>⌘K</span>
-            </button>
+              Home
+            </Link>
 
             {/* COURSES dropdown */}
-            <div ref={dropdownRef} className="relative">
+            <div ref={dropdownRef} className="relative"
+              onMouseEnter={() => { if (coursesCloseTimer.current) clearTimeout(coursesCloseTimer.current); setCoursesOpen(true); }}
+              onMouseLeave={() => { coursesCloseTimer.current = setTimeout(() => { setCoursesOpen(false); setOpenGroup(null); }, 150); }}>
               <button
-                onClick={() => setCoursesOpen((v) => !v)}
-                className="flex items-center gap-1.5 text-xs font-semibold tracking-widest transition-colors duration-200"
-                style={{ color: pathname.startsWith("/course") ? "#fff" : "rgba(255,255,255,0.45)", letterSpacing: "0.18em" }}
+                className="flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+                style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname.startsWith("/course") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
               >
-                COURSES
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
-                  style={{ transition: "transform 0.2s", transform: coursesOpen ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.6 }}>
+                Courses
+                <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor"
+                  style={{ transition: "transform 0.15s", transform: coursesOpen ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.5, marginTop: 1 }}>
                   <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
                 </svg>
               </button>
 
               {coursesOpen && (
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 w-56 rounded-xl overflow-hidden"
-                  style={{ background: "rgba(12,10,26,0.97)", border: "1px solid rgba(124,58,237,0.25)", backdropFilter: "blur(16px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-                  {/* ดูทั้งหมด */}
+                <div className="absolute top-full left-0 mt-1 w-52 rounded-lg overflow-hidden"
+                  style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" }}
+                  onMouseEnter={() => { if (coursesCloseTimer.current) clearTimeout(coursesCloseTimer.current); }}
+                  onMouseLeave={() => { coursesCloseTimer.current = setTimeout(() => setCoursesOpen(false), 150); }}>
                   <Link href="/courses" onClick={() => setCoursesOpen(false)}
-                    className="flex items-center px-4 py-3 text-xs font-bold tracking-widest transition-colors hover:bg-white/5"
-                    style={{ color: "rgba(255,255,255,0.5)", letterSpacing: "0.12em" }}>
+                    className="flex items-center px-3 py-2 text-sm transition-colors hover:bg-white/5"
+                    style={{ color: "var(--text-muted)", borderBottom: "1px solid var(--border)" }}>
                     ดูทั้งหมด →
                   </Link>
-                  <div style={{ height: 1, background: "rgba(124,58,237,0.15)" }} />
-                  {/* Accordion groups */}
-                  {COURSE_GROUPS.map((group, gi) => (
-                    <div key={group.label} style={{ borderTop: gi > 0 ? "1px solid rgba(124,58,237,0.1)" : undefined }}>
-                      <button
-                        onClick={() => setOpenGroup(openGroup === group.label ? null : group.label)}
-                        className="w-full flex items-center justify-between px-4 py-3 text-xs font-bold tracking-wide transition-colors hover:bg-white/5"
-                        style={{ color: openGroup === group.label ? "#c4b5fd" : "rgba(255,255,255,0.7)" }}
-                      >
-                        <span className="flex items-center gap-2">
-                          <img src={group.icon3d} alt="" width={18} height={18} style={{ objectFit: "contain" }} />
-                          {group.label}
-                        </span>
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
-                          style={{ transition: "transform 0.2s", transform: openGroup === group.label ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.5 }}>
-                          <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                        </svg>
-                      </button>
-                      {openGroup === group.label && (
-                        <div style={{ background: "rgba(124,58,237,0.06)" }}>
-                          {group.items.map((item) => (
-                            <Link key={item.href} href={item.href}
-                              onClick={() => { setCoursesOpen(false); setOpenGroup(null); }}
-                              className="flex items-center gap-2.5 px-6 py-2.5 text-sm transition-colors hover:bg-white/5"
-                              style={{ color: pathname === item.href ? "#fff" : "rgba(255,255,255,0.55)" }}>
-                              <img src={item.icon3d} alt="" width={16} height={16} style={{ objectFit: "contain", flexShrink: 0 }} />
-                              {item.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                  {COURSE_GROUPS.map((group) => (
+                    <Link key={group.label} href={`/courses?cat=${group.slug}`} onClick={() => setCoursesOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors hover:bg-white/5"
+                      style={{ color: "var(--text-muted)", borderTop: "1px solid var(--border)" }}>
+                      {group.label}
+                    </Link>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* PROGRESS */}
-            <Link href="/dashboard" className="text-xs font-semibold tracking-widest transition-colors duration-200"
-              style={{ color: pathname === "/dashboard" ? "#fff" : "rgba(255,255,255,0.45)", letterSpacing: "0.18em" }}>
-              PROGRESS
+            {/* Progress link */}
+            <Link
+              href="/dashboard"
+              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+              style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/dashboard" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              Progress
             </Link>
 
-            {/* XP badge */}
-            <div className="text-xs font-bold px-3 py-1.5 rounded-full tracking-wider"
-              style={{ background: "rgba(245,158,11,0.12)", color: "var(--accent)", border: "1px solid rgba(245,158,11,0.2)", letterSpacing: "0.1em" }}>
-              ⚡ {xp} XP
-            </div>
+            <Link
+              href="/tarot"
+              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+              style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/tarot" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              TAROT
+            </Link>
 
-            {/* Auth */}
-            {userEmail ? (
-              <div ref={userMenuRef} className="relative">
-                <button
-                  onClick={() => setUserMenuOpen((v) => !v)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black transition-all hover:opacity-80"
-                  style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))", color: "#fff" }}
-                  title={userEmail}
-                >
-                  {userEmail[0].toUpperCase()}
-                </button>
-                {userMenuOpen && (
-                  <div className="absolute top-10 right-0 rounded-xl overflow-hidden min-w-[200px]"
-                    style={{ background: "rgba(12,10,26,0.97)", border: "1px solid rgba(124,58,237,0.25)", backdropFilter: "blur(16px)", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-                    {/* Profile header */}
-                    <div className="px-4 py-3" style={{ borderBottom: "1px solid rgba(124,58,237,0.1)" }}>
-                      {displayName && <p className="text-sm font-bold truncate" style={{ color: "#fff" }}>{displayName}</p>}
-                      <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.4)" }}>{userEmail}</p>
-                      <div className="flex items-center gap-3 mt-2">
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(245,158,11,0.12)", color: "var(--accent)" }}>⚡ {xp} XP</span>
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(124,58,237,0.12)", color: "var(--primary-light)" }}>Lv.{Math.floor(xp / 100) + 1}</span>
-                      </div>
-                    </div>
-                    <Link
-                      href="/dashboard"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
-                      style={{ color: "rgba(255,255,255,0.65)" }}
-                    >
-                      📊 ความก้าวหน้า
-                    </Link>
-                    <button
-                      onClick={() => { setUserMenuOpen(false); setEditProfileOpen(true); }}
-                      className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
-                      style={{ color: "rgba(255,255,255,0.65)" }}
-                    >
-                      ✏️ แก้ไขโปรไฟล์
-                    </button>
-                    <div style={{ height: 1, background: "rgba(124,58,237,0.08)" }} />
-                    <button
-                      onClick={async () => { await signOut(); setUserMenuOpen(false); }}
-                      className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
-                      style={{ color: "#f87171" }}
-                    >
-                      ออกจากระบบ
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
+            <Link
+              href="/game"
+              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+              style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/game" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              Games
+            </Link>
+
+            <Link
+              href="/about"
+              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+              style={{ color: pathname === "/about" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/about" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              About Us
+            </Link>
+
+            <Link
+              href="/contact"
+              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+              style={{ color: pathname === "/contact" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/contact" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              Contact
+            </Link>
+
+            <a
+              href="https://airrok.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+              style={{ color: "var(--text-muted)", fontSize: 14, fontWeight: 400, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}
+            >
+              Tools
+            </a>
+
+            {/* Search button */}
+            <button
+              onClick={openSearch}
+              className="flex items-center gap-2 ml-2 px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+              style={{ color: "var(--text-muted)", fontSize: 13 }}
+            >
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M8.5 8.5L11.5 11.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+              </svg>
+              <span>ค้นหา</span>
+              <span style={{ fontSize: 11, padding: "1px 5px", borderRadius: 4, background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text-subtle)" }}>⌘K</span>
+            </button>
+
+            {/* Right side */}
+            <div className="ml-auto flex items-center gap-2">
+              {/* XP badge */}
+              <span className="badge" style={{ color: "var(--accent)", borderColor: "rgba(240,136,62,0.3)", background: "rgba(240,136,62,0.08)", fontSize: 12 }}>
+                ⚡ {xp} XP
+              </span>
+
+              {/* Theme toggle */}
               <button
-                onClick={() => setAuthOpen(true)}
-                className="text-xs font-bold px-4 py-1.5 rounded-full transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))", color: "#fff", letterSpacing: "0.05em" }}
+                onClick={toggleTheme}
+                className="flex items-center justify-center w-7 h-7 rounded-md transition-colors hover:bg-white/5"
+                style={{ color: "var(--text-muted)", fontSize: 14, border: "1px solid var(--border)" }}
+                title={isDark ? "Light mode" : "Dark mode"}
               >
-                เข้าสู่ระบบ
+                {isDark ? "☀" : "☾"}
               </button>
-            )}
+
+              {/* Auth */}
+              {userEmail ? (
+                <div ref={userMenuRef} className="relative"
+                  onMouseEnter={() => { if (userMenuCloseTimer.current) clearTimeout(userMenuCloseTimer.current); setUserMenuOpen(true); }}
+                  onMouseLeave={() => { userMenuCloseTimer.current = setTimeout(() => setUserMenuOpen(false), 150); }}>
+                  <button
+                    className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:opacity-80"
+                    style={{ background: avatar?.bg ?? "var(--primary)", fontSize: 16 }}
+                    title={userEmail}
+                  >
+                    {avatar ? avatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
+                  </button>
+                  {userMenuOpen && (
+                    <div className="absolute top-full right-0 mt-1 rounded-lg overflow-hidden min-w-[200px]"
+                      style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" }}
+                      onMouseEnter={() => { if (userMenuCloseTimer.current) clearTimeout(userMenuCloseTimer.current); }}
+                      onMouseLeave={() => { userMenuCloseTimer.current = setTimeout(() => setUserMenuOpen(false), 150); }}>
+                      <div className="px-3 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
+                        <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 36, height: 36, background: avatar?.bg ?? "var(--primary)", fontSize: 20 }}>
+                          {avatar ? avatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                        {displayName && <p className="text-sm font-semibold truncate" style={{ color: "var(--text)" }}>{displayName}</p>}
+                        <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{userEmail}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="badge" style={{ color: "var(--accent)", borderColor: "rgba(240,136,62,0.3)", background: "rgba(240,136,62,0.08)" }}>⚡ {xp} XP</span>
+                          <span className="badge" style={{ color: "var(--accent-purple)", borderColor: "rgba(165,160,248,0.3)", background: "rgba(165,160,248,0.08)" }}>Lv.{Math.floor(xp / 100) + 1}</span>
+                        </div>
+                        </div>
+                      </div>
+                      <Link href="/dashboard" onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-sm cursor-pointer"
+                        style={{ color: "var(--text-muted)", transition: "background 0.1s, transform 0.1s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; (e.currentTarget as HTMLElement).style.transform = "translateX(3px)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}>
+                        Progress
+                      </Link>
+                      <button
+                        onClick={() => { setUserMenuOpen(false); setEditProfileOpen(true); }}
+                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm cursor-pointer"
+                        style={{ color: "var(--text-muted)", transition: "background 0.1s, transform 0.1s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; (e.currentTarget as HTMLElement).style.transform = "translateX(3px)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}>
+                        Edit Profile
+                      </button>
+                      <div style={{ height: 1, background: "var(--border)" }} />
+                      <button
+                        onClick={async () => { await signOut(); window.location.href = "/"; }}
+                        className="w-full text-left px-3 py-2 text-sm cursor-pointer"
+                        style={{ color: "var(--accent-red)", transition: "background 0.1s, transform 0.1s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,123,114,0.08)"; (e.currentTarget as HTMLElement).style.transform = "translateX(3px)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}>
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => setAuthOpen(true)}
+                  className="btn-primary"
+                  style={{ padding: "4px 12px", fontSize: 13 }}
+                >
+                  เข้าสู่ระบบ
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Mobile: search icon + hamburger */}
-          <div className="md:hidden flex items-center gap-3">
-            <button onClick={openSearch} className="p-2" style={{ color: "rgba(255,255,255,0.6)" }}>
+          {/* Mobile */}
+          <div className="md:hidden flex items-center gap-2 ml-auto">
+            <button onClick={openSearch} className="p-1.5" style={{ color: "var(--text-muted)" }}>
               <svg width="16" height="16" viewBox="0 0 13 13" fill="none">
-                <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M8.5 8.5L11.5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M8.5 8.5L11.5 11.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
               </svg>
             </button>
-            <button className="flex flex-col gap-1.5 p-2" onClick={() => setMenuOpen(!menuOpen)}>
+            <button className="flex flex-col gap-1 p-1.5" onClick={() => setMenuOpen(!menuOpen)}>
               {[0, 1, 2].map((i) => (
-                <span key={i} className="block w-6 h-px transition-all duration-300"
-                  style={{ background: "rgba(255,255,255,0.7)", transform: menuOpen && i === 0 ? "rotate(45deg) translateY(6px)" : menuOpen && i === 2 ? "rotate(-45deg) translateY(-6px)" : "none", opacity: menuOpen && i === 1 ? 0 : 1 }} />
+                <span key={i} className="block w-5 h-px transition-all duration-200"
+                  style={{ background: "var(--text-muted)", transform: menuOpen && i === 0 ? "rotate(45deg) translateY(5px)" : menuOpen && i === 2 ? "rotate(-45deg) translateY(-5px)" : "none", opacity: menuOpen && i === 1 ? 0 : 1 }} />
               ))}
             </button>
           </div>
@@ -325,50 +398,71 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden px-6 py-4 flex flex-col gap-1"
-            style={{ background: "rgba(10,9,20,0.97)", borderTop: "1px solid rgba(124,58,237,0.1)" }}>
-            <Link href="/courses" onClick={() => setMenuOpen(false)} className="text-xs font-bold tracking-widest py-2"
-              style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.18em" }}>COURSES — ดูทั้งหมด</Link>
-            {COURSE_GROUPS.map((group) => (
-              <div key={group.label}>
-                <button
-                  onClick={() => setOpenGroup(openGroup === group.label ? null : group.label)}
-                  className="w-full flex items-center justify-between py-2 pl-3 text-sm font-semibold"
-                  style={{ color: "rgba(255,255,255,0.7)" }}>
-                  <span className="flex items-center gap-2">
-                    <img src={group.icon3d} alt="" width={18} height={18} style={{ objectFit: "contain" }} />
+          <div className="md:hidden px-4 py-3 flex flex-col gap-0.5"
+            style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}>
+            <Link href="/" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Home</Link>
+            <button
+              onClick={() => setOpenGroup(openGroup === "courses" ? null : "courses")}
+              className="flex items-center justify-between px-2 py-2.5 rounded w-full hover:bg-white/5"
+              style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontWeight: pathname.startsWith("/course") ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              <span>Courses</span>
+              <span style={{ fontSize: 10, color: "var(--text-muted)", transition: "transform 0.2s", transform: openGroup === "courses" ? "rotate(180deg)" : "none", display: "inline-block" }}>▼</span>
+            </button>
+            {openGroup === "courses" && (
+              <div className="flex flex-col gap-0.5 ml-3 pl-3" style={{ borderLeft: "1px solid var(--border)" }}>
+                {COURSE_GROUPS.map((group) => (
+                  <Link key={group.slug} href={`/courses?cat=${group.slug}`} onClick={() => { setMenuOpen(false); setOpenGroup(null); }}
+                    className="px-2 py-2 rounded text-sm hover:bg-white/5"
+                    style={{ color: "var(--text-muted)", textDecoration: "none" }}>
                     {group.label}
-                  </span>
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"
-                    style={{ transition: "transform 0.2s", transform: openGroup === group.label ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.4 }}>
-                    <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                  </svg>
-                </button>
-                {openGroup === group.label && group.items.map((item) => (
-                  <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-2 py-2 pl-6 text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
-                    <img src={item.icon3d} alt="" width={16} height={16} style={{ objectFit: "contain" }} />
-                    {item.label}
                   </Link>
                 ))}
+                <Link href="/courses" onClick={() => { setMenuOpen(false); setOpenGroup(null); }}
+                  className="px-2 py-2 rounded text-sm hover:bg-white/5"
+                  style={{ color: "var(--primary)", textDecoration: "none" }}>
+                  ดูทั้งหมด →
+                </Link>
               </div>
-            ))}
-            <div style={{ height: 1, background: "rgba(124,58,237,0.15)", margin: "8px 0" }} />
-            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="text-xs font-semibold tracking-widest py-2"
-              style={{ color: pathname === "/dashboard" ? "#fff" : "rgba(255,255,255,0.5)", letterSpacing: "0.18em" }}>
-              PROGRESS
-            </Link>
-            <span className="text-xs font-bold pt-1" style={{ color: "var(--accent)" }}>⚡ {xp} XP</span>
-            <div style={{ height: 1, background: "rgba(124,58,237,0.1)" }} />
+            )}
+            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/dashboard" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Progress</Link>
+            <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>TAROT</Link>
+            <Link href="/game" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Games</Link>
+            <Link href="/about" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/about" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/about" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>About Us</Link>
+            <Link href="/contact" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/contact" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/contact" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Contact</Link>
+            <a href="https://airrok.com" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: "var(--text-muted)", fontWeight: 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Tools</a>
+            <div style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
+            <div className="flex items-center justify-between px-2 py-1.5">
+              <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+                {isDark ? "Dark mode" : "Light mode"}
+              </span>
+              <button
+                onClick={toggleTheme}
+                className="flex items-center justify-center w-7 h-7 rounded-md"
+                style={{ color: "var(--text-muted)", fontSize: 14, border: "1px solid var(--border)" }}
+              >
+                {isDark ? "☀" : "☾"}
+              </button>
+            </div>
+            <div style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
             {userEmail ? (
-              <div className="flex items-center justify-between py-1">
-                <span className="text-xs truncate" style={{ color: "rgba(255,255,255,0.4)" }}>{userEmail}</span>
-                <button onClick={async () => { await signOut(); setMenuOpen(false); }} className="text-xs font-bold ml-3" style={{ color: "#f87171" }}>ออก</button>
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-2 px-2 py-1.5">
+                  <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 28, height: 28, background: avatar?.bg ?? "var(--primary)", fontSize: 16 }}>
+                    {avatar ? avatar.emoji : (displayName || userEmail)[0].toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold truncate" style={{ color: "var(--text)" }}>{displayName || userEmail}</p>
+                    <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>⚡ {xp} XP · Lv.{Math.floor(xp / 100) + 1}</p>
+                  </div>
+                </div>
+                <button onClick={() => { setMenuOpen(false); setEditProfileOpen(true); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--text-muted)" }}>Edit Profile</button>
+                <button onClick={async () => { await signOut(); setMenuOpen(false); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--accent-red)" }}>Sign Out</button>
               </div>
             ) : (
               <button onClick={() => { setMenuOpen(false); setAuthOpen(true); }}
-                className="text-xs font-bold py-2 tracking-wider" style={{ color: "var(--primary-light)" }}>
-                เข้าสู่ระบบ / สมัครสมาชิก →
+                className="px-2 py-2.5 text-sm font-medium text-left" style={{ color: "var(--primary)" }}>
+                Sign In / Sign Up →
               </button>
             )}
           </div>
@@ -378,26 +472,25 @@ export default function Navbar() {
       {/* Search overlay */}
       {searchOpen && (
         <div
-          className="fixed inset-0 z-[100] flex flex-col items-center pt-24 px-4"
-          style={{ background: "rgba(5,4,15,0.85)", backdropFilter: "blur(12px)" }}
+          className="fixed inset-0 z-[100] flex flex-col items-center pt-20 px-4"
+          style={{ background: "rgba(1,4,9,0.8)", backdropFilter: "blur(4px)" }}
           onClick={(e) => { if (e.target === e.currentTarget) closeSearch(); }}
         >
           <div className="w-full max-w-xl">
-            {/* Input */}
-            <div className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
-              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(124,58,237,0.4)", boxShadow: "0 0 40px rgba(124,58,237,0.15)" }}>
-              <svg width="16" height="16" viewBox="0 0 13 13" fill="none" style={{ color: "rgba(167,139,250,0.8)", flexShrink: 0 }}>
-                <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M8.5 8.5L11.5 11.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            <div className="flex items-center gap-3 rounded-lg px-3 py-2.5"
+              style={{ background: "var(--surface)", border: "1px solid var(--primary)", boxShadow: "0 0 0 3px rgba(31,111,235,0.15)" }}>
+              <svg width="15" height="15" viewBox="0 0 13 13" fill="none" style={{ color: "var(--text-muted)", flexShrink: 0 }}>
+                <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M8.5 8.5L11.5 11.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
               </svg>
               <input
                 ref={searchInputRef}
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ค้นหาคอร์ส เช่น กฎหมาย, ปลัดอำเภอ, อส., คณิต..."
+                placeholder="ค้นหาคอร์ส..."
                 className="flex-1 bg-transparent outline-none text-sm"
-                style={{ color: "#fff", caretColor: "#a78bfa" }}
+                style={{ color: "var(--text)", caretColor: "var(--primary)" }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && searchResults.length > 0) {
                     router.push(`/course/${searchResults[0].id}`);
@@ -405,39 +498,27 @@ export default function Navbar() {
                   }
                 }}
               />
-              <button onClick={closeSearch} className="text-xs px-2 py-0.5 rounded transition-opacity hover:opacity-70" style={{ color: "rgba(255,255,255,0.3)" }}>ESC</button>
+              <button onClick={closeSearch} className="text-xs px-1.5 py-0.5 rounded transition-opacity hover:opacity-70" style={{ color: "var(--text-muted)", border: "1px solid var(--border)" }}>ESC</button>
             </div>
 
-            {/* Results */}
-            <div className="mt-3 rounded-2xl overflow-hidden"
-              style={{ background: "rgba(12,10,26,0.97)", border: "1px solid rgba(124,58,237,0.2)", boxShadow: "0 8px 40px rgba(0,0,0,0.6)" }}>
+            <div className="mt-1.5 rounded-lg overflow-hidden"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}>
               {searchResults.length === 0 ? (
-                <p className="px-5 py-6 text-sm text-center" style={{ color: "rgba(255,255,255,0.3)" }}>ไม่พบคอร์สที่ตรงกัน</p>
+                <p className="px-4 py-5 text-sm text-center" style={{ color: "var(--text-muted)" }}>ไม่พบคอร์สที่ตรงกัน</p>
               ) : (
                 searchResults.map((course, i) => (
-                  <Link
-                    key={course.id}
-                    href={`/course/${course.id}`}
-                    onClick={closeSearch}
-                    className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-white/5"
-                    style={{ borderTop: i > 0 ? "1px solid rgba(255,255,255,0.05)" : undefined }}
-                  >
-                    <span className="text-2xl w-9 h-9 flex items-center justify-center rounded-xl flex-shrink-0"
-                      style={{ background: `${course.color}22` }}>
-                      {course.icon}
-                    </span>
+                  <Link key={course.id} href={`/course/${course.id}`} onClick={closeSearch}
+                    className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-white/5"
+                    style={{ borderTop: i > 0 ? "1px solid var(--border)" : undefined }}>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate" style={{ color: "#fff" }}>{course.title}</p>
-                      <p className="text-xs truncate mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>{course.description}</p>
+                      <p className="text-sm font-medium truncate" style={{ color: "var(--text)" }}>{course.title}</p>
+                      <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{course.description}</p>
                     </div>
-                    <span className="text-xs px-2 py-0.5 rounded-full flex-shrink-0"
-                      style={{ background: `${course.color}22`, color: course.color }}>
-                      {course.tag}
-                    </span>
+                    <span className="badge" style={{ fontSize: 11, flexShrink: 0 }}>{course.tag}</span>
                   </Link>
                 ))
               )}
-              <div className="px-5 py-2.5 flex gap-4 text-xs" style={{ borderTop: "1px solid rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.2)" }}>
+              <div className="px-4 py-2 flex gap-4 text-xs" style={{ borderTop: "1px solid var(--border)", color: "var(--text-subtle)" }}>
                 <span>↵ เปิดคอร์สแรก</span>
                 <span>ESC ปิด</span>
               </div>
@@ -447,20 +528,17 @@ export default function Navbar() {
       )}
 
       {authOpen && (
-        <AuthModal
-          onClose={() => setAuthOpen(false)}
-          onSuccess={(email) => setUserEmail(email)}
-        />
+        <AuthModal onClose={() => setAuthOpen(false)} onSuccess={(email) => setUserEmail(email)} />
       )}
 
       {nameModalOpen && (
-        <DisplayNameModal onDone={(name) => { setDisplayName(name); setNameModalOpen(false); }} />
+        <DisplayNameModal onDone={(name) => { setDisplayName(name); setAvatar(getAvatar()); setNameModalOpen(false); }} />
       )}
 
       {editProfileOpen && (
         <DisplayNameModal
           current={displayName ?? ""}
-          onDone={(name) => { setDisplayName(name); setEditProfileOpen(false); }}
+          onDone={(name) => { setDisplayName(name); setAvatar(getAvatar()); setEditProfileOpen(false); }}
           onClose={() => setEditProfileOpen(false)}
         />
       )}
