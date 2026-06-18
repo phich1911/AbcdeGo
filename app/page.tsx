@@ -8,6 +8,11 @@ const totalXp = COURSES.reduce((s, c) => s + c.xpReward, 0);
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "AbcdeGo — เรียน เล่น เก่งขึ้น",
+  description: "แพลตฟอร์มติวสอบราชการ ก.พ. DSI ปลัดอำเภอ เรียนฟรี ทำแบบทดสอบ รับ XP สะสมเลเวล",
+};
+
 export default async function Home() {
   const popularIds = await getPopularCourseIds();
   return (
