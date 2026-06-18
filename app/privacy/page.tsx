@@ -72,7 +72,7 @@ export default function PrivacyPage() {
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>8. ติดต่อเรา</h2>
         <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8 }}>
           หากมีคำถามเกี่ยวกับ Privacy Policy สามารถติดต่อได้ที่หน้า{" "}
-          <a href="/contact" style={{ color: "var(--primary)" }}>Contact</a> หรืออีเมล phich1911@gmail.com
+          <a href="/contact" style={{ color: "var(--primary)" }}>Contact</a> หรืออีเมล support@abcdego.com
         </p>
       </div>
     </main>
