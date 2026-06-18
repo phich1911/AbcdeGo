@@ -42,7 +42,7 @@ export default function SiteStats() {
                   {entry.avatar && (
                     <span style={{ fontSize: 16 }}>{AVATARS.find((a) => a.id === entry.avatar)?.emoji}</span>
                   )}
-                  <span className="flex-1 font-semibold text-sm truncate" style={{ color: "var(--text)" }}>{entry.name}{entry.name === "JACKPHICH" && <span style={{ color: "#ef4444", marginLeft: 4 }}>(GM)</span>}</span>
+                  <span className="flex-1 font-semibold text-sm truncate" style={{ color: "var(--text)" }}>{entry.name}{entry.name === "JACKPHICH" && <span style={{ color: "#ef4444", marginLeft: 4 }}>[GM]</span>}</span>
                   <span className="badge mr-1" style={{ color: "var(--accent-purple)", borderColor: "rgba(165,160,248,0.3)", background: "rgba(165,160,248,0.08)", fontSize: 11 }}>Lv.{Math.floor(entry.xp / 100) + 1}</span>
                   <span className="text-sm font-semibold flex items-center gap-1" style={{ color: "var(--accent)" }}><Zap size={12} fill="currentColor" /> {entry.xp.toLocaleString()}</span>
                 </div>
