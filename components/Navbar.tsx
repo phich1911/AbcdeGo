@@ -334,9 +334,9 @@ export default function Navbar() {
                         <div className="min-w-0">
                         {displayName && <p className="text-sm font-semibold truncate" style={{ color: "var(--text)" }}>{displayName}{userEmail === "phich1911@gmail.com" && <span style={{ color: "#ef4444", marginLeft: 4 }}>[GM]</span>}</p>}
                         <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{userEmail}</p>
-                        <div className="flex items-center gap-2 mt-2">
-                          <span className="badge" style={{ color: "var(--accent)", borderColor: "rgba(240,136,62,0.3)", background: "rgba(240,136,62,0.08)" }}>⚡ {xp} XP</span>
-                          <span className="badge" style={{ color: "var(--accent-purple)", borderColor: "rgba(165,160,248,0.3)", background: "rgba(165,160,248,0.08)" }}>Lv.{Math.floor(xp / 100) + 1}</span>
+                        <div className="flex flex-col gap-1 mt-2">
+                          <span className="badge" style={{ color: "var(--accent)", borderColor: "rgba(240,136,62,0.3)", background: "rgba(240,136,62,0.08)", width: "fit-content" }}>⚡ {xp} XP</span>
+                          <span className="badge" style={{ color: "var(--accent-purple)", borderColor: "rgba(165,160,248,0.3)", background: "rgba(165,160,248,0.08)", width: "fit-content" }}>Lv.{Math.floor(xp / 100) + 1}</span>
                         </div>
                         </div>
                       </div>
