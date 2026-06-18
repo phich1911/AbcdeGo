@@ -3,12 +3,11 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Navbar from "@/components/Navbar";
-import CourseIcon from "@/components/CourseIcon";
 import AuthModal from "@/components/AuthModal";
 import { getCourse, getLessonsForCourse } from "@/lib/data";
-import { isLessonCompleted, getCourseProgress } from "@/lib/progress";
+import { isLessonCompleted, getCourseProgress, getLessonScore } from "@/lib/progress";
 import { getUser, onAuthChange } from "@/lib/supabase";
+import { Lock, CheckCircle, Zap } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 export default function CoursePage({ params }: { params: Promise<{ id: string }> }) {
@@ -36,7 +35,6 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
 
   return (
     <>
-      <Navbar />
       {authOpen && (
         <AuthModal
           onClose={() => setAuthOpen(false)}
@@ -46,17 +44,14 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
       <main className="max-w-3xl mx-auto px-6 pt-28 pb-12">
         {/* Header */}
         <div className="glass rounded-2xl p-8 mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <CourseIcon icon={course.icon} icon3d={course.icon3d} color={course.color} size={64} />
-            <div>
-              <span
-                className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                style={{ background: `${course.color}22`, color: course.color }}
-              >
-                {course.tag}
-              </span>
-              <h1 className="text-2xl font-black mt-1">{course.title}</h1>
-            </div>
+          <div className="mb-4">
+            <span
+              className="text-xs font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: `${course.color}22`, color: course.color }}
+            >
+              {course.tag}
+            </span>
+            <h1 className="text-2xl font-black mt-1">{course.title}</h1>
           </div>
           <p style={{ color: "var(--text-muted)" }}>{course.description}</p>
 
@@ -84,7 +79,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
               className="inline-block mt-6 px-6 py-3 rounded-full font-bold"
               style={{ background: "rgba(16,185,129,0.15)", color: "var(--accent-green)" }}
             >
-              🎉 เรียนจบแล้ว!
+              ✦ เรียนจบแล้ว!
             </div>
           )}
         </div>
@@ -111,14 +106,15 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                     color: done ? "var(--accent-green)" : memberOnly ? "var(--primary-light)" : "var(--text-muted)",
                   }}
                 >
-                  {done ? "✓" : memberOnly ? "🔒" : i + 1}
+                  {done ? <CheckCircle size={16} /> : memberOnly ? <Lock size={14} /> : i + 1}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold">{lesson.title}</h3>
                   <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                    {lesson.steps.length} ขั้นตอน · ⚡ {lesson.xpReward} XP
+                    {lesson.steps.length} ขั้นตอน · <Zap size={11} style={{ display: "inline", verticalAlign: "middle" }} fill="currentColor" /> {lesson.xpReward} XP
                     {memberOnly && <span style={{ color: "var(--primary-light)" }}> · สมาชิกเท่านั้น</span>}
+                    {done && (() => { const s = getLessonScore(lesson.id); return s && s.correct < s.total ? <span style={{ color: "#ef4444", marginLeft: 6 }}>({s.correct}/{s.total})</span> : null; })()}
                   </p>
                 </div>
 
@@ -143,7 +139,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
                     {done ? "ทบทวน" : "เริ่ม"}
                   </Link>
                 ) : (
-                  <span className="text-lg">🔒</span>
+                  <Lock size={16} style={{ color: "var(--text-muted)" }} />
                 )}
               </div>
             );
@@ -154,7 +150,7 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
               className="rounded-2xl p-6 text-center mt-4"
               style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.15), rgba(124,58,237,0.05))", border: "1px solid rgba(124,58,237,0.3)" }}
             >
-              <p className="font-bold mb-1">🔒 {lessons.length - freeLimit} บทเรียนถัดไปสำหรับสมาชิก</p>
+              <p className="font-bold mb-1 flex items-center justify-center gap-2"><Lock size={14} /> {lessons.length - freeLimit} บทเรียนถัดไปสำหรับสมาชิก</p>
               <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>สมัครฟรี เข้าถึงบทเรียนทั้งหมดได้ทันที</p>
               <button
                 onClick={() => setAuthOpen(true)}

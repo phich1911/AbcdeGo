@@ -4,10 +4,10 @@ import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { notFound } from "next/navigation";
 import { getLesson, getCourse, getLessonsForCourse, LESSONS } from "@/lib/data";
-import { completeLesson } from "@/lib/progress";
-import Navbar from "@/components/Navbar";
+import { completeLesson, pushProgressToCloud } from "@/lib/progress";
 import AuthModal from "@/components/AuthModal";
-import { getUser, onAuthChange, syncLeaderboard } from "@/lib/supabase";
+import { getSession, onAuthChange, syncLeaderboard } from "@/lib/supabase";
+import { Lock, PartyPopper, Lightbulb, Zap } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
@@ -32,13 +32,31 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [authOpen, setAuthOpen] = useState(false);
   const [earnedXp, setEarnedXp] = useState(0);
   const [stepEarned, setStepEarned] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
 
   const answerableCount = lesson.steps.filter((s) => s.type !== "info").length;
   const xpPerStep = answerableCount > 0 ? Math.round(lesson.xpReward / answerableCount) : 0;
 
   useEffect(() => {
-    getUser().then(setUser);
+    getSession().then((session) => setUser(session?.user ?? null)).catch(() => setUser(null));
     return onAuthChange(setUser);
+  }, []);
+
+  // Discourage copying lesson content (right-click, copy, cut). Inputs still work.
+  useEffect(() => {
+    const isInput = (t: EventTarget | null) => {
+      const el = t as HTMLElement | null;
+      return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA");
+    };
+    const block = (e: Event) => { if (!isInput(e.target)) e.preventDefault(); };
+    document.addEventListener("contextmenu", block);
+    document.addEventListener("copy", block);
+    document.addEventListener("cut", block);
+    return () => {
+      document.removeEventListener("contextmenu", block);
+      document.removeEventListener("copy", block);
+      document.removeEventListener("cut", block);
+    };
   }, []);
 
   const step = lesson.steps[stepIndex];
@@ -51,21 +69,15 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setCorrect(false);
     setStepEarned(false);
     if (stepIndex + 1 >= lesson.steps.length) {
-      const updated = completeLesson(lesson.id, earnedXp);
+      const updated = completeLesson(lesson.id, earnedXp, { correct: correctCount, total: answerableCount });
       syncLeaderboard(updated.xp);
+      pushProgressToCloud();
       setDone(true);
     } else {
       setStepIndex((s) => s + 1);
     }
   }
 
-  function retryStep() {
-    setSelected(null);
-    setFillInput("");
-    setAnswered(false);
-    setCorrect(false);
-    setStepEarned(false);
-  }
 
   function checkQuiz(idx: number) {
     if (answered) return;
@@ -75,6 +87,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
       setCorrect(true);
       if (!stepEarned) {
         setEarnedXp((x) => x + xpPerStep);
+        setCorrectCount((c) => c + 1);
         setStepEarned(true);
       }
     } else {
@@ -92,6 +105,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     if (isCorrect) {
       if (!stepEarned) {
         setEarnedXp((x) => x + xpPerStep);
+        setCorrectCount((c) => c + 1);
         setStepEarned(true);
       }
     } else {
@@ -108,7 +122,6 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   if (isMemberOnly) {
     return (
       <>
-        <Navbar />
         {authOpen && (
           <AuthModal
             onClose={() => setAuthOpen(false)}
@@ -116,7 +129,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
           />
         )}
         <div className="flex flex-col items-center justify-center min-h-[80vh] px-6 text-center">
-          <div className="text-6xl mb-6">🔒</div>
+          <div className="mb-6 flex justify-center"><Lock size={52} style={{ color: "var(--text-muted)" }} /></div>
           <h1 className="text-3xl font-black mb-3">บทเรียนนี้สำหรับสมาชิก</h1>
           <p className="mb-2" style={{ color: "var(--text-muted)" }}>
             สมัครฟรีเพื่อเข้าถึงบทเรียนทั้งหมด
@@ -145,15 +158,15 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     );
   }
 
-  if (user === undefined) return null;
+  // Only wait for auth state on gated (member-only) lessons; free lessons render immediately
+  if (lessonIndex >= freeLimit && user === undefined) return null;
 
   if (done) {
     return (
       <>
-        <Navbar />
         <div className="flex flex-col items-center justify-center min-h-[80vh] px-6 text-center">
           <div className="animate-bounce-in">
-            <div className="text-8xl mb-6">🎉</div>
+            <div className="mb-6 flex justify-center"><PartyPopper size={64} style={{ color: "var(--accent)" }} /></div>
             <h1 className="text-4xl font-black mb-3">ยอดเยี่ยม!</h1>
             <p className="text-xl mb-2" style={{ color: "var(--text-muted)" }}>
               คุณผ่านบทเรียน <strong style={{ color: "var(--text)" }}>{lesson.title}</strong>
@@ -162,7 +175,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xl font-black my-6"
               style={{ background: "rgba(245,158,11,0.15)", color: "var(--accent)" }}
             >
-              ⚡ +{earnedXp} XP {earnedXp < lesson.xpReward && <span style={{ fontSize: "0.7em", opacity: 0.6 }}>/ {lesson.xpReward} XP</span>}
+              <Zap size={20} fill="currentColor" /> +{earnedXp} XP {earnedXp < lesson.xpReward && <span style={{ fontSize: "0.7em", opacity: 0.6 }}>/ {lesson.xpReward} XP</span>}
             </div>
             <div className="flex flex-col items-center gap-3 mt-4 w-full max-w-xs mx-auto">
               {nextLesson && (
@@ -203,8 +216,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
   return (
     <>
-      <Navbar />
-      <main className="max-w-2xl mx-auto px-6 pt-24 pb-10">
+      <main className="max-w-2xl mx-auto px-6 pt-24 pb-10" style={{ userSelect: "none", WebkitUserSelect: "none" }}>
         {/* Top bar */}
         <div className="flex items-center gap-4 mb-8">
           <button
@@ -234,7 +246,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               <h2 className="text-2xl font-black">{step.title}</h2>
               <p
                 className="text-base leading-relaxed whitespace-pre-line"
-                style={{ color: "var(--text-muted)" }}
+                style={{ color: "var(--text)" }}
               >
                 {step.content}
               </p>
@@ -308,21 +320,12 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
               {answered && (
                 <div className="flex gap-3 self-end">
-                  {!correct && (
-                    <button
-                      onClick={retryStep}
-                      className="px-6 py-3 rounded-full font-bold transition-all hover:scale-105"
-                      style={{ border: "1px solid var(--primary-light)", color: "var(--primary-light)" }}
-                    >
-                      ลองใหม่ →
-                    </button>
-                  )}
                   <button
                     onClick={nextStep}
                     className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
                     style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
                   >
-                    {correct ? "ต่อไป →" : "ข้ามไป"}
+                    ต่อไป →
                   </button>
                 </div>
               )}
@@ -339,7 +342,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               </div>
               <h2 className="text-xl font-black">{step.question}</h2>
               <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                💡 {step.hint}
+                <Lightbulb size={14} style={{ display: "inline", marginRight: 4, color: "var(--accent)" }} />{step.hint}
               </p>
               <input
                 type="text"
@@ -382,22 +385,13 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     ตรวจ
                   </button>
                 )}
-                {answered && !correct && (
-                  <button
-                    onClick={retryStep}
-                    className="px-6 py-3 rounded-full font-bold transition-all hover:scale-105"
-                    style={{ border: "1px solid var(--primary-light)", color: "var(--primary-light)" }}
-                  >
-                    ลองใหม่ →
-                  </button>
-                )}
                 {answered && (
                   <button
                     onClick={nextStep}
                     className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
                     style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
                   >
-                    {correct ? "ต่อไป →" : "ข้ามไป"}
+                    ต่อไป →
                   </button>
                 )}
               </div>
