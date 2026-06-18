@@ -364,6 +364,14 @@ export default function Navbar() {
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}>
                         Sign Out
                       </button>
+                      <div style={{ height: 1, background: "var(--border)" }} />
+                      <Link href="/privacy" onClick={() => setUserMenuOpen(false)}
+                        className="flex items-center px-3 py-2 text-xs cursor-pointer"
+                        style={{ color: "var(--text-subtle)", transition: "background 0.1s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
+                        นโยบายความเป็นส่วนตัว
+                      </Link>
                     </div>
                   )}
                 </div>
