@@ -24,7 +24,7 @@ function bumpUsed() {
 export default function ChatBot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { from: "bot", text: "สวัสดีครับ มีคำถามเกี่ยวกับคอร์สหรือเนื้อหาวิชาไหน ถามได้เลยนะครับ" },
+    { from: "bot", text: "สงสัยอะไรถามได้เลยครับ อาจารย์โกพร้อมช่วยตลอด 24 ชม." },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
