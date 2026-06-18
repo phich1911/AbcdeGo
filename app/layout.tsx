@@ -29,6 +29,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-10 flex flex-col flex-1">
           {children}
         </div>
+        <footer style={{ textAlign: "center", padding: "24px 16px", borderTop: "1px solid var(--border)", marginTop: "auto" }}>
+          <p style={{ fontSize: 13, color: "var(--text-subtle)" }}>
+            © {new Date().getFullYear()} AbcdeGo
+            {" · "}<a href="/about" style={{ color: "var(--text-muted)", textDecoration: "none" }}>About</a>
+            {" · "}<a href="/contact" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Contact</a>
+            {" · "}<a href="/privacy" style={{ color: "var(--text-muted)", textDecoration: "none" }}>นโยบายความเป็นส่วนตัว</a>
+          </p>
+        </footer>
 <ChatBot />
         <Analytics />
       </body>
