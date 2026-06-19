@@ -1,21 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import { COURSES, getLessonsForCourse } from "@/lib/data";
-import { getProgress, getCourseProgress } from "@/lib/progress";
-import { submitScore, getUser, syncLeaderboard } from "@/lib/supabase";
+import { getProgress, getCourseProgress, syncProgressFromCloud } from "@/lib/progress";
+import { getSession, syncLeaderboard } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
+import { Star, Zap, BookOpen, Flame, Trophy } from "lucide-react";
+
+function useCountUp(target: number, duration = 900) {
+  const [value, setValue] = useState(0);
+  const rafRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (target === 0) { setValue(0); return; }
+    const start = performance.now();
+    const animate = (now: number) => {
+      const t = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setValue(Math.round(eased * target));
+      if (t < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration]);
+  return value;
+}
 
 export default function DashboardPage() {
   const [xp, setXp] = useState(0);
   const [streak, setStreak] = useState(1);
   const [completedCount, setCompletedCount] = useState(0);
   const [courseProgresses, setCourseProgresses] = useState<number[]>([]);
-  const [submitName, setSubmitName] = useState("");
-  const [submitState, setSubmitState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [user, setUser] = useState<User | null>(null);
+  const [syncDone, setSyncDone] = useState(false);
 
   useEffect(() => {
     const p = getProgress();
@@ -23,28 +40,38 @@ export default function DashboardPage() {
     setStreak(p.streak);
     setCompletedCount(p.completedLessons.length);
     setCourseProgresses(COURSES.map((c) => getCourseProgress(c.id, c.totalLessons)));
-    getUser().then(async (u) => {
+    (async () => {
+      const session = await getSession();
+      const u = session?.user ?? null;
       setUser(u);
-      if (u) {
-        const xp = getProgress().xp;
-        console.log("[dashboard] user:", u.email, "xp:", xp);
-        if (xp > 0) {
-          const res = await syncLeaderboard(xp);
-          console.log("[dashboard] sync result:", res);
-        }
+      if (!u) return;
+      await syncProgressFromCloud();
+      const p2 = getProgress();
+      setXp(p2.xp);
+      setStreak(p2.streak);
+      setCompletedCount(p2.completedLessons.length);
+      setCourseProgresses(COURSES.map((c) => getCourseProgress(c.id, c.totalLessons)));
+      if (p2.xp > 0) {
+        const res = await syncLeaderboard(p2.xp);
+        if (res?.ok) setSyncDone(true);
       }
-    });
+    })();
   }, []);
 
   const totalLessons = COURSES.reduce((sum, c) => sum + c.totalLessons, 0);
   const level = Math.floor(xp / 100) + 1;
   const levelXp = xp % 100;
 
+  const animLevel = useCountUp(level);
+  const animXp = useCountUp(xp);
+  const animCompleted = useCountUp(completedCount);
+  const animStreak = useCountUp(streak);
+  const animLevelXp = useCountUp(levelXp);
+
   return (
     <>
-      <Navbar />
       <main className="max-w-4xl mx-auto px-6 pt-28 pb-12">
-        <h1 className="text-4xl font-black mb-2">ความก้าวหน้าของคุณ</h1>
+        <h1 className="text-2xl md:text-4xl font-black mb-2">ความก้าวหน้าของคุณ</h1>
         <p style={{ color: "var(--text-muted)" }} className="mb-10">
           ทุกบทเรียนที่เรียนจะบันทึกไว้ที่นี่
         </p>
@@ -52,13 +79,13 @@ export default function DashboardPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {[
-            { label: "เลเวล", value: level, icon: "⭐", color: "#a855f7" },
-            { label: "XP รวม", value: xp, icon: "⚡", color: "#f59e0b" },
-            { label: "บทเรียนสำเร็จ", value: `${completedCount}/${totalLessons}`, icon: "📚", color: "#10b981" },
-            { label: "Streak", value: `${streak} วัน`, icon: "🔥", color: "#ef4444" },
+            { label: "เลเวล", value: animLevel, icon: <Star size={22} fill="currentColor" />, color: "#a855f7" },
+            { label: "XP รวม", value: animXp, icon: <Zap size={22} fill="currentColor" />, color: "#f59e0b" },
+            { label: "บทเรียนสำเร็จ", value: `${animCompleted}/${totalLessons}`, icon: <BookOpen size={22} />, color: "#10b981" },
+            { label: "Streak", value: `${animStreak} วัน`, icon: <Flame size={22} fill="currentColor" />, color: "#ef4444" },
           ].map((s) => (
             <div key={s.label} className="glass rounded-2xl p-5 text-center">
-              <div className="text-2xl mb-1">{s.icon}</div>
+              <div className="mb-2 flex justify-center" style={{ color: s.color }}>{s.icon}</div>
               <div className="text-2xl font-black" style={{ color: s.color }}>{s.value}</div>
               <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>{s.label}</div>
             </div>
@@ -68,11 +95,11 @@ export default function DashboardPage() {
         {/* Level progress */}
         <div className="glass rounded-2xl p-6 mb-8">
           <div className="flex justify-between mb-3">
-            <span className="font-bold">Lv.{level}</span>
-            <span style={{ color: "var(--text-muted)" }} className="text-sm">{levelXp}/100 XP สู่ Lv.{level + 1}</span>
+            <span className="font-bold">Lv.{animLevel}</span>
+            <span style={{ color: "var(--text-muted)" }} className="text-sm">{animLevelXp}/100 XP สู่ Lv.{animLevel + 1}</span>
           </div>
           <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${levelXp}%` }} />
+            <div className="progress-fill" style={{ width: `${animLevelXp}%` }} />
           </div>
         </div>
 
@@ -81,18 +108,13 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-4">
           {COURSES.map((course, i) => {
             const pct = courseProgresses[i] ?? 0;
+            if (pct === 0) return null;
             return (
               <Link
                 key={course.id}
                 href={`/course/${course.id}`}
                 className="glass rounded-2xl p-5 flex items-center gap-5 transition-all hover:scale-[1.01]"
               >
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-                  style={{ background: `${course.color}22` }}
-                >
-                  {course.icon}
-                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between mb-1">
                     <h3 className="font-bold">{course.title}</h3>
@@ -136,65 +158,10 @@ export default function DashboardPage() {
         {/* Leaderboard */}
         {xp > 0 && (
           <div className="glass rounded-2xl p-6 mt-8">
-            {user ? (
-              <>
-                <h2 className="text-lg font-black mb-1">🏆 Leaderboard</h2>
-                {submitState === "done" ? (
-                  <p className="text-sm font-bold" style={{ color: "var(--accent-green)" }}>✓ Sync สำเร็จแล้ว!</p>
-                ) : submitState === "error" ? (
-                  <p className="text-sm" style={{ color: "#f87171" }}>❌ Sync ไม่สำเร็จ ลองใหม่อีกครั้ง</p>
-                ) : (
-                  <p className="text-sm" style={{ color: "var(--text-muted)" }}>XP ของคุณ {xp.toLocaleString()} XP</p>
-                )}
-                <button
-                  onClick={async () => {
-                    setSubmitState("loading");
-                    const res = await syncLeaderboard(xp);
-                    console.log("sync result:", res);
-                    setSubmitState(res?.ok ? "done" : "error");
-                  }}
-                  disabled={submitState === "loading"}
-                  className="mt-3 px-5 py-2 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 disabled:opacity-40"
-                  style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
-                >
-                  {submitState === "loading" ? "กำลัง Sync..." : "🔄 Sync Ranking"}
-                </button>
-              </>
-            ) : (
-              <>
-                <h2 className="text-lg font-black mb-1">🏆 ส่งคะแนนขึ้น Leaderboard</h2>
-                <p className="text-sm mb-4" style={{ color: "var(--text-muted)" }}>ใส่ชื่อเพื่อโชว์บนหน้าแรก — XP ของคุณ {xp.toLocaleString()} XP</p>
-                {submitState === "done" ? (
-                  <p className="text-sm font-bold" style={{ color: "var(--accent-green)" }}>✓ ส่งคะแนนสำเร็จแล้ว!</p>
-                ) : (
-                  <div className="flex gap-3">
-                    <input
-                      type="text"
-                      value={submitName}
-                      onChange={(e) => setSubmitName(e.target.value)}
-                      placeholder="ชื่อของคุณ"
-                      maxLength={20}
-                      className="flex-1 rounded-xl px-4 py-2.5 text-sm outline-none"
-                      style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }}
-                    />
-                    <button
-                      disabled={!submitName.trim() || submitState === "loading"}
-                      onClick={async () => {
-                        if (!submitName.trim()) return;
-                        setSubmitState("loading");
-                        const ok = await submitScore(submitName.trim(), xp);
-                        setSubmitState(ok ? "done" : "error");
-                      }}
-                      className="px-5 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90 disabled:opacity-40"
-                      style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
-                    >
-                      {submitState === "loading" ? "..." : "ส่งคะแนน"}
-                    </button>
-                  </div>
-                )}
-                {submitState === "error" && <p className="text-xs mt-2" style={{ color: "#f87171" }}>เกิดข้อผิดพลาด ลองใหม่อีกครั้ง</p>}
-              </>
-            )}
+            <h2 className="text-lg font-black mb-1 flex items-center gap-2"><Trophy size={18} style={{ color: "var(--accent)" }} /> Leaderboard</h2>
+            <p className="text-sm" style={{ color: syncDone ? "var(--accent-green)" : "var(--text-muted)" }}>
+              {syncDone ? "✓ อัพเดท Ranking อัตโนมัติแล้ว" : `กำลังอัพเดท Ranking — XP ของคุณ ${xp.toLocaleString()} XP`}
+            </p>
           </div>
         )}
       </main>

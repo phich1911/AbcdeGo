@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { signIn, signUp, signInWithGoogle, signInWithFacebook } from "@/lib/supabase";
+import { signIn, signUp, signInWithGoogle } from "@/lib/supabase";
+import { Mail } from "lucide-react";
 
 interface Props {
   onClose: () => void;
@@ -13,7 +14,7 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [oauthLoading, setOauthLoading] = useState<"google" | "facebook" | null>(null);
+  const [oauthLoading, setOauthLoading] = useState<"google" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
@@ -47,16 +48,6 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
     }
   }
 
-  async function handleFacebook() {
-    setOauthLoading("facebook");
-    setError(null);
-    const err = await signInWithFacebook();
-    if (err) {
-      setError(err.includes("provider is not enabled") ? "Facebook login ยังไม่ได้เปิดใช้งาน — กรุณาตั้งค่าใน Supabase Dashboard ก่อน" : err);
-      setOauthLoading(null);
-    }
-  }
-
   return (
     <div
       className="fixed inset-0 z-[200] flex items-center justify-center p-4"
@@ -65,29 +56,28 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
     >
       <div
         className="w-full max-w-sm rounded-2xl p-8 relative"
-        style={{ background: "rgba(12,10,26,0.98)", border: "1px solid rgba(124,58,237,0.3)", boxShadow: "0 20px 60px rgba(0,0,0,0.6)" }}
+        style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}
       >
         {/* Close */}
-        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-colors hover:bg-white/10" style={{ color: "rgba(255,255,255,0.4)" }}>
+        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-colors hover:bg-black/10" style={{ color: "var(--text-muted)" }}>
           ✕
         </button>
 
         {/* Logo */}
         <div className="text-center mb-6">
-          <span className="text-xl font-black uppercase" style={{ letterSpacing: "0.15em", color: "#fff" }}>
-            ABCDE<span style={{ color: "var(--accent)" }}>GO</span>
-          </span>
-          <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>เรียน. เล่น. เก่งขึ้น.</p>
+          <img src="/abcdego_no_slash.png" alt="AbcdeGo" className="logo-light" style={{ height: 32, width: "auto", objectFit: "contain", margin: "0 auto" }} />
+          <img src="/abcdego_dark.png" alt="AbcdeGo" className="logo-dark" style={{ height: 32, width: "auto", objectFit: "contain", margin: "0 auto" }} />
+          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Learn. Play. Level Up.</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex rounded-xl p-1 mb-6" style={{ background: "rgba(255,255,255,0.05)" }}>
+        <div className="flex rounded-xl p-1 mb-6" style={{ background: "var(--surface-2)" }}>
           {(["login", "register"] as const).map((t) => (
             <button
               key={t}
               onClick={() => { setTab(t); setError(null); setDone(false); }}
               className="flex-1 py-2 rounded-lg text-sm font-bold transition-all"
-              style={tab === t ? { background: "linear-gradient(135deg, var(--primary), var(--primary-light))", color: "#fff" } : { color: "rgba(255,255,255,0.4)" }}
+              style={tab === t ? { background: "linear-gradient(135deg, var(--primary), var(--primary-light))", color: "#fff" } : { color: "var(--text-muted)" }}
             >
               {t === "login" ? "เข้าสู่ระบบ" : "สมัครสมาชิก"}
             </button>
@@ -96,10 +86,10 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
 
         {done ? (
           <div className="text-center py-4">
-            <div className="text-4xl mb-3">📧</div>
-            <p className="font-bold mb-1">ตรวจสอบอีเมลของคุณ</p>
-            <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>กดลิงก์ยืนยันในอีเมล<br />แล้วกลับมาเข้าสู่ระบบได้เลย</p>
-            <button onClick={() => { setTab("login"); setDone(false); }} className="mt-4 text-sm font-bold" style={{ color: "var(--primary-light)" }}>
+            <div className="mb-3 flex justify-center"><Mail size={36} style={{ color: "var(--primary)" }} /></div>
+            <p className="font-bold mb-1" style={{ color: "var(--text)" }}>ตรวจสอบอีเมลของคุณ</p>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>กดลิงก์ยืนยันในอีเมล<br />แล้วกลับมาเข้าสู่ระบบได้เลย</p>
+            <button onClick={() => { setTab("login"); setDone(false); }} className="mt-4 text-sm font-bold" style={{ color: "var(--primary)" }}>
               ไปหน้าเข้าสู่ระบบ →
             </button>
           </div>
@@ -111,7 +101,7 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
                 onClick={handleGoogle}
                 disabled={!!oauthLoading}
                 className="w-full flex items-center justify-center gap-3 py-3 rounded-xl text-sm font-bold transition-all hover:opacity-90 disabled:opacity-40"
-                style={{ background: "#fff", color: "#1f1f1f" }}
+                style={{ background: "var(--surface-2)", color: "var(--text)", border: "1px solid var(--border)" }}
               >
                 {oauthLoading === "google" ? (
                   <span className="w-5 h-5 rounded-full border-2 border-gray-300 border-t-gray-600 animate-spin" />
@@ -126,34 +116,19 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
                 {oauthLoading === "google" ? "กำลังเชื่อมต่อ..." : "ดำเนินการต่อด้วย Google"}
               </button>
 
-              <button
-                onClick={handleFacebook}
-                disabled={!!oauthLoading}
-                className="w-full flex items-center justify-center gap-3 py-3 rounded-xl text-sm font-bold transition-all hover:opacity-90 disabled:opacity-40"
-                style={{ background: "#1877f2", color: "#fff" }}
-              >
-                {oauthLoading === "facebook" ? (
-                  <span className="w-5 h-5 rounded-full border-2 border-blue-300 border-t-white animate-spin" />
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                  </svg>
-                )}
-                {oauthLoading === "facebook" ? "กำลังเชื่อมต่อ..." : "ดำเนินการต่อด้วย Facebook"}
-              </button>
             </div>
 
             {/* Divider */}
             <div className="flex items-center gap-3 mb-5">
-              <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
-              <span className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>หรือใช้อีเมล</span>
-              <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+              <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+              <span className="text-xs" style={{ color: "var(--text-muted)" }}>หรือใช้อีเมล</span>
+              <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
             </div>
 
             {/* Email form */}
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div>
-                <label className="text-xs font-semibold mb-1.5 block" style={{ color: "rgba(255,255,255,0.5)" }}>อีเมล</label>
+                <label className="text-xs font-semibold mb-1.5 block" style={{ color: "var(--text-muted)" }}>อีเมล</label>
                 <input
                   type="email"
                   value={email}
@@ -161,13 +136,13 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
                   placeholder="you@example.com"
                   required
                   className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }}
-                  onFocus={(e) => (e.target.style.borderColor = "rgba(124,58,237,0.6)")}
-                  onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
+                  style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                  onFocus={(e) => (e.target.style.borderColor = "var(--primary)")}
+                  onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold mb-1.5 block" style={{ color: "rgba(255,255,255,0.5)" }}>รหัสผ่าน</label>
+                <label className="text-xs font-semibold mb-1.5 block" style={{ color: "var(--text-muted)" }}>รหัสผ่าน</label>
                 <input
                   type="password"
                   value={password}
@@ -176,9 +151,9 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
                   required
                   minLength={6}
                   className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff" }}
-                  onFocus={(e) => (e.target.style.borderColor = "rgba(124,58,237,0.6)")}
-                  onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
+                  style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                  onFocus={(e) => (e.target.style.borderColor = "var(--primary)")}
+                  onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
                 />
               </div>
 

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "SERVICE_KEY missing", env_keys: Object.keys(process.env).filter(k => k.includes("SUPA")) }, { status: 500 });
   }
 
-  const { name, xp, oldName } = await req.json();
+  const { name, xp, oldName, avatar } = await req.json();
   if (!name || xp == null) return NextResponse.json({ error: "missing fields" }, { status: 400 });
 
   const auth = req.headers.get("authorization");
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const { error: insErr } = await admin.from("leaderboard").insert({ name, xp });
+  const { error: insErr } = await admin.from("leaderboard").insert({ name, xp, avatar: avatar ?? null });
   if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
