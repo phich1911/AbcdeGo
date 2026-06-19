@@ -11,18 +11,21 @@ const SLUG_TO_CATEGORY: Record<string, string> = {
   kp: "สอบ ก.พ.",
   dsi: "เจ้าหน้าที่คดีพิเศษ (DSI)",
   "eng-m": "ภาษาอังกฤษ ม.ปลาย",
+  "math-m": "คณิตศาสตร์ ม.ปลาย",
 };
 
 const CATEGORY_SLUGS: Record<string, string> = {
   "สอบ ก.พ.": "kp",
   "เจ้าหน้าที่คดีพิเศษ (DSI)": "dsi",
   "ภาษาอังกฤษ ม.ปลาย": "eng-m",
+  "คณิตศาสตร์ ม.ปลาย": "math-m",
 };
 
 const CATEGORY_META: Record<string, { description: string }> = {
   "สอบ ก.พ.": { description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ." },
   "เจ้าหน้าที่คดีพิเศษ (DSI)": { description: "กฎหมายและกระบวนการสอบสวนคดีพิเศษ กรมสอบสวนคดีพิเศษ" },
   "ภาษาอังกฤษ ม.ปลาย": { description: "ไวยากรณ์ การอ่าน คำศัพท์ บทสนทนา และการเขียน สำหรับระดับ ม.4–ม.6" },
+  "คณิตศาสตร์ ม.ปลาย": { description: "จำนวนและพีชคณิต เรขาคณิต สถิติ และแคลคูลัส สำหรับระดับ ม.4–ม.6" },
 };
 
 function CourseCard({ course, pct }: { course: (typeof COURSES)[0]; pct: number }) {
@@ -61,11 +64,12 @@ function CourseCard({ course, pct }: { course: (typeof COURSES)[0]; pct: number 
   );
 }
 
-const categoryOrder = ["สอบ ก.พ.", "เจ้าหน้าที่คดีพิเศษ (DSI)", "ภาษาอังกฤษ ม.ปลาย"];
+const categoryOrder = ["สอบ ก.พ.", "เจ้าหน้าที่คดีพิเศษ (DSI)", "ภาษาอังกฤษ ม.ปลาย", "คณิตศาสตร์ ม.ปลาย"];
 const categoryLabels: Record<string, string> = {
   "สอบ ก.พ.": "สอบ ก.พ.",
   "เจ้าหน้าที่คดีพิเศษ (DSI)": "เจ้าหน้าที่คดีพิเศษ (DSI)",
   "ภาษาอังกฤษ ม.ปลาย": "ภาษาอังกฤษ ม.ปลาย",
+  "คณิตศาสตร์ ม.ปลาย": "คณิตศาสตร์ ม.ปลาย",
 };
 
 function CoursesInner() {
