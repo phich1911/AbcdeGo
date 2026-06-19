@@ -22,6 +22,7 @@ const COURSE_GROUPS = [
   { label: "เจ้าหน้าที่คดีพิเศษ (DSI)", slug: "dsi", icon3d: `${A}/1f50e.png` },
   { label: "ภาษาอังกฤษ ม.ปลาย", slug: "eng-m", icon3d: `${A}/1f1ec-1f1e7.png` },
   { label: "คณิตศาสตร์ ม.ปลาย", slug: "math-m", icon3d: `${A}/1f522.png` },
+  { label: "ภาษาไทย ม.ปลาย", slug: "thai-m", icon3d: `${A}/1f1f9-1f1ed.png` },
 ];
 
 export default function Navbar() {
