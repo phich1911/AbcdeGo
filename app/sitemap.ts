@@ -1,24 +1,28 @@
-import type { MetadataRoute } from "next";
-import { LESSONS } from "@/lib/data";
+import { MetadataRoute } from "next";
+import { COURSES } from "@/lib/data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://www.abcdego.com";
+  const base = "https://abcdego.com";
 
-  const staticRoutes = [
-    { url: base, priority: 1.0, changeFrequency: "weekly" as const },
-    { url: `${base}/courses`, priority: 0.9, changeFrequency: "weekly" as const },
-    { url: `${base}/about`, priority: 0.6, changeFrequency: "monthly" as const },
-    { url: `${base}/contact`, priority: 0.6, changeFrequency: "monthly" as const },
-    { url: `${base}/privacy`, priority: 0.4, changeFrequency: "monthly" as const },
-    { url: `${base}/game`, priority: 0.7, changeFrequency: "monthly" as const },
-    { url: `${base}/tarot`, priority: 0.7, changeFrequency: "monthly" as const },
+  const staticPages: MetadataRoute.Sitemap = [
+    { url: base, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
+    { url: `${base}/courses`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
+    { url: `${base}/courses?cat=kp`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/courses?cat=dsi`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/courses?cat=eng-m`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/courses?cat=math-m`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/courses?cat=thai-m`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${base}/progress`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${base}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
+    { url: `${base}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
   ];
 
-  const lessonRoutes = LESSONS.map((lesson) => ({
-    url: `${base}/lesson/${lesson.id}`,
-    priority: 0.8,
+  const coursePages: MetadataRoute.Sitemap = COURSES.map((course) => ({
+    url: `${base}/course/${course.id}`,
+    lastModified: new Date(),
     changeFrequency: "monthly" as const,
+    priority: 0.7,
   }));
 
-  return [...staticRoutes, ...lessonRoutes];
+  return [...staticPages, ...coursePages];
 }
