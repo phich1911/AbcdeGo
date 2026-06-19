@@ -20,6 +20,7 @@ const A = "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64";
 const COURSE_GROUPS = [
   { label: "สอบ ก.พ.", slug: "kp", icon3d: `${A}/1f4dd.png` },
   { label: "เจ้าหน้าที่คดีพิเศษ (DSI)", slug: "dsi", icon3d: `${A}/1f50e.png` },
+  { label: "ภาษาอังกฤษ ม.ปลาย", slug: "eng-m", icon3d: `${A}/1f1ec-1f1e7.png` },
 ];
 
 export default function Navbar() {

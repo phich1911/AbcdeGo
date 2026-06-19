@@ -1,84 +1,77 @@
 "use client";
 
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
-import CourseIcon from "@/components/CourseIcon";
 import { COURSES } from "@/lib/data";
 import { getCourseProgress } from "@/lib/progress";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Fuse from "fuse.js";
 
-const CATEGORY_META: Record<string, { icon: string; description: string; borderColor: string; badgeBg: string; badgeColor: string; badgeBorder: string }> = {
-  "สอบ ก.พ.": {
-    icon: "📝",
-    description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ.",
-    borderColor: "rgba(8,145,178,0.3)",
-    badgeBg: "rgba(8,145,178,0.12)",
-    badgeColor: "#67e8f9",
-    badgeBorder: "rgba(8,145,178,0.3)",
-  },
-  "เจ้าหน้าที่คดีพิเศษ (DSI)": {
-    icon: "🔎",
-    description: "กฎหมายและกระบวนการสอบสวนคดีพิเศษ กรมสอบสวนคดีพิเศษ",
-    borderColor: "rgba(220,38,38,0.3)",
-    badgeBg: "rgba(220,38,38,0.12)",
-    badgeColor: "#fca5a5",
-    badgeBorder: "rgba(220,38,38,0.3)",
-  },
-  "ปลัดอำเภอ": {
-    icon: "🏛️",
-    description: "กฎหมายและระเบียบที่เกี่ยวข้องกับงานปลัดอำเภอ",
-    borderColor: "rgba(124,58,237,0.25)",
-    badgeBg: "rgba(124,58,237,0.15)",
-    badgeColor: "#a78bfa",
-    badgeBorder: "rgba(124,58,237,0.3)",
-  },
+const SLUG_TO_CATEGORY: Record<string, string> = {
+  kp: "สอบ ก.พ.",
+  dsi: "เจ้าหน้าที่คดีพิเศษ (DSI)",
+  "eng-m": "ภาษาอังกฤษ ม.ปลาย",
 };
 
-const fuse = new Fuse(COURSES, {
-  keys: ["title", "description", "tag", "category"],
-  threshold: 0.4,
-});
+const CATEGORY_SLUGS: Record<string, string> = {
+  "สอบ ก.พ.": "kp",
+  "เจ้าหน้าที่คดีพิเศษ (DSI)": "dsi",
+  "ภาษาอังกฤษ ม.ปลาย": "eng-m",
+};
+
+const CATEGORY_META: Record<string, { description: string }> = {
+  "สอบ ก.พ.": { description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ." },
+  "เจ้าหน้าที่คดีพิเศษ (DSI)": { description: "กฎหมายและกระบวนการสอบสวนคดีพิเศษ กรมสอบสวนคดีพิเศษ" },
+  "ภาษาอังกฤษ ม.ปลาย": { description: "ไวยากรณ์ การอ่าน คำศัพท์ บทสนทนา และการเขียน สำหรับระดับ ม.4–ม.6" },
+};
 
 function CourseCard({ course, pct }: { course: (typeof COURSES)[0]; pct: number }) {
   return (
     <Link
       href={`/course/${course.id}`}
-      className="glass rounded-2xl p-6 flex flex-col gap-4 transition-all hover:scale-[1.02] hover:glow"
+      className="card-lg flex flex-col gap-3 p-4 transition-colors hover:border-[color:var(--text-subtle)]"
+      style={{ textDecoration: "none" }}
     >
-      <div className="flex items-start justify-between">
-        <CourseIcon icon={course.icon} icon3d={course.icon3d} color={course.color} size={56} />
-        {pct === 100 && (
-          <span className="text-sm px-2 py-1 rounded-full font-bold" style={{ background: "rgba(16,185,129,0.15)", color: "var(--accent-green)" }}>
-            ✓ เสร็จแล้ว
-          </span>
-        )}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-1.5">
+          {pct === 100 && (
+            <span className="badge" style={{ color: "var(--accent-green)", borderColor: "rgba(63,185,80,0.4)", background: "rgba(63,185,80,0.08)", fontSize: 11 }}>✓ เสร็จแล้ว</span>
+          )}
+          <span className="badge" style={{ fontSize: 11 }}>{course.tag}</span>
+        </div>
       </div>
       <div>
-        <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${course.color}22`, color: course.color }}>
-          {course.tag}
-        </span>
-        <h2 className="font-black text-xl mt-2">{course.title}</h2>
-        <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>{course.description}</p>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 3 }}>{course.title}</h2>
+        <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>{course.description}</p>
       </div>
       <div className="mt-auto">
-        <div className="flex justify-between text-xs mb-1.5" style={{ color: "var(--text-muted)" }}>
+        <div className="flex justify-between mb-1.5" style={{ fontSize: 11, color: "var(--text-muted)" }}>
           <span>ความก้าวหน้า</span>
-          <span style={{ color: pct > 0 ? "var(--primary-light)" : undefined }}>{pct}%</span>
+          <span style={{ color: pct > 0 ? "var(--primary)" : undefined }}>{pct}%</span>
         </div>
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${pct}%` }} />
         </div>
-        <div className="flex justify-between mt-3 text-sm">
+        <div className="flex justify-between mt-3" style={{ fontSize: 12 }}>
           <span style={{ color: "var(--text-muted)" }}>{course.totalLessons} บทเรียน</span>
-          <span className="font-bold" style={{ color: "var(--accent)" }}>⚡ {course.xpReward} XP</span>
+          <span style={{ color: "var(--accent)", fontWeight: 500 }}>⚡ {course.xpReward} XP</span>
         </div>
       </div>
     </Link>
   );
 }
 
-export default function CoursesPage() {
+const categoryOrder = ["สอบ ก.พ.", "เจ้าหน้าที่คดีพิเศษ (DSI)", "ภาษาอังกฤษ ม.ปลาย"];
+const categoryLabels: Record<string, string> = {
+  "สอบ ก.พ.": "สอบ ก.พ.",
+  "เจ้าหน้าที่คดีพิเศษ (DSI)": "เจ้าหน้าที่คดีพิเศษ (DSI)",
+  "ภาษาอังกฤษ ม.ปลาย": "ภาษาอังกฤษ ม.ปลาย",
+};
+
+function CoursesInner() {
+  const searchParams = useSearchParams();
+  const catSlug = searchParams.get("cat");
+  const activeCat = catSlug !== null ? (SLUG_TO_CATEGORY[catSlug] ?? null) : null;
   const [progresses, setProgresses] = useState<Record<string, number>>({});
   const [query, setQuery] = useState("");
 
@@ -88,111 +81,148 @@ export default function CoursesPage() {
     setProgresses(p);
   }, []);
 
-  const results = useMemo(() => {
+  const searchResults = useMemo(() => {
     const q = query.trim();
-    if (!q) return COURSES;
-    return fuse.search(q).map((r) => r.item);
+    if (!q) return null;
+    return new Fuse(COURSES, { keys: ["title", "description", "tag", "category"], threshold: 0.4 }).search(q).map((r) => r.item);
   }, [query]);
 
-  const categoryOrder = ["สอบ ก.พ.", "เจ้าหน้าที่คดีพิเศษ (DSI)", "ปลัดอำเภอ"];
-  const allCategories = categoryOrder.filter((cat) => results.some((c) => c.category === cat));
-  const general = results.filter((c) => !c.category);
+  // Search mode — show results across all categories
+  if (searchResults !== null) {
+    return (
+      <>
+        <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>ค้นหาคอร์ส</h1>
+              <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกวิชาที่คุณอยากเรียน แล้วเริ่มได้เลย</p>
+            </div>
+          </div>
+          <SearchBar query={query} setQuery={setQuery} />
+          {searchResults.length === 0 ? (
+            <div className="text-center py-16" style={{ color: "var(--text-muted)" }}>
+              <p style={{ fontSize: 13 }}>ไม่พบคอร์สที่ตรงกัน — ลองค้นหาด้วยคำอื่น</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-3">
+              {searchResults.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+            </div>
+          )}
+        </main>
+      </>
+    );
+  }
 
+  // Category view — show courses in selected category
+  if (activeCat !== null) {
+    const courses = COURSES.filter((c) => activeCat === "" ? !c.category : c.category === activeCat);
+    const label = categoryLabels[activeCat] ?? activeCat;
+    const meta = CATEGORY_META[activeCat];
+    const intro = courses.find((c) => c.intro)?.intro;
+    return (
+      <>
+        <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{label}</h1>
+              <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{meta?.description}</p>
+            </div>
+            <Link href="/courses" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← หมวดหมู่</Link>
+          </div>
+
+          {intro && (
+            <details className="card-lg mb-5" style={{ padding: "14px 18px" }} open>
+              <summary style={{ cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text)", listStyle: "none" }}>
+                📋 เกี่ยวกับการสอบ
+              </summary>
+              <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, whiteSpace: "pre-line", marginTop: 12 }}>{intro}</p>
+            </details>
+          )}
+
+          <SearchBar query={query} setQuery={setQuery} />
+          <div className="grid md:grid-cols-2 gap-3">
+            {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  // Default — show category cards only
   return (
     <>
-      <Navbar />
-      <main className="max-w-5xl mx-auto px-6 pt-28 pb-16">
-        <h1 className="text-4xl font-black mb-2">คอร์สทั้งหมด</h1>
-        <p className="mb-6" style={{ color: "var(--text-muted)" }}>เลือกวิชาที่คุณอยากเรียน แล้วเริ่มได้เลย</p>
-
-        {/* Search bar */}
-        <div className="relative mb-10">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-base pointer-events-none" style={{ color: "rgba(255,255,255,0.3)" }}>
-            🔍
-          </span>
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="ค้นหาคอร์ส เช่น กฎหมาย, ปลัดอำเภอ, อส., คณิต..."
-            className="w-full rounded-2xl py-3.5 pl-11 pr-10 text-sm outline-none transition-all"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              color: "#fff",
-              caretColor: "var(--primary-light)",
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.border = "1px solid rgba(124,58,237,0.5)";
-              e.currentTarget.style.background = "rgba(255,255,255,0.07)";
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.border = "1px solid rgba(255,255,255,0.1)";
-              e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-            }}
-          />
-          {query && (
-            <button
-              onClick={() => setQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-70"
-              style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.8rem" }}
-            >
-              ✕
-            </button>
-          )}
+      <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+        <div className="mb-5">
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>เลือกหมวดหมู่</h1>
+          <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกหมวดหมู่ที่คุณสนใจ แล้วเริ่มเรียนได้เลย</p>
         </div>
-
-        {/* No results */}
-        {results.length === 0 && (
-          <div className="text-center py-20" style={{ color: "var(--text-muted)" }}>
-            <p className="text-4xl mb-3">🔍</p>
-            <p className="font-semibold">ไม่พบคอร์สที่ตรงกัน</p>
-            <p className="text-sm mt-1 opacity-60">ลองค้นหาด้วยคำอื่น</p>
-          </div>
-        )}
-
-        {/* Category sections */}
-        {allCategories.map((cat) => {
-          const meta = CATEGORY_META[cat];
-          const courses = results.filter((c) => c.category === cat);
-          return (
-            <section key={cat} className="mb-14">
-              <div className="flex items-center gap-3 mb-6 pb-4" style={{ borderBottom: `1px solid ${meta.borderColor}` }}>
-                <span className="text-2xl">{meta.icon}</span>
-                <div>
-                  <h2 className="text-xl font-black" style={{ color: "#fff" }}>หมวด {cat}</h2>
-                  <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{meta.description}</p>
+        <SearchBar query={query} setQuery={setQuery} />
+        <div className="grid sm:grid-cols-2 gap-4">
+          {categoryOrder.map((cat) => {
+            const meta = CATEGORY_META[cat];
+            const slug = CATEGORY_SLUGS[cat];
+            const count = COURSES.filter((c) => cat === "" ? !c.category : c.category === cat).length;
+            const label = categoryLabels[cat];
+            return (
+              <Link
+                key={cat || "general"}
+                href={`/courses?cat=${slug}`}
+                className="card-lg flex flex-col gap-3 p-5"
+                style={{ textDecoration: "none" }}
+              >
+                <div className="flex items-start justify-between">
+                  <span className="badge" style={{ fontSize: 11 }}>{count} วิชา</span>
                 </div>
-                <span className="ml-auto text-xs font-bold px-3 py-1 rounded-full" style={{ background: meta.badgeBg, color: meta.badgeColor, border: `1px solid ${meta.badgeBorder}` }}>
-                  {courses.length} วิชา
-                </span>
-              </div>
-              <div className="grid md:grid-cols-2 gap-6">
-                {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
-              </div>
-            </section>
-          );
-        })}
-
-        {/* General section */}
-        {general.length > 0 && (
-          <section>
-            <div className="flex items-center gap-3 mb-6 pb-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-              <span className="text-2xl">📚</span>
-              <div>
-                <h2 className="text-xl font-black" style={{ color: "#fff" }}>วิชาทั่วไป</h2>
-                <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>คณิตศาสตร์ ภาษาอังกฤษ และโปรแกรมมิ่ง</p>
-              </div>
-              <span className="ml-auto text-xs font-bold px-3 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                {general.length} วิชา
-              </span>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {general.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
-            </div>
-          </section>
-        )}
+                <div>
+                  <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{label}</h2>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>{meta.description}</p>
+                </div>
+                <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--primary)", fontWeight: 500 }}>
+                  <span>ดูวิชาทั้งหมด</span>
+                  <span>→</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </main>
     </>
+  );
+}
+
+function SearchBar({ query, setQuery }: { query: string; setQuery: (q: string) => void }) {
+  return (
+    <div className="relative mb-8">
+      <svg className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" width="14" height="14" viewBox="0 0 13 13" fill="none" style={{ color: "var(--text-muted)" }}>
+        <circle cx="5.5" cy="5.5" r="4" stroke="currentColor" strokeWidth="1.4"/>
+        <path d="M8.5 8.5L11.5 11.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      </svg>
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="ค้นหาคอร์ส เช่น ก.พ., DSI, คณิต, ภาษาอังกฤษ..."
+        className="w-full rounded-lg py-2.5 pl-9 pr-9 text-sm outline-none transition-all"
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          color: "var(--text)",
+          caretColor: "var(--primary)",
+        }}
+        onFocus={(e) => { e.currentTarget.style.borderColor = "var(--primary)"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(31,111,235,0.15)"; }}
+        onBlur={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.boxShadow = "none"; }}
+      />
+      {query && (
+        <button onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 hover:opacity-70" style={{ color: "var(--text-muted)", fontSize: 12 }}>✕</button>
+      )}
+    </div>
+  );
+}
+
+export default function CoursesPage() {
+  return (
+    <Suspense>
+      <CoursesInner />
+    </Suspense>
   );
 }
