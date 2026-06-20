@@ -283,7 +283,7 @@ export default function TarotPage() {
                           display: "flex", alignItems: "center", justifyContent: "center",
                           transition: "all 0.2s",
                         }}>
-                          <img src="/abcdego_logo_76.png" alt="AbcdeGo" style={{ width: 40, height: 40, objectFit: "contain", opacity: isPicked ? 0.3 : 0.6 }} />
+                          <img src="/abcdego_dark.png" alt="AbcdeGo" style={{ width: 52, height: 52, objectFit: "contain", opacity: isPicked ? 0.2 : 0.75 }} />
                         </div>
                       </button>
                     );
