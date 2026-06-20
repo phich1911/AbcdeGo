@@ -226,28 +226,11 @@ export default function Navbar() {
                     ดูทั้งหมด →
                   </Link>
                   {COURSE_GROUPS.map((group) => (
-                    <div key={group.label} style={{ borderTop: "1px solid var(--border)" }}>
-                      {group.sub ? (
-                        <>
-                          <div className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold" style={{ color: "var(--text-subtle)", letterSpacing: "0.05em" }}>
-                            {group.label}
-                          </div>
-                          {group.sub.map((s) => (
-                            <Link key={s.slug} href={`/courses?cat=${s.slug}`} onClick={() => setCoursesOpen(false)}
-                              className="flex items-center gap-2 px-5 py-2 text-sm transition-colors hover:bg-white/5"
-                              style={{ color: "var(--text-muted)" }}>
-                              {s.label}
-                            </Link>
-                          ))}
-                        </>
-                      ) : (
-                        <Link href={`/courses?cat=${group.slug}`} onClick={() => setCoursesOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors hover:bg-white/5"
-                          style={{ color: "var(--text-muted)" }}>
-                          {group.label}
-                        </Link>
-                      )}
-                    </div>
+                    <Link key={group.label} href={`/courses?cat=${group.slug}`} onClick={() => setCoursesOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2.5 text-sm transition-colors hover:bg-white/5"
+                      style={{ color: "var(--text-muted)", borderTop: "1px solid var(--border)" }}>
+                      {group.label}
+                    </Link>
                   ))}
                 </div>
               )}
@@ -445,24 +428,11 @@ export default function Navbar() {
             {openGroup === "courses" && (
               <div className="flex flex-col gap-0.5 ml-3 pl-3" style={{ borderLeft: "1px solid var(--border)" }}>
                 {COURSE_GROUPS.map((group) => (
-                  group.sub ? (
-                    <div key={group.label}>
-                      <p className="px-2 py-1 text-xs font-semibold" style={{ color: "var(--text-subtle)" }}>{group.label}</p>
-                      {group.sub.map((s) => (
-                        <Link key={s.slug} href={`/courses?cat=${s.slug}`} onClick={() => { setMenuOpen(false); setOpenGroup(null); }}
-                          className="px-4 py-1.5 rounded text-sm hover:bg-white/5 block"
-                          style={{ color: "var(--text-muted)", textDecoration: "none" }}>
-                          {s.label}
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <Link key={group.slug} href={`/courses?cat=${group.slug}`} onClick={() => { setMenuOpen(false); setOpenGroup(null); }}
-                      className="px-2 py-2 rounded text-sm hover:bg-white/5"
-                      style={{ color: "var(--text-muted)", textDecoration: "none" }}>
-                      {group.label}
-                    </Link>
-                  )
+                  <Link key={group.slug} href={`/courses?cat=${group.slug}`} onClick={() => { setMenuOpen(false); setOpenGroup(null); }}
+                    className="px-2 py-2 rounded text-sm hover:bg-white/5"
+                    style={{ color: "var(--text-muted)", textDecoration: "none" }}>
+                    {group.label}
+                  </Link>
                 ))}
                 <Link href="/courses" onClick={() => { setMenuOpen(false); setOpenGroup(null); }}
                   className="px-2 py-2 rounded text-sm hover:bg-white/5"
