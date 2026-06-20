@@ -30,7 +30,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </div>
         <footer style={{ textAlign: "center", padding: "24px 16px", borderTop: "1px solid var(--border)", marginTop: "auto" }}>
-          <p style={{ fontSize: 13, color: "var(--text-subtle)" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 16px", marginBottom: 8 }}>
+            {[
+              { href: "/courses?cat=kp", label: "สอบ ก.พ." },
+              { href: "/courses?cat=dsi", label: "DSI" },
+              { href: "/courses?cat=eng-m", label: "ภาษาอังกฤษ ม.ปลาย" },
+              { href: "/courses?cat=math-m", label: "คณิตศาสตร์ ม.ปลาย" },
+              { href: "/courses?cat=thai-m", label: "ภาษาไทย ม.ปลาย" },
+            ].map((l) => (
+              <a key={l.href} href={l.href} style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "none" }}>{l.label}</a>
+            ))}
+          </div>
+          <p style={{ fontSize: 12, color: "var(--text-subtle)" }}>
             © {new Date().getFullYear()} AbcdeGo
             {" · "}<a href="/about" style={{ color: "var(--text-muted)", textDecoration: "none" }}>About</a>
             {" · "}<a href="/contact" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Contact</a>

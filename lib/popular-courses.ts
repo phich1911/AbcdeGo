@@ -13,7 +13,7 @@ function categoryKey(courseId: string) {
   return COURSES.find((c) => c.id === courseId)?.category ?? "";
 }
 
-const FALLBACKS = ["kp-general", "dsi-2547", "math-primary"];
+const FALLBACKS = ["kp-general", "dsi-2547", "eng-grammar", "math-algebra", "thai-lang"];
 
 export async function getPopularCourseIds(): Promise<string[]> {
   try {
@@ -46,15 +46,15 @@ export async function getPopularCourseIds(): Promise<string[]> {
       }
     }
 
-    const top3 = Object.values(bestPerCategory)
+    const top6 = Object.values(bestPerCategory)
       .sort((a, b) => b.count - a.count)
-      .slice(0, 3)
+      .slice(0, 6)
       .map((e) => e.id);
 
-    // Pad with fallbacks (one per category) if fewer than 3
-    const result = [...top3];
+    // Pad with fallbacks (one per category) if fewer than 6
+    const result = [...top6];
     for (const fb of FALLBACKS) {
-      if (result.length >= 3) break;
+      if (result.length >= 6) break;
       const fbCat = categoryKey(fb);
       if (!result.some((id) => categoryKey(id) === fbCat)) result.push(fb);
     }

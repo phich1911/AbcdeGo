@@ -33,7 +33,7 @@ export default async function Home() {
               <span style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>เก่งขึ้น</span>
             </h1>
             <p style={{ fontSize: 16, color: "var(--text-muted)", maxWidth: 520, marginBottom: 28, lineHeight: 1.6 }}>
-              AbcdeGo รวมวิชาสอบราชการไว้ครบ — ก.พ., DSI, ปลัดอำเภอ
+              AbcdeGo รวมวิชาครบ — สอบราชการ ก.พ., DSI, ภาษาอังกฤษ, คณิตศาสตร์, ภาษาไทย ม.ปลาย
               เรียนทีละขั้น ทำแบบทดสอบ รับ XP สะสมเลเวล
             </p>
             <div className="flex gap-3 flex-wrap">
@@ -68,7 +68,7 @@ export default async function Home() {
               <h2 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>คอร์สยอดนิยม</h2>
               <Link href="/courses" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>ดูทั้งหมด →</Link>
             </div>
-            <div className="grid md:grid-cols-3 gap-3">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
               {COURSES.filter((c) => popularIds.includes(c.id))
                 .sort((a, b) => popularIds.indexOf(a.id) - popularIds.indexOf(b.id))
                 .map((course) => (
