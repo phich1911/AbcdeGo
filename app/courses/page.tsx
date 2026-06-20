@@ -31,6 +31,24 @@ const CATEGORY_META: Record<string, { description: string }> = {
   "ภาษาไทย ม.ปลาย": { description: "หลักการใช้ภาษา ทักษะการสื่อสาร และวรรณคดีวรรณกรรม สำหรับระดับ ม.4–ม.6" },
 };
 
+// Top-level categories shown on /courses
+const TOP_LEVEL = [
+  { slug: "kp", label: "สอบ ก.พ.", description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ.", cats: ["สอบ ก.พ."] },
+  { slug: "dsi", label: "เจ้าหน้าที่คดีพิเศษ (DSI)", description: "กฎหมายและกระบวนการสอบสวนคดีพิเศษ กรมสอบสวนคดีพิเศษ", cats: ["เจ้าหน้าที่คดีพิเศษ (DSI)"] },
+  {
+    slug: "mplatai", label: "มัธยมศึกษาตอนปลาย (ม.4–6)",
+    description: "ภาษาอังกฤษ คณิตศาสตร์ และภาษาไทย สำหรับระดับ ม.4–ม.6",
+    cats: ["ภาษาอังกฤษ ม.ปลาย", "คณิตศาสตร์ ม.ปลาย", "ภาษาไทย ม.ปลาย"],
+  },
+];
+
+// Sub-categories inside มัธยมศึกษาตอนปลาย
+const MPLATAI_SUBS = [
+  { slug: "eng-m", label: "ภาษาอังกฤษ", description: "ไวยากรณ์ การอ่าน คำศัพท์ บทสนทนา และการเขียน สำหรับระดับ ม.4–ม.6", cat: "ภาษาอังกฤษ ม.ปลาย" },
+  { slug: "math-m", label: "คณิตศาสตร์", description: "จำนวนและพีชคณิต เรขาคณิต สถิติ และแคลคูลัส สำหรับระดับ ม.4–ม.6", cat: "คณิตศาสตร์ ม.ปลาย" },
+  { slug: "thai-m", label: "ภาษาไทย", description: "หลักการใช้ภาษา ทักษะการสื่อสาร และวรรณคดีวรรณกรรม สำหรับระดับ ม.4–ม.6", cat: "ภาษาไทย ม.ปลาย" },
+];
+
 function CourseCard({ course, pct }: { course: (typeof COURSES)[0]; pct: number }) {
   return (
     <Link
@@ -67,15 +85,6 @@ function CourseCard({ course, pct }: { course: (typeof COURSES)[0]; pct: number 
   );
 }
 
-const categoryOrder = ["สอบ ก.พ.", "เจ้าหน้าที่คดีพิเศษ (DSI)", "ภาษาอังกฤษ ม.ปลาย", "คณิตศาสตร์ ม.ปลาย", "ภาษาไทย ม.ปลาย"];
-const categoryLabels: Record<string, string> = {
-  "สอบ ก.พ.": "สอบ ก.พ.",
-  "เจ้าหน้าที่คดีพิเศษ (DSI)": "เจ้าหน้าที่คดีพิเศษ (DSI)",
-  "ภาษาอังกฤษ ม.ปลาย": "ภาษาอังกฤษ ม.ปลาย",
-  "คณิตศาสตร์ ม.ปลาย": "คณิตศาสตร์ ม.ปลาย",
-  "ภาษาไทย ม.ปลาย": "ภาษาไทย ม.ปลาย",
-};
-
 function CoursesInner() {
   const searchParams = useSearchParams();
   const catSlug = searchParams.get("cat");
@@ -95,106 +104,125 @@ function CoursesInner() {
     return new Fuse(COURSES, { keys: ["title", "description", "tag", "category"], threshold: 0.4 }).search(q).map((r) => r.item);
   }, [query]);
 
-  // Search mode — show results across all categories
+  // Search mode
   if (searchResults !== null) {
     return (
-      <>
-        <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>ค้นหาคอร์ส</h1>
-              <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกวิชาที่คุณอยากเรียน แล้วเริ่มได้เลย</p>
-            </div>
-          </div>
-          <SearchBar query={query} setQuery={setQuery} />
-          {searchResults.length === 0 ? (
-            <div className="text-center py-16" style={{ color: "var(--text-muted)" }}>
-              <p style={{ fontSize: 13 }}>ไม่พบคอร์สที่ตรงกัน — ลองค้นหาด้วยคำอื่น</p>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 gap-3">
-              {searchResults.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
-            </div>
-          )}
-        </main>
-      </>
-    );
-  }
-
-  // Category view — show courses in selected category
-  if (activeCat !== null) {
-    const courses = COURSES.filter((c) => activeCat === "" ? !c.category : c.category === activeCat);
-    const label = categoryLabels[activeCat] ?? activeCat;
-    const meta = CATEGORY_META[activeCat];
-    const intro = courses.find((c) => c.intro)?.intro;
-    return (
-      <>
-        <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{label}</h1>
-              <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{meta?.description}</p>
-            </div>
-            <Link href="/courses" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← หมวดหมู่</Link>
-          </div>
-
-          {intro && (
-            <details className="card-lg mb-5" style={{ padding: "14px 18px" }} open>
-              <summary style={{ cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text)", listStyle: "none" }}>
-                📋 เกี่ยวกับการสอบ
-              </summary>
-              <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, whiteSpace: "pre-line", marginTop: 12 }}>{intro}</p>
-            </details>
-          )}
-
-          <SearchBar query={query} setQuery={setQuery} />
-          <div className="grid md:grid-cols-2 gap-3">
-            {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
-          </div>
-        </main>
-      </>
-    );
-  }
-
-  // Default — show category cards only
-  return (
-    <>
       <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
-        <div className="mb-5">
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>เลือกหมวดหมู่</h1>
-          <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกหมวดหมู่ที่คุณสนใจ แล้วเริ่มเรียนได้เลย</p>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>ค้นหาคอร์ส</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกวิชาที่คุณอยากเรียน แล้วเริ่มได้เลย</p>
+          </div>
         </div>
         <SearchBar query={query} setQuery={setQuery} />
-        <div className="grid sm:grid-cols-2 gap-4">
-          {categoryOrder.map((cat) => {
-            const meta = CATEGORY_META[cat];
-            const slug = CATEGORY_SLUGS[cat];
-            const count = COURSES.filter((c) => cat === "" ? !c.category : c.category === cat).length;
-            const label = categoryLabels[cat];
+        {searchResults.length === 0 ? (
+          <div className="text-center py-16" style={{ color: "var(--text-muted)" }}>
+            <p style={{ fontSize: 13 }}>ไม่พบคอร์สที่ตรงกัน — ลองค้นหาด้วยคำอื่น</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-3">
+            {searchResults.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+          </div>
+        )}
+      </main>
+    );
+  }
+
+  // มัธยมศึกษาตอนปลาย — show 3 subject sub-categories
+  if (catSlug === "mplatai") {
+    return (
+      <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>มัธยมศึกษาตอนปลาย (ม.4–6)</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกวิชาที่คุณอยากเรียน</p>
+          </div>
+          <Link href="/courses" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← หมวดหมู่</Link>
+        </div>
+        <SearchBar query={query} setQuery={setQuery} />
+        <div className="grid sm:grid-cols-3 gap-4">
+          {MPLATAI_SUBS.map((sub) => {
+            const count = COURSES.filter((c) => c.category === sub.cat).length;
             return (
-              <Link
-                key={cat || "general"}
-                href={`/courses?cat=${slug}`}
-                className="card-lg flex flex-col gap-3 p-5"
-                style={{ textDecoration: "none" }}
-              >
-                <div className="flex items-start justify-between">
-                  <span className="badge" style={{ fontSize: 11 }}>{count} วิชา</span>
-                </div>
+              <Link key={sub.slug} href={`/courses?cat=${sub.slug}`}
+                className="card-lg flex flex-col gap-3 p-5" style={{ textDecoration: "none" }}>
+                <span className="badge" style={{ fontSize: 11, width: "fit-content" }}>{count} วิชา</span>
                 <div>
-                  <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{label}</h2>
-                  <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>{meta.description}</p>
+                  <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{sub.label}</h2>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>{sub.description}</p>
                 </div>
                 <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--primary)", fontWeight: 500 }}>
-                  <span>ดูวิชาทั้งหมด</span>
-                  <span>→</span>
+                  <span>ดูวิชาทั้งหมด</span><span>→</span>
                 </div>
               </Link>
             );
           })}
         </div>
       </main>
-    </>
+    );
+  }
+
+  // Subject category view — show courses
+  if (activeCat !== null) {
+    const courses = COURSES.filter((c) => c.category === activeCat);
+    const meta = CATEGORY_META[activeCat];
+    const intro = courses.find((c) => c.intro)?.intro;
+    const isMplataiSub = ["eng-m", "math-m", "thai-m"].includes(catSlug ?? "");
+    return (
+      <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{activeCat}</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{meta?.description}</p>
+          </div>
+          <Link href={isMplataiSub ? "/courses?cat=mplatai" : "/courses"}
+            style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>
+            ← {isMplataiSub ? "ม.ปลาย" : "หมวดหมู่"}
+          </Link>
+        </div>
+        {intro && (
+          <details className="card-lg mb-5" style={{ padding: "14px 18px" }} open>
+            <summary style={{ cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text)", listStyle: "none" }}>
+              📋 เกี่ยวกับการสอบ
+            </summary>
+            <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, whiteSpace: "pre-line", marginTop: 12 }}>{intro}</p>
+          </details>
+        )}
+        <SearchBar query={query} setQuery={setQuery} />
+        <div className="grid md:grid-cols-2 gap-3">
+          {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+        </div>
+      </main>
+    );
+  }
+
+  // Default — top-level category cards
+  return (
+    <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+      <div className="mb-5">
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>เลือกหมวดหมู่</h1>
+        <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกหมวดหมู่ที่คุณสนใจ แล้วเริ่มเรียนได้เลย</p>
+      </div>
+      <SearchBar query={query} setQuery={setQuery} />
+      <div className="grid sm:grid-cols-2 gap-4">
+        {TOP_LEVEL.map((item) => {
+          const count = COURSES.filter((c) => item.cats.includes(c.category ?? "")).length;
+          return (
+            <Link key={item.slug} href={`/courses?cat=${item.slug}`}
+              className="card-lg flex flex-col gap-3 p-5" style={{ textDecoration: "none" }}>
+              <span className="badge" style={{ fontSize: 11, width: "fit-content" }}>{count} วิชา</span>
+              <div>
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{item.label}</h2>
+                <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>{item.description}</p>
+              </div>
+              <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--primary)", fontWeight: 500 }}>
+                <span>ดูวิชาทั้งหมด</span><span>→</span>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </main>
   );
 }
 
