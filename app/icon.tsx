@@ -10,11 +10,12 @@ export default function Icon() {
         style={{
           width: 32,
           height: 32,
-          borderRadius: 8,
-          background: "#1a1a2e",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          background: "#1a1a2e",
+          borderRadius: 7,
+          overflow: "hidden",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
