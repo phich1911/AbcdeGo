@@ -283,10 +283,7 @@ export default function TarotPage() {
                           display: "flex", alignItems: "center", justifyContent: "center",
                           transition: "all 0.2s",
                         }}>
-                          <svg width="48" height="48" viewBox="0 0 100 100" fill="none" style={{ opacity: isPicked ? 0.15 : 0.7 }}>
-                            <polygon points="50,8 92,92 8,92" fill="none" stroke="white" strokeWidth="10" strokeLinejoin="round" strokeLinecap="round"/>
-                            <line x1="30" y1="62" x2="70" y2="62" stroke="white" strokeWidth="10" strokeLinecap="round"/>
-                          </svg>
+                          <img src="/logo white.png" alt="AbcdeGo" style={{ width: 56, height: 56, objectFit: "contain", opacity: isPicked ? 0.15 : 0.85 }} />
                         </div>
                       </button>
                     );
