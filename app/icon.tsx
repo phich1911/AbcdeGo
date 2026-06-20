@@ -6,25 +6,9 @@ export const contentType = "image/png";
 export default function Icon() {
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: 32,
-          height: 32,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#1a1a2e",
-          borderRadius: 7,
-          overflow: "hidden",
-        }}
-      >
+      <div style={{ display: "flex", width: 32, height: 32, borderRadius: 7, overflow: "hidden", background: "white", alignItems: "center", justifyContent: "center" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://www.abcdego.com/logo white.png"
-          width={22}
-          height={22}
-          alt=""
-        />
+        <img src="https://www.abcdego.com/AbcdeGo Logo.png" width={24} height={24} alt="" style={{ objectFit: "contain" }} />
       </div>
     ),
     { ...size }
