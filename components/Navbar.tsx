@@ -250,7 +250,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/tarot" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              ไพ่ทาโร่
+              ดูดวง
             </Link>
 
             <Link
@@ -442,7 +442,7 @@ export default function Navbar() {
               </div>
             )}
             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/dashboard" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ความคืบหน้า</Link>
-            <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ไพ่ทาโร่</Link>
+            <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ดูดวง</Link>
             <Link href="/game" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกม</Link>
             <Link href="/about" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/about" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/about" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกี่ยวกับเรา</Link>
             <Link href="/contact" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/contact" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/contact" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ติดต่อ</Link>
