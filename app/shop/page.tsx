@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { PRODUCTS, calcDiscount, finalPrice } from "@/lib/products";
 import { getProgress } from "@/lib/progress";
+import { getSession } from "@/lib/supabase";
+import AuthModal from "@/components/AuthModal";
+import type { User } from "@supabase/supabase-js";
 
 const CATEGORY_ICON: Record<string, string> = {
   "ก.พ.": "📝",
@@ -12,9 +15,12 @@ const CATEGORY_ICON: Record<string, string> = {
 export default function ShopPage() {
   const [xp, setXp] = useState(0);
   const [selectedCat, setSelectedCat] = useState<string>("ทั้งหมด");
+  const [user, setUser] = useState<User | null>(null);
+  const [authOpen, setAuthOpen] = useState(false);
 
   useEffect(() => {
     setXp(getProgress().xp);
+    getSession().then((s) => setUser(s?.user ?? null)).catch(() => {});
   }, []);
 
   const categories = ["ทั้งหมด", ...Array.from(new Set(PRODUCTS.map((p) => p.category)))];
@@ -24,6 +30,12 @@ export default function ShopPage() {
 
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "80px 16px 48px" }}>
+      {authOpen && (
+        <AuthModal
+          onClose={() => setAuthOpen(false)}
+          onSuccess={(email) => { setUser({ email } as User); setAuthOpen(false); }}
+        />
+      )}
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 48 }}>
         <h1 style={{ fontSize: "clamp(28px,5vw,40px)", fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.02em" }}>
@@ -118,6 +130,7 @@ export default function ShopPage() {
                 </div>
                 <button
                   disabled={isSoon}
+                  onClick={() => { if (!isSoon && !user) setAuthOpen(true); }}
                   style={{
                     padding: "8px 18px", borderRadius: 980, fontSize: 13, fontWeight: 600, border: "none", cursor: isSoon ? "default" : "pointer",
                     background: isSoon ? "var(--surface-2)" : "var(--primary)",
