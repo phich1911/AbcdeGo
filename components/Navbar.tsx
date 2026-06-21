@@ -197,7 +197,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: pathname === "/" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              Home
+              หน้าแรก
             </Link>
 
             {/* COURSES dropdown */}
@@ -208,7 +208,7 @@ export default function Navbar() {
                 className="flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
                 style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname.startsWith("/course") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
               >
-                Courses
+                คอร์สเรียน
                 <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor"
                   style={{ transition: "transform 0.15s", transform: coursesOpen ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.5, marginTop: 1 }}>
                   <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
@@ -242,7 +242,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/dashboard" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              Progress
+              ความคืบหน้า
             </Link>
 
             <Link
@@ -250,7 +250,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/tarot" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              TAROT
+              ไพ่ทาโร่
             </Link>
 
             <Link
@@ -258,7 +258,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/game" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              Games
+              เกม
             </Link>
 
             <Link
@@ -266,7 +266,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: pathname === "/about" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/about" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              About Us
+              เกี่ยวกับเรา
             </Link>
 
             <Link
@@ -274,7 +274,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: pathname === "/contact" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/contact" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              Contact
+              ติดต่อ
             </Link>
 
             <a
@@ -284,7 +284,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: "var(--text-muted)", fontSize: 14, fontWeight: 400, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}
             >
-              Tools
+              เครื่องมือ
             </a>
 
             {/* Search button */}
@@ -353,7 +353,7 @@ export default function Navbar() {
                         style={{ color: "var(--text-muted)", transition: "background 0.1s, transform 0.1s" }}
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; (e.currentTarget as HTMLElement).style.transform = "translateX(3px)"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}>
-                        Progress
+                        ความคืบหน้า
                       </Link>
                       <button
                         onClick={() => { setUserMenuOpen(false); setEditProfileOpen(true); }}
@@ -361,7 +361,7 @@ export default function Navbar() {
                         style={{ color: "var(--text-muted)", transition: "background 0.1s, transform 0.1s" }}
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; (e.currentTarget as HTMLElement).style.transform = "translateX(3px)"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}>
-                        Edit Profile
+                        แก้ไขโปรไฟล์
                       </button>
                       <div style={{ height: 1, background: "var(--border)" }} />
                       <button
@@ -370,7 +370,7 @@ export default function Navbar() {
                         style={{ color: "var(--accent-red)", transition: "background 0.1s, transform 0.1s" }}
                         onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,123,114,0.08)"; (e.currentTarget as HTMLElement).style.transform = "translateX(3px)"; }}
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}>
-                        Sign Out
+                        ออกจากระบบ
                       </button>
                       <div style={{ height: 1, background: "var(--border)" }} />
                       <Link href="/privacy" onClick={() => setUserMenuOpen(false)}
@@ -416,13 +416,13 @@ export default function Navbar() {
         {menuOpen && (
           <div className="md:hidden px-4 py-3 flex flex-col gap-0.5"
             style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}>
-            <Link href="/" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Home</Link>
+            <Link href="/" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>หน้าแรก</Link>
             <button
               onClick={() => setOpenGroup(openGroup === "courses" ? null : "courses")}
               className="flex items-center justify-between px-2 py-2.5 rounded w-full hover:bg-white/5"
               style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontWeight: pathname.startsWith("/course") ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              <span>Courses</span>
+              <span>คอร์สเรียน</span>
               <span style={{ fontSize: 10, color: "var(--text-muted)", transition: "transform 0.2s", transform: openGroup === "courses" ? "rotate(180deg)" : "none", display: "inline-block" }}>▼</span>
             </button>
             {openGroup === "courses" && (
@@ -441,16 +441,16 @@ export default function Navbar() {
                 </Link>
               </div>
             )}
-            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/dashboard" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Progress</Link>
-            <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>TAROT</Link>
-            <Link href="/game" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Games</Link>
-            <Link href="/about" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/about" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/about" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>About Us</Link>
-            <Link href="/contact" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/contact" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/contact" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Contact</Link>
-            <a href="https://airrok.com" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: "var(--text-muted)", fontWeight: 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>Tools</a>
+            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/dashboard" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ความคืบหน้า</Link>
+            <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ไพ่ทาโร่</Link>
+            <Link href="/game" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกม</Link>
+            <Link href="/about" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/about" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/about" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกี่ยวกับเรา</Link>
+            <Link href="/contact" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/contact" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/contact" ? 600 : 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ติดต่อ</Link>
+            <a href="https://airrok.com" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: "var(--text-muted)", fontWeight: 400, fontSize: 14, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เครื่องมือ</a>
             <div style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
             <div className="flex items-center justify-between px-2 py-1.5">
               <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                {isDark ? "Dark mode" : "Light mode"}
+                {isDark ? "โหมดมืด" : "โหมดสว่าง"}
               </span>
               <button
                 onClick={toggleTheme}
@@ -472,13 +472,13 @@ export default function Navbar() {
                     <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>⚡ {xp} XP · Lv.{Math.floor(xp / 100) + 1}</p>
                   </div>
                 </div>
-                <button onClick={() => { setMenuOpen(false); setEditProfileOpen(true); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--text-muted)" }}>Edit Profile</button>
-                <button onClick={async () => { await signOut(); setMenuOpen(false); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--accent-red)" }}>Sign Out</button>
+                <button onClick={() => { setMenuOpen(false); setEditProfileOpen(true); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--text-muted)" }}>แก้ไขโปรไฟล์</button>
+                <button onClick={async () => { await signOut(); setMenuOpen(false); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--accent-red)" }}>ออกจากระบบ</button>
               </div>
             ) : (
               <button onClick={() => { setMenuOpen(false); setAuthOpen(true); }}
                 className="px-2 py-2.5 text-sm font-medium text-left" style={{ color: "var(--primary)" }}>
-                Sign In / Sign Up →
+                เข้าสู่ระบบ / สมัครสมาชิก →
               </button>
             )}
           </div>
