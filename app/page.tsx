@@ -45,6 +45,14 @@ export default async function Home() {
               </Link>
             </div>
 
+            {/* XP → ส่วนลด teaser */}
+            <div style={{ marginTop: 20, display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 10, background: "rgba(255,190,0,0.08)", border: "1px solid rgba(255,190,0,0.2)" }}>
+              <span style={{ fontSize: 16 }}>⚡</span>
+              <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                เรียนมากขึ้น → ได้ XP → <Link href="/shop" style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}>ซื้อข้อสอบถูกลงสูงสุด 50 บาท</Link>
+              </span>
+            </div>
+
             {/* Stats row */}
             <div className="flex gap-6 mt-10 flex-wrap">
               {[
