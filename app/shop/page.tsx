@@ -12,7 +12,7 @@ declare global {
   interface Window {
     Paddle?: {
       Initialize: (opts: { token: string }) => void;
-      Checkout: { open: (opts: { items: { priceId: string; quantity: number }[]; customer?: { email: string } }) => void };
+      Checkout: { open: (opts: { items: { priceId: string; quantity: number }[]; customer?: { email: string }; discountCode?: string }) => void };
     };
   }
 }
