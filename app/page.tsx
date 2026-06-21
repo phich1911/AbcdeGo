@@ -21,7 +21,7 @@ export default async function Home() {
   ]);
   return (
     <>
-      <main className="flex-1" style={{ paddingTop: 48 }}>
+      <main className="flex-1" style={{ paddingTop: 60 }}>
 
         {/* Hero */}
         <section style={{ borderBottom: "1px solid var(--border)", padding: "64px 24px 48px" }}>
