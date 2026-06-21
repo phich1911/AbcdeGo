@@ -11,7 +11,9 @@ const EXAMS: Record<string, MockExam> = {
   "kp-mock-1": KP_MOCK_1,
 };
 
-type Phase = "intro" | "exam" | "results";
+type Phase = "intro" | "mode" | "exam" | "results";
+// "full" = all sections, number = section index (0/1/2)
+type ExamMode = "full" | number;
 
 function formatTime(secs: number) {
   const h = Math.floor(secs / 3600);
@@ -26,13 +28,25 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const exam = EXAMS[id];
 
   const [phase, setPhase] = useState<Phase>("intro");
+  const [mode, setMode] = useState<ExamMode>("full");
   const [sectionIdx, setSectionIdx] = useState(0);
   const [questionIdx, setQuestionIdx] = useState(0);
-  // answers: flat index → choice index
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [timeLeft, setTimeLeft] = useState(exam ? exam.totalTime * 60 : 0);
+  const [timeLeft, setTimeLeft] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Derive which sections are active for the current mode
+  const activeSections: ExamSection[] = exam
+    ? mode === "full"
+      ? exam.sections
+      : [exam.sections[mode as number]]
+    : [];
+
+  const activeTime =
+    mode === "full"
+      ? exam?.totalTime ?? 0
+      : exam?.sections[mode as number]?.timeRecommended ?? 0;
 
   useEffect(() => {
     if (phase === "exam" && !submitted) {
@@ -55,21 +69,29 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     return <div className="p-10 text-center">ไม่พบข้อสอบนี้</div>;
   }
 
-  // Build flat question list with section info
-  const flatQuestions = exam.sections.flatMap((sec) =>
-    sec.questions.map((q) => ({ ...q, section: sec }))
-  );
-  const totalQ = flatQuestions.length;
-
-  // Offset per section for flat index
-  const sectionOffsets = exam.sections.reduce<number[]>((acc, sec, i) => {
-    acc.push(i === 0 ? 0 : acc[i - 1] + exam.sections[i - 1].questions.length);
+  const sectionOffsets = activeSections.reduce<number[]>((acc, sec, i) => {
+    acc.push(i === 0 ? 0 : acc[i - 1] + activeSections[i - 1].questions.length);
     return acc;
   }, []);
 
-  const currentSection: ExamSection = exam.sections[sectionIdx];
-  const currentFlatIdx = sectionOffsets[sectionIdx] + questionIdx;
-  const currentQ = currentSection.questions[questionIdx];
+  const totalQ = activeSections.reduce((s, sec) => s + sec.questions.length, 0);
+  const currentSection: ExamSection = activeSections[sectionIdx];
+  const currentFlatIdx = (sectionOffsets[sectionIdx] ?? 0) + questionIdx;
+  const currentQ = currentSection?.questions[questionIdx];
+
+  function startExam(selectedMode: ExamMode) {
+    setMode(selectedMode);
+    setAnswers({});
+    setSectionIdx(0);
+    setQuestionIdx(0);
+    setSubmitted(false);
+    const secs =
+      selectedMode === "full"
+        ? exam.totalTime * 60
+        : exam.sections[selectedMode as number].timeRecommended * 60;
+    setTimeLeft(secs);
+    setPhase("exam");
+  }
 
   function handleAnswer(choice: number) {
     setAnswers((prev) => ({ ...prev, [currentFlatIdx]: choice }));
@@ -78,7 +100,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   function goNext() {
     if (questionIdx + 1 < currentSection.questions.length) {
       setQuestionIdx((i) => i + 1);
-    } else if (sectionIdx + 1 < exam.sections.length) {
+    } else if (sectionIdx + 1 < activeSections.length) {
       setSectionIdx((i) => i + 1);
       setQuestionIdx(0);
     }
@@ -88,7 +110,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     if (questionIdx > 0) {
       setQuestionIdx((i) => i - 1);
     } else if (sectionIdx > 0) {
-      const prevSec = exam.sections[sectionIdx - 1];
+      const prevSec = activeSections[sectionIdx - 1];
       setSectionIdx((i) => i - 1);
       setQuestionIdx(prevSec.questions.length - 1);
     }
@@ -100,14 +122,12 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     setPhase("results");
   }
 
-  // ── Results calculation ────────────────────────────────────────
   function calcResults() {
-    return exam.sections.map((sec, si) => {
+    return activeSections.map((sec, si) => {
       const offset = sectionOffsets[si];
       let correct = 0;
-      sec.questions.forEach((_, qi) => {
-        const flatIdx = offset + qi;
-        if (answers[flatIdx] === sec.questions[qi].correct) correct++;
+      sec.questions.forEach((q, qi) => {
+        if (answers[offset + qi] === q.correct) correct++;
       });
       const scorePercent = Math.round((correct / sec.questionCount) * 100);
       const passed = scorePercent >= sec.passingPercent;
@@ -117,6 +137,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
   const answeredCount = Object.keys(answers).length;
   const timerColor = timeLeft < 600 ? "#ff3b30" : timeLeft < 1800 ? "#ff9500" : "var(--accent-green)";
+  const isFullMode = mode === "full";
 
   // ── INTRO ──────────────────────────────────────────────────────
   if (phase === "intro") {
@@ -128,7 +149,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
             {exam.title}
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: 15, margin: 0 }}>
-            อ่านคำแนะนำก่อนเริ่มสอบ
+            เลือกโหมดการฝึกก่อนเริ่มสอบ
           </p>
         </div>
 
@@ -137,7 +158,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           <h2 style={{ fontSize: 15, fontWeight: 700, marginBottom: 16 }}>ภาพรวมข้อสอบ</h2>
           <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
             {[
-              { label: "จำนวนข้อ", value: `${totalQ} ข้อ` },
+              { label: "จำนวนข้อ", value: `${exam.sections.reduce((s, sec) => s + sec.questionCount, 0)} ข้อ` },
               { label: "เวลารวม", value: `${exam.totalTime} นาที` },
               { label: "จำนวนวิชา", value: `${exam.sections.length} วิชา` },
               { label: "XP รางวัล", value: `${exam.xpReward.toLocaleString()} XP` },
@@ -173,17 +194,6 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           ))}
         </div>
 
-        {/* Rules */}
-        <div className="card" style={{ padding: 20, marginBottom: 28, background: "rgba(255,190,0,0.05)", borderColor: "rgba(255,190,0,0.2)" }}>
-          <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: 13, color: "var(--accent)" }}>⚠️ กติกาข้อสอบ</p>
-          <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: "var(--text-muted)", lineHeight: 1.9 }}>
-            <li>เวลารวม <strong style={{ color: "var(--text)" }}>3 ชั่วโมง (180 นาที)</strong> เมื่อหมดเวลาระบบส่งอัตโนมัติ</li>
-            <li>ต้องผ่านทุกวิชาตามเกณฑ์จึงจะถือว่าสอบผ่าน</li>
-            <li>สามารถข้ามข้อและย้อนกลับมาแก้ไขได้ตลอด</li>
-            <li>ผ่านครบทุกวิชา → รับ <strong style={{ color: "var(--accent)" }}>{exam.xpReward.toLocaleString()} XP</strong> และยศ <strong style={{ color: "var(--primary)" }}>{exam.rankReward}</strong></li>
-          </ul>
-        </div>
-
         <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
           <button
             onClick={() => router.back()}
@@ -192,10 +202,89 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
             ← กลับ
           </button>
           <button
-            onClick={() => setPhase("exam")}
+            onClick={() => setPhase("mode")}
             style={{ padding: "10px 32px", borderRadius: 980, border: "none", background: "var(--primary)", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 14 }}
           >
-            เริ่มสอบเลย →
+            เลือกโหมด →
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  // ── MODE SELECTION ──────────────────────────────────────────────
+  if (phase === "mode") {
+    const modeOptions: { label: string; sub: string; badge: string; badgeColor: string; value: ExamMode }[] = [
+      ...exam.sections.map((sec, i) => ({
+        label: `ฝึกวิชาที่ ${i + 1}: ${sec.shortTitle}`,
+        sub: `${sec.questionCount} ข้อ · ${sec.timeRecommended} นาที · ผ่าน ${sec.passingPercent}%`,
+        badge: "ฝึกรายวิชา",
+        badgeColor: "rgba(0,122,255,0.12)",
+        value: i as ExamMode,
+      })),
+      {
+        label: "ข้อสอบจำลองเต็มรูปแบบ",
+        sub: `ครบ 3 วิชา 100 ข้อ · ${exam.totalTime} นาที · รับ ${exam.xpReward.toLocaleString()} XP`,
+        badge: "แนะนำ",
+        badgeColor: "rgba(52,199,89,0.12)",
+        value: "full" as ExamMode,
+      },
+    ];
+
+    return (
+      <main style={{ maxWidth: 640, margin: "0 auto", padding: "80px 16px 48px" }}>
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <h1 style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>
+            เลือกโหมดการฝึก
+          </h1>
+          <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>
+            1 สินค้านี้ปลดล็อคทุกโหมดด้านล่าง
+          </p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
+          {modeOptions.map((opt) => (
+            <button
+              key={String(opt.value)}
+              onClick={() => startExam(opt.value)}
+              style={{
+                textAlign: "left", padding: "18px 20px", borderRadius: 16, cursor: "pointer",
+                border: "1px solid var(--border)", background: "var(--surface)",
+                transition: "border-color 0.15s, background 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--primary)";
+                (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,122,255,0.04)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+                (e.currentTarget as HTMLButtonElement).style.background = "var(--surface)";
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+                <div>
+                  <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 15, color: "var(--text)" }}>
+                    {opt.label}
+                  </p>
+                  <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>{opt.sub}</p>
+                </div>
+                <span style={{
+                  flexShrink: 0, padding: "3px 10px", borderRadius: 980, fontSize: 11, fontWeight: 700,
+                  background: opt.badgeColor, color: opt.value === "full" ? "var(--accent-green)" : "var(--primary)",
+                }}>
+                  {opt.badge}
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        <div style={{ textAlign: "center" }}>
+          <button
+            onClick={() => setPhase("intro")}
+            style={{ padding: "8px 20px", borderRadius: 980, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontWeight: 600, cursor: "pointer", fontSize: 13 }}
+          >
+            ← ย้อนกลับ
           </button>
         </div>
       </main>
@@ -207,25 +296,27 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     const results = calcResults();
     const allPassed = results.every((r) => r.passed);
 
-    if (allPassed) {
-      // Award XP
+    if (isFullMode && allPassed) {
       const updated = completeLesson(`exam-${exam.id}`, exam.xpReward, { correct: answeredCount, total: totalQ });
       syncLeaderboard(updated.xp);
     }
+
+    const sectionXp = isFullMode ? 0 : Math.round(exam.xpReward / 4);
 
     return (
       <main style={{ maxWidth: 760, margin: "0 auto", padding: "80px 16px 48px" }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
           <div style={{ fontSize: 56, marginBottom: 12 }}>{allPassed ? "🎉" : "📊"}</div>
           <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px", color: allPassed ? "var(--accent-green)" : "var(--text)" }}>
-            {allPassed ? "ผ่านการสอบ!" : "ยังไม่ผ่านในครั้งนี้"}
+            {allPassed ? (isFullMode ? "ผ่านการสอบ!" : "ผ่านวิชานี้!") : "ยังไม่ผ่านในครั้งนี้"}
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>
             ตอบแล้ว {answeredCount}/{totalQ} ข้อ
+            {!isFullMode && ` · ${activeSections[0].title}`}
           </p>
         </div>
 
-        {allPassed && (
+        {allPassed && isFullMode && (
           <div className="card" style={{ padding: 20, marginBottom: 20, textAlign: "center", background: "rgba(52,199,89,0.06)", borderColor: "rgba(52,199,89,0.3)" }}>
             <p style={{ margin: "0 0 4px", fontWeight: 800, fontSize: 18, color: "var(--accent-green)" }}>
               ⚡ +{exam.xpReward.toLocaleString()} XP
@@ -236,7 +327,14 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           </div>
         )}
 
-        {/* Per-section results */}
+        {allPassed && !isFullMode && sectionXp > 0 && (
+          <div className="card" style={{ padding: 16, marginBottom: 20, textAlign: "center", background: "rgba(52,199,89,0.06)", borderColor: "rgba(52,199,89,0.3)" }}>
+            <p style={{ margin: 0, fontSize: 14, color: "var(--text-muted)" }}>
+              ⚡ ทำครบ 3 วิชาในโหมดเต็มรูปแบบเพื่อรับ <strong style={{ color: "var(--accent-green)" }}>{exam.xpReward.toLocaleString()} XP</strong>
+            </p>
+          </div>
+        )}
+
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
           {results.map(({ sec, correct, scorePercent, passed }) => (
             <div key={sec.id} className="card" style={{ padding: "16px 20px", borderColor: passed ? "rgba(52,199,89,0.3)" : "rgba(255,59,48,0.3)" }}>
@@ -248,17 +346,16 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
                   </p>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <p style={{ margin: "0 0 2px", fontSize: 22, fontWeight: 800, color: passed ? "var(--accent-green)" : "var(--accent-red)" }}>
+                  <p style={{ margin: "0 0 2px", fontSize: 22, fontWeight: 800, color: passed ? "var(--accent-green)" : "var(--accent-red, #ff3b30)" }}>
                     {scorePercent}%
                   </p>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: passed ? "var(--accent-green)" : "var(--accent-red)" }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: passed ? "var(--accent-green)" : "var(--accent-red, #ff3b30)" }}>
                     {passed ? "✓ ผ่าน" : "✗ ไม่ผ่าน"}
                   </span>
                 </div>
               </div>
-              {/* Score bar */}
               <div style={{ marginTop: 10, height: 6, borderRadius: 3, background: "var(--border)", overflow: "hidden" }}>
-                <div style={{ height: "100%", borderRadius: 3, width: `${scorePercent}%`, background: passed ? "var(--accent-green)" : "var(--accent-red)", transition: "width 0.6s" }} />
+                <div style={{ height: "100%", borderRadius: 3, width: `${scorePercent}%`, background: passed ? "var(--accent-green)" : "#ff3b30", transition: "width 0.6s" }} />
               </div>
             </div>
           ))}
@@ -267,17 +364,23 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         {!allPassed && (
           <div className="card" style={{ padding: 16, marginBottom: 20, background: "rgba(255,59,48,0.04)", borderColor: "rgba(255,59,48,0.2)" }}>
             <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
-              💡 ต้องผ่านทุกวิชาตามเกณฑ์ ลองทบทวนบทเรียนในคอร์สฟรีแล้วกลับมาสอบใหม่ได้เลย
+              💡 ลองทบทวนบทเรียนในคอร์สฟรีแล้วกลับมาสอบใหม่ได้เลย
             </p>
           </div>
         )}
 
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
           <button
-            onClick={() => { setPhase("intro"); setAnswers({}); setTimeLeft(exam.totalTime * 60); setSubmitted(false); setSectionIdx(0); setQuestionIdx(0); }}
+            onClick={() => startExam(mode)}
             style={{ padding: "10px 24px", borderRadius: 980, border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", fontWeight: 600, cursor: "pointer", fontSize: 14 }}
           >
             สอบใหม่อีกครั้ง
+          </button>
+          <button
+            onClick={() => setPhase("mode")}
+            style={{ padding: "10px 24px", borderRadius: 980, border: "1px solid var(--primary)", background: "transparent", color: "var(--primary)", fontWeight: 600, cursor: "pointer", fontSize: 14 }}
+          >
+            เปลี่ยนโหมด
           </button>
           <button
             onClick={() => router.push("/shop")}
@@ -299,27 +402,36 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         background: "var(--bg)", borderBottom: "1px solid var(--border)",
         padding: "10px 16px", display: "flex", alignItems: "center", gap: 12,
       }}>
-        {/* Section tabs */}
-        <div style={{ display: "flex", gap: 6, flex: 1, overflow: "auto" }}>
-          {exam.sections.map((sec, i) => {
-            const offset = sectionOffsets[i];
-            const answered = sec.questions.filter((_, qi) => answers[offset + qi] !== undefined).length;
-            return (
-              <button
-                key={sec.id}
-                onClick={() => { setSectionIdx(i); setQuestionIdx(0); }}
-                style={{
-                  padding: "5px 12px", borderRadius: 980, fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
-                  border: "1px solid var(--border)",
-                  background: sectionIdx === i ? "var(--primary)" : "var(--surface)",
-                  color: sectionIdx === i ? "#fff" : "var(--text-muted)",
-                }}
-              >
-                {sec.shortTitle} ({answered}/{sec.questionCount})
-              </button>
-            );
-          })}
-        </div>
+        {/* Section tabs (only show if multiple sections active) */}
+        {activeSections.length > 1 && (
+          <div style={{ display: "flex", gap: 6, flex: 1, overflow: "auto" }}>
+            {activeSections.map((sec, i) => {
+              const offset = sectionOffsets[i];
+              const answered = sec.questions.filter((_, qi) => answers[offset + qi] !== undefined).length;
+              return (
+                <button
+                  key={sec.id}
+                  onClick={() => { setSectionIdx(i); setQuestionIdx(0); }}
+                  style={{
+                    padding: "5px 12px", borderRadius: 980, fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
+                    border: "1px solid var(--border)",
+                    background: sectionIdx === i ? "var(--primary)" : "var(--surface)",
+                    color: sectionIdx === i ? "#fff" : "var(--text-muted)",
+                  }}
+                >
+                  {sec.shortTitle} ({answered}/{sec.questionCount})
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Section label (single section mode) */}
+        {activeSections.length === 1 && (
+          <div style={{ flex: 1, fontWeight: 700, fontSize: 13, color: "var(--text)" }}>
+            {activeSections[0].shortTitle}
+          </div>
+        )}
 
         {/* Timer */}
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
@@ -340,18 +452,17 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
       {/* Question area */}
       <main style={{ maxWidth: 720, margin: "0 auto", padding: "80px 16px 120px", flex: 1 }}>
-        {/* Question number breadcrumb */}
         <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8 }}>
-          {currentSection.shortTitle} · ข้อ {questionIdx + 1} จาก {currentSection.questions.length}
+          {currentSection?.shortTitle} · ข้อ {questionIdx + 1} จาก {currentSection?.questions.length}
         </p>
 
         <div className="card" style={{ padding: 28, marginBottom: 20 }}>
           <p style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.7, whiteSpace: "pre-line", margin: "0 0 24px" }}>
-            {currentFlatIdx + 1}. {currentQ.question}
+            {currentFlatIdx + 1}. {currentQ?.question}
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {currentQ.choices.map((choice, ci) => {
+            {currentQ?.choices.map((choice, ci) => {
               const selected = answers[currentFlatIdx] === ci;
               return (
                 <button
@@ -375,7 +486,6 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           </div>
         </div>
 
-        {/* Prev / Next */}
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <button
             onClick={goPrev}
@@ -386,23 +496,23 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           </button>
           <button
             onClick={goNext}
-            disabled={sectionIdx === exam.sections.length - 1 && questionIdx === currentSection.questions.length - 1}
-            style={{ padding: "8px 20px", borderRadius: 980, border: "none", background: "var(--primary)", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer", opacity: (sectionIdx === exam.sections.length - 1 && questionIdx === currentSection.questions.length - 1) ? 0.3 : 1 }}
+            disabled={sectionIdx === activeSections.length - 1 && questionIdx === (currentSection?.questions.length ?? 0) - 1}
+            style={{ padding: "8px 20px", borderRadius: 980, border: "none", background: "var(--primary)", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer", opacity: (sectionIdx === activeSections.length - 1 && questionIdx === (currentSection?.questions.length ?? 0) - 1) ? 0.3 : 1 }}
           >
             ถัดไป →
           </button>
         </div>
       </main>
 
-      {/* Question grid navigator (bottom) */}
+      {/* Question grid navigator */}
       <div style={{
         position: "fixed", bottom: 0, left: 0, right: 0,
         background: "var(--bg)", borderTop: "1px solid var(--border)",
         padding: "10px 16px",
       }}>
         <div style={{ maxWidth: 720, margin: "0 auto", display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {currentSection.questions.map((_, qi) => {
-            const flatIdx = sectionOffsets[sectionIdx] + qi;
+          {currentSection?.questions.map((_, qi) => {
+            const flatIdx = (sectionOffsets[sectionIdx] ?? 0) + qi;
             const isAnswered = answers[flatIdx] !== undefined;
             const isCurrent = qi === questionIdx;
             return (
