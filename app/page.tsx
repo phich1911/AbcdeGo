@@ -73,6 +73,9 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* Leaderboard + CTA */}
+        <SiteStatsWrapper />
+
         {/* Popular courses */}
         <section style={{ padding: "40px 24px", borderBottom: "1px solid var(--border)" }}>
           <div className="max-w-4xl mx-auto">
@@ -103,9 +106,6 @@ export default async function Home() {
             </div>
           </div>
         </section>
-
-        {/* Leaderboard + CTA */}
-        <SiteStatsWrapper />
 
 
       </main>
