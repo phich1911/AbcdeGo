@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      amount: String(discountAmount),
+      amount: String(discountAmount * 100),
       description: `XP Discount (${xp} XP)`,
       type: "flat",
       currency_code: "THB",
