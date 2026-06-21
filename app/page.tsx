@@ -60,7 +60,6 @@ export default async function Home() {
             {/* Stats row */}
             <div className="flex gap-6 mt-10 flex-wrap">
               {[
-                { num: `${learnerCount > 0 ? learnerCount.toLocaleString() : "—"}+`, label: "ผู้เรียน" },
                 { num: String(COURSES.length), label: "วิชา" },
                 { num: String(totalLessons), label: "บทเรียน" },
                 { num: `${totalXp.toLocaleString()}+`, label: "XP รวม" },
