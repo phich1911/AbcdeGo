@@ -22,6 +22,20 @@ function formatTime(secs: number) {
   return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
+function getPassedSections(examId: string): number[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(`exam-passed-${examId}`) ?? "[]");
+  } catch { return []; }
+}
+
+function savePassedSection(examId: string, sectionIndex: number) {
+  const passed = getPassedSections(examId);
+  if (!passed.includes(sectionIndex)) {
+    localStorage.setItem(`exam-passed-${examId}`, JSON.stringify([...passed, sectionIndex]));
+  }
+}
+
 export default function ExamPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -34,7 +48,12 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [timeLeft, setTimeLeft] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [passedSections, setPassedSections] = useState<number[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (id) setPassedSections(getPassedSections(id));
+  }, [id]);
 
   // Derive which sections are active for the current mode
   const activeSections: ExamSection[] = exam
@@ -214,13 +233,14 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
   // ── MODE SELECTION ──────────────────────────────────────────────
   if (phase === "mode") {
-    const modeOptions: { label: string; sub: string; badge: string; badgeColor: string; value: ExamMode }[] = [
+    const modeOptions: { label: string; sub: string; badge: string; badgeColor: string; value: ExamMode; locked: boolean }[] = [
       ...exam.sections.map((sec, i) => ({
-        label: `ฝึกวิชาที่ ${i + 1}: ${sec.shortTitle}`,
+        label: `วิชาที่ ${i + 1}: ${sec.shortTitle}`,
         sub: `${sec.questionCount} ข้อ · ${sec.timeRecommended} นาที · ผ่าน ${sec.passingPercent}%`,
-        badge: "ฝึกรายวิชา",
-        badgeColor: "rgba(0,122,255,0.12)",
+        badge: passedSections.includes(i) ? "✓ ผ่านแล้ว" : "ฝึกรายวิชา",
+        badgeColor: passedSections.includes(i) ? "rgba(52,199,89,0.12)" : "rgba(0,122,255,0.12)",
         value: i as ExamMode,
+        locked: i > 0 && !passedSections.includes(i - 1),
       })),
       {
         label: "ข้อสอบจำลองเต็มรูปแบบ",
@@ -228,6 +248,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         badge: "แนะนำ",
         badgeColor: "rgba(52,199,89,0.12)",
         value: "full" as ExamMode,
+        locked: exam.sections.some((_, i) => !passedSections.includes(i)),
       },
     ];
 
@@ -246,13 +267,18 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           {modeOptions.map((opt) => (
             <button
               key={String(opt.value)}
-              onClick={() => startExam(opt.value)}
+              disabled={opt.locked}
+              onClick={() => !opt.locked && startExam(opt.value)}
               style={{
-                textAlign: "left", padding: "18px 20px", borderRadius: 16, cursor: "pointer",
-                border: "1px solid var(--border)", background: "var(--surface)",
+                textAlign: "left", padding: "18px 20px", borderRadius: 16,
+                cursor: opt.locked ? "not-allowed" : "pointer",
+                border: `1px solid ${opt.locked ? "var(--border)" : "var(--border)"}`,
+                background: opt.locked ? "var(--surface)" : "var(--surface)",
+                opacity: opt.locked ? 0.5 : 1,
                 transition: "border-color 0.15s, background 0.15s",
               }}
               onMouseEnter={(e) => {
+                if (opt.locked) return;
                 (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--primary)";
                 (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,122,255,0.04)";
               }}
@@ -263,14 +289,22 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
             >
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
                 <div>
-                  <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 15, color: "var(--text)" }}>
+                  <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 15, color: "var(--text)", display: "flex", alignItems: "center", gap: 6 }}>
+                    {opt.locked && <span>🔒</span>}
                     {opt.label}
                   </p>
-                  <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>{opt.sub}</p>
+                  <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
+                    {opt.locked
+                      ? typeof opt.value === "number"
+                        ? `ต้องผ่านวิชาที่ ${opt.value} ก่อน`
+                        : "ต้องผ่านครบทั้ง 3 วิชาก่อน"
+                      : opt.sub}
+                  </p>
                 </div>
                 <span style={{
                   flexShrink: 0, padding: "3px 10px", borderRadius: 980, fontSize: 11, fontWeight: 700,
-                  background: opt.badgeColor, color: opt.value === "full" ? "var(--accent-green)" : "var(--primary)",
+                  background: opt.badgeColor,
+                  color: passedSections.includes(opt.value as number) ? "var(--accent-green)" : opt.value === "full" ? "var(--accent-green)" : "var(--primary)",
                 }}>
                   {opt.badge}
                 </span>
@@ -299,6 +333,14 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     if (isFullMode && allPassed) {
       const updated = completeLesson(`exam-${exam.id}`, exam.xpReward, { correct: answeredCount, total: totalQ });
       syncLeaderboard(updated.xp);
+    }
+
+    // Save section pass to localStorage
+    if (!isFullMode && allPassed) {
+      savePassedSection(id, mode as number);
+      if (!passedSections.includes(mode as number)) {
+        setPassedSections((prev) => [...prev, mode as number]);
+      }
     }
 
     const sectionXp = isFullMode ? 0 : Math.round(exam.xpReward / 4);
