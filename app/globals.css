@@ -49,8 +49,8 @@ body {
   background-attachment: fixed;
   color: var(--text);
   font-family: "Noto Sans Thai", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.6;
   letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -92,10 +92,10 @@ a.card-lg:hover, button.card-lg:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 22px;
+  padding: 12px 26px;
   background: var(--primary);
   color: #ffffff;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   border-radius: 980px;
   border: none;
@@ -109,10 +109,10 @@ a.card-lg:hover, button.card-lg:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 22px;
+  padding: 12px 26px;
   background: var(--surface-2);
   color: var(--primary);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   border-radius: 980px;
   border: none;
