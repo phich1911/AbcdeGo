@@ -243,11 +243,11 @@ export default function ChatBot() {
         )}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex flex-col items-center justify-center gap-1 transition-opacity hover:opacity-80"
+        className="flex items-center justify-center gap-1.5 transition-opacity hover:opacity-80"
         style={{
-          width: 72,
-          height: 72,
-          borderRadius: 16,
+          height: 36,
+          padding: "0 14px",
+          borderRadius: 980,
           background: open ? "var(--surface-2)" : "var(--primary)",
           border: "1px solid var(--border)",
           boxShadow: "0 4px 16px rgba(0,0,0,0.35)",
@@ -256,10 +256,8 @@ export default function ChatBot() {
       >
         {open ? "✕" : (
           <>
-            <svg width="24" height="24" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894"/>
-            </svg>
-            <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.03em", lineHeight: 1 }}>JarnGo</span>
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e", boxShadow: "0 0 5px #22c55e", flexShrink: 0, display: "inline-block" }} />
+            <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.01em", lineHeight: 1 }}>JarnGo</span>
           </>
         )}
       </button>
