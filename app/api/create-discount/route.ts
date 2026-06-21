@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Create a one-time-use discount code in Paddle
-  const code = `XP-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+  const code = `XP${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`.slice(0, 32);
 
   const res = await fetch(`${PADDLE_API}/discounts`, {
     method: "POST",
