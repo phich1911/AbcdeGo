@@ -4,6 +4,7 @@ import { useState } from "react";
 import { setDisplayName, syncLeaderboard } from "@/lib/supabase";
 import { getProgress as getLocalProgress } from "@/lib/progress";
 import { AVATARS, getAvatar, saveAvatar } from "@/lib/avatar";
+import { containsProfanity } from "@/lib/profanity";
 
 interface Props {
   current?: string;
@@ -23,6 +24,10 @@ export default function DisplayNameModal({ current, onDone, onClose }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) return;
+    if (containsProfanity(name.trim())) {
+      setError("ชื่อนี้ไม่เหมาะสม กรุณาเลือกชื่ออื่น");
+      return;
+    }
     setLoading(true);
     const err = await setDisplayName(name.trim());
     if (err) { setError(err); setLoading(false); return; }
