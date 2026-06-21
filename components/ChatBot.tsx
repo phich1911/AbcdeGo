@@ -230,17 +230,6 @@ export default function ChatBot() {
 
       {/* Bubble button */}
       <div className="fixed bottom-5 right-5 z-[200]" style={{ position: "fixed" }}>
-        {/* Online indicator */}
-        {!open && (
-          <div style={{
-            position: "absolute", top: 8, right: 8,
-            width: 7, height: 7, borderRadius: "50%",
-            background: "#22c55e",
-            border: "none",
-            zIndex: 1,
-            boxShadow: "0 0 5px #22c55e",
-          }} />
-        )}
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center justify-center gap-1.5 transition-opacity hover:opacity-80"
