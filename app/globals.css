@@ -22,9 +22,9 @@ html.light {
   --surface: #ffffff;
   --surface-2: #f5f5f7;
   --border: #e5e5ea;
-  --bg-gradient: radial-gradient(ellipse 70% 50% at 0% 0%, #fdefd4 0%, transparent 60%),
-                 radial-gradient(ellipse 60% 50% at 100% 0%, #ddd6f8 0%, transparent 60%),
-                 #f0eff8;
+  --bg-gradient: radial-gradient(ellipse 80% 60% at 0% 0%, #fde9b8 0%, transparent 55%),
+                 radial-gradient(ellipse 70% 60% at 100% 0%, #cfc7f5 0%, transparent 55%),
+                 #eeecf7;
   --primary: #007aff;
   --primary-hover: #0062cc;
   --primary-light: #3395ff;
