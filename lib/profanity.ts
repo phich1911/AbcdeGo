@@ -1,9 +1,23 @@
 const BLOCKED = [
-  // Thai profanity
-  "สัตว์", "ควาย", "หมา", "หน้าหี", "หี", "สวะ", "เหี้ย", "อีสัตว์", "อีควาย", "อีหมา",
-  "มึง", "กู", "เย็ด", "สัส", "แม่ง", "ไอ้สัตว์", "ไอ้ควาย", "ไอ้หมา", "ไอ้เหี้ย",
-  "หน้าหมา", "ชิบหาย", "ฉิบหาย", "บ้าหี", "อีดอก", "อีตัว", "หน้าตัวเมีย",
-  "เชี่ย", "ชาติชั่ว", "อีโง่", "ไอ้โง่", "ระยำ", "ตอแหล", "ไอ้ตอแหล",
+  // Thai profanity — stored as codepoints to avoid encoding issues
+  "เหี้ย", // เหี้ย
+  "หมา",             // หมา
+  "หน้าหี", // หน้าหี
+  "หี",                   // หี
+  "สัตว์", // สัตว์
+  "ควาย",       // ควาย
+  "สวะ",             // สวะ
+  "มึง",             // มึง
+  "กู",                   // กู
+  "เย็ด",       // เย็ด
+  "สัส",             // สัส
+  "แม่ง",       // แม่ง
+  "ชิบหาย", // ชิบหาย
+  "ฉิบหาย", // ฉิบหาย
+  "เชี่ย", // เชี่ย
+  "ระยำ",       // ระยำ
+  "ตอแหล", // ตอแหล
+  "อีดอก", // อีดอก
   // English profanity
   "fuck", "shit", "bitch", "asshole", "bastard", "dick", "pussy", "cunt",
   "cock", "whore", "slut", "nigger", "faggot", "retard",
@@ -11,7 +25,12 @@ const BLOCKED = [
   "admin", "moderator", "staff", "support", "abcdego",
 ];
 
+// Normalize: lowercase, strip spaces and zero-width chars
+function normalize(text: string): string {
+  return text.toLowerCase().replace(/[\s​‌‍﻿]/g, "");
+}
+
 export function containsProfanity(text: string): boolean {
-  const lower = text.toLowerCase().replace(/\s+/g, "");
-  return BLOCKED.some((word) => lower.includes(word.toLowerCase()));
+  const n = normalize(text);
+  return BLOCKED.some((word) => n.includes(normalize(word)));
 }
