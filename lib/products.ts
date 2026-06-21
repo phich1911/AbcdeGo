@@ -7,18 +7,20 @@ export interface Product {
   paddlePriceId: string | null; // null = coming soon
   questionCount: number;
   timeLimit: number; // minutes
+  examId?: string; // links to exam data in lib/exam-data/
 }
 
 export const PRODUCTS: Product[] = [
   {
     id: "mock-kp-1",
     title: "ข้อสอบจำลอง ก.พ. ชุดที่ 1",
-    description: "วิชาความสามารถทั่วไป 100 ข้อ จับเวลา 150 นาที เหมือนสอบจริงทุกอย่าง",
+    description: "ครบ 3 วิชา 100 ข้อ จับเวลา 180 นาที เหมือนสอบจริงทุกอย่าง",
     category: "ก.พ.",
     price: 299,
     paddlePriceId: null,
     questionCount: 100,
-    timeLimit: 150,
+    timeLimit: 180,
+    examId: "kp-mock-1",
   },
   {
     id: "mock-kp-2",
