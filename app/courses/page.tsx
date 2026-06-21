@@ -196,29 +196,30 @@ function CoursesInner() {
     );
   }
 
-  // Default — show all courses grouped by category
+  // Default — top-level category cards
   return (
     <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
       <div className="mb-5">
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>คอร์สทั้งหมด</h1>
-        <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{COURSES.length} คอร์ส — เลือกเรียนได้เลย</p>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>เลือกหมวดหมู่</h1>
+        <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกหมวดหมู่ที่คุณสนใจ แล้วเริ่มเรียนได้เลย</p>
       </div>
       <SearchBar query={query} setQuery={setQuery} />
-      {TOP_LEVEL.map((group) => {
-        const groupCourses = COURSES.filter((c) => group.cats.includes(c.category ?? ""));
-        if (groupCourses.length === 0) return null;
-        return (
-          <div key={group.slug} style={{ marginBottom: 32 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", margin: 0 }}>{group.label}</h2>
-              <Link href={`/courses?cat=${group.slug}`} style={{ fontSize: 12, color: "var(--primary)", textDecoration: "none" }}>ดูทั้งหมด →</Link>
-            </div>
-            <div className="grid md:grid-cols-2 gap-3">
-              {groupCourses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
-            </div>
-          </div>
-        );
-      })}
+      <div className="grid sm:grid-cols-3 gap-4">
+        {TOP_LEVEL.map((item) => {
+          const count = COURSES.filter((c) => item.cats.includes(c.category ?? "")).length;
+          return (
+            <Link key={item.slug} href={`/courses?cat=${item.slug}`}
+              className="card-lg flex flex-col gap-3 p-5" style={{ textDecoration: "none" }}>
+              <span className="badge" style={{ fontSize: 11, width: "fit-content" }}>{count} คอร์ส</span>
+              <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", margin: 0 }}>{item.label}</h2>
+              <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>{item.description}</p>
+              <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--primary)", fontWeight: 500 }}>
+                <span>ดูคอร์ส</span><span>→</span>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
     </main>
   );
 }
