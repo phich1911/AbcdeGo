@@ -13,7 +13,7 @@ function categoryKey(courseId: string) {
   return COURSES.find((c) => c.id === courseId)?.category ?? "";
 }
 
-const FALLBACKS = ["kp-general", "dsi-2547", "eng-grammar"];
+const FALLBACKS = ["kp-general", "kp-thai", "eng-grammar"];
 
 export async function getPopularCourseIds(): Promise<string[]> {
   try {

@@ -37,7 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 16px", marginBottom: 8 }}>
             {[
               { href: "/courses?cat=kp", label: "สอบ ก.พ." },
-              { href: "/courses?cat=dsi", label: "DSI" },
               { href: "/courses?cat=eng-m", label: "ภาษาอังกฤษ ม.ปลาย" },
               { href: "/courses?cat=math-m", label: "คณิตศาสตร์ ม.ปลาย" },
               { href: "/courses?cat=thai-m", label: "ภาษาไทย ม.ปลาย" },

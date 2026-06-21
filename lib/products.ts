@@ -37,16 +37,6 @@ export const PRODUCTS: Product[] = [
     questionCount: 100,
     timeLimit: 150,
   },
-  {
-    id: "mock-dsi-1",
-    title: "ข้อสอบจำลอง DSI ชุดที่ 1",
-    description: "กฎหมายและกระบวนการสืบสวน 100 ข้อ จับเวลา 120 นาที",
-    category: "DSI",
-    price: 299,
-    paddlePriceId: null,
-    questionCount: 100,
-    timeLimit: 120,
-  },
 ];
 
 // XP discount: every 500 XP = 10 THB off, max 50 THB

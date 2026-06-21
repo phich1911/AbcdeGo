@@ -9,7 +9,6 @@ import Fuse from "fuse.js";
 
 const SLUG_TO_CATEGORY: Record<string, string> = {
   kp: "สอบ ก.พ.",
-  dsi: "เจ้าหน้าที่คดีพิเศษ (DSI)",
   "eng-m": "ภาษาอังกฤษ ม.ปลาย",
   "math-m": "คณิตศาสตร์ ม.ปลาย",
   "thai-m": "ภาษาไทย ม.ปลาย",
@@ -17,7 +16,6 @@ const SLUG_TO_CATEGORY: Record<string, string> = {
 
 const CATEGORY_SLUGS: Record<string, string> = {
   "สอบ ก.พ.": "kp",
-  "เจ้าหน้าที่คดีพิเศษ (DSI)": "dsi",
   "ภาษาอังกฤษ ม.ปลาย": "eng-m",
   "คณิตศาสตร์ ม.ปลาย": "math-m",
   "ภาษาไทย ม.ปลาย": "thai-m",
@@ -25,7 +23,6 @@ const CATEGORY_SLUGS: Record<string, string> = {
 
 const CATEGORY_META: Record<string, { description: string }> = {
   "สอบ ก.พ.": { description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ." },
-  "เจ้าหน้าที่คดีพิเศษ (DSI)": { description: "กฎหมายและกระบวนการสอบสวนคดีพิเศษ กรมสอบสวนคดีพิเศษ" },
   "ภาษาอังกฤษ ม.ปลาย": { description: "ไวยากรณ์ การอ่าน คำศัพท์ บทสนทนา และการเขียน สำหรับระดับ ม.4–ม.6" },
   "คณิตศาสตร์ ม.ปลาย": { description: "จำนวนและพีชคณิต เรขาคณิต สถิติ และแคลคูลัส สำหรับระดับ ม.4–ม.6" },
   "ภาษาไทย ม.ปลาย": { description: "หลักการใช้ภาษา ทักษะการสื่อสาร และวรรณคดีวรรณกรรม สำหรับระดับ ม.4–ม.6" },
@@ -34,7 +31,6 @@ const CATEGORY_META: Record<string, { description: string }> = {
 // Top-level categories shown on /courses
 const TOP_LEVEL = [
   { slug: "kp", label: "สอบ ก.พ.", description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ.", cats: ["สอบ ก.พ."] },
-  { slug: "dsi", label: "เจ้าหน้าที่คดีพิเศษ (DSI)", description: "กฎหมายและกระบวนการสอบสวนคดีพิเศษ กรมสอบสวนคดีพิเศษ", cats: ["เจ้าหน้าที่คดีพิเศษ (DSI)"] },
   {
     slug: "mplatai", label: "มัธยมศึกษาตอนปลาย (ม.4–6)",
     description: "ภาษาอังกฤษ คณิตศาสตร์ และภาษาไทย สำหรับระดับ ม.4–ม.6",

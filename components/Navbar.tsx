@@ -19,7 +19,6 @@ const fuse = new Fuse(COURSES, {
 const A = "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64";
 const COURSE_GROUPS = [
   { label: "สอบ ก.พ.", slug: "kp", icon3d: `${A}/1f4dd.png` },
-  { label: "เจ้าหน้าที่คดีพิเศษ (DSI)", slug: "dsi", icon3d: `${A}/1f50e.png` },
   {
     label: "มัธยมศึกษาตอนปลาย (ม.4–6)", slug: "mplatai", icon3d: `${A}/1f393.png`,
     sub: [
