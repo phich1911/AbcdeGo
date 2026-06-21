@@ -35,6 +35,28 @@ function getStoredSession(): { access_token?: string; user?: User } | null {
   }
 }
 
+export async function getLearnerCount(): Promise<number> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/leaderboard?select=name&limit=1`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
+          Prefer: "count=exact",
+          Range: "0-0",
+        },
+        next: { revalidate: 3600 },
+      }
+    );
+    const range = res.headers.get("content-range"); // e.g. "0-0/42"
+    const total = range ? parseInt(range.split("/")[1]) : 0;
+    return isNaN(total) ? 0 : total;
+  } catch {
+    return 0;
+  }
+}
+
 export async function getLeaderboard(limit = 10) {
   // Direct REST fetch — supabase-js client queries can hang on auth locks
   let data: { name: string; xp: number; avatar: string | null }[] = [];

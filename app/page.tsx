@@ -2,6 +2,7 @@ import Link from "next/link";
 import SiteStatsWrapper from "@/components/SiteStatsWrapper";
 import { COURSES } from "@/lib/data";
 import { getPopularCourseIds } from "@/lib/popular-courses";
+import { getLearnerCount } from "@/lib/supabase";
 
 const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
 const totalXp = COURSES.reduce((s, c) => s + c.xpReward, 0);
@@ -14,7 +15,10 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const popularIds = await getPopularCourseIds();
+  const [popularIds, learnerCount] = await Promise.all([
+    getPopularCourseIds(),
+    getLearnerCount(),
+  ]);
   return (
     <>
       <main className="flex-1" style={{ paddingTop: 48 }}>
@@ -56,6 +60,7 @@ export default async function Home() {
             {/* Stats row */}
             <div className="flex gap-6 mt-10 flex-wrap">
               {[
+                { num: `${learnerCount > 0 ? learnerCount.toLocaleString() : "—"}+`, label: "ผู้เรียน" },
                 { num: String(COURSES.length), label: "วิชา" },
                 { num: String(totalLessons), label: "บทเรียน" },
                 { num: `${totalXp.toLocaleString()}+`, label: "XP รวม" },
