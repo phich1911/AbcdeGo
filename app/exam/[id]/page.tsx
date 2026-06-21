@@ -398,7 +398,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       {/* Top bar */}
       <div style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        position: "fixed", top: 60, left: 0, right: 0, zIndex: 90,
         background: "var(--bg)", borderBottom: "1px solid var(--border)",
         padding: "10px 16px", display: "flex", alignItems: "center", gap: 12,
       }}>
@@ -451,7 +451,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
       </div>
 
       {/* Question area */}
-      <main style={{ maxWidth: 720, margin: "0 auto", padding: "80px 16px 120px", flex: 1 }}>
+      <main style={{ maxWidth: 720, margin: "0 auto", padding: "130px 16px 120px", flex: 1 }}>
         <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8 }}>
           {currentSection?.shortTitle} · ข้อ {questionIdx + 1} จาก {currentSection?.questions.length}
         </p>
