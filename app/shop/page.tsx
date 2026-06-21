@@ -146,6 +146,17 @@ export default function ShopPage() {
 
               <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)", lineHeight: 1.6 }}>{product.description}</p>
 
+              {product.highlights && (
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 4 }}>
+                  {product.highlights.map((h) => (
+                    <li key={h} style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", gap: 6, alignItems: "flex-start" }}>
+                      <span style={{ color: "var(--accent-green)", fontWeight: 700, flexShrink: 0 }}>✓</span>
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
               <div style={{ display: "flex", gap: 16 }}>
                 <div style={{ textAlign: "center" }}>
                   <p style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{product.questionCount}</p>

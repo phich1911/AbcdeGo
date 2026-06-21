@@ -2,6 +2,7 @@ export interface Product {
   id: string;
   title: string;
   description: string;
+  highlights?: string[];
   category: string;
   price: number; // THB
   paddlePriceId: string | null; // null = coming soon
@@ -21,6 +22,10 @@ export const PRODUCTS: Product[] = [
     questionCount: 100,
     timeLimit: 180,
     examId: "kp-mock-1",
+    highlights: [
+      "วิชาที่ 1: 50 ข้อ ผ่าน 60% · วิชาที่ 2: 25 ข้อ ผ่าน 50% · วิชาที่ 3: 25 ข้อ ผ่าน 60%",
+      "ทำเรียงตามลำดับ ปลดล็อคทีละวิชา จนครบได้ XP",
+    ],
   },
   {
     id: "mock-kp-2",
