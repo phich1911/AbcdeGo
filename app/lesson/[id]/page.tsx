@@ -164,6 +164,12 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   if (done) {
     return (
       <>
+        {authOpen && (
+          <AuthModal
+            onClose={() => setAuthOpen(false)}
+            onSuccess={(email) => { setUser({ email } as User); setAuthOpen(false); }}
+          />
+        )}
         <div className="flex flex-col items-center justify-center min-h-[80vh] px-6 text-center">
           <div className="animate-bounce-in">
             <div className="mb-6 flex justify-center"><PartyPopper size={64} style={{ color: "var(--accent)" }} /></div>
@@ -177,6 +183,29 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             >
               <Zap size={20} fill="currentColor" /> +{earnedXp} XP {earnedXp < lesson.xpReward && <span style={{ fontSize: "0.7em", opacity: 0.6 }}>/ {lesson.xpReward} XP</span>}
             </div>
+
+            {/* XP save prompt — guest only */}
+            {!user && earnedXp > 0 && (
+              <div
+                className="mb-6 mx-auto max-w-xs rounded-2xl p-4 text-left"
+                style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)" }}
+              >
+                <p className="font-bold text-sm mb-1" style={{ color: "var(--accent)" }}>
+                  ⚡ XP ของคุณกำลังจะหาย!
+                </p>
+                <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>
+                  สมัครฟรีเพื่อบันทึก {earnedXp} XP และขึ้นตารางผู้นำ
+                </p>
+                <button
+                  onClick={() => setAuthOpen(true)}
+                  className="w-full py-2 rounded-full font-bold text-sm text-white"
+                  style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+                >
+                  บันทึก XP + ขึ้น Leaderboard →
+                </button>
+              </div>
+            )}
+
             <div className="flex flex-col items-center gap-3 mt-4 w-full max-w-xs mx-auto">
               {nextLesson && (
                 <button
