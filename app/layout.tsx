@@ -1,11 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Prompt } from "next/font/google";
+import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import ChatBot from "@/components/ChatBot";
 import Navbar from "@/components/Navbar";
 import { Analytics } from "@vercel/analytics/next";
 
-const prompt = Prompt({ subsets: ["latin", "thai"], weight: ["300", "400", "500", "600", "700", "800", "900"] });
+const notoSansThai = Noto_Sans_Thai({
+  subsets: ["thai", "latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "AbcdeGo — Learn. Play. Level Up.",
@@ -24,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.classList.remove('light')}else{document.documentElement.classList.add('light')}})()` }} />
       </head>
-      <body className={`${prompt.className} min-h-full flex flex-col`}>
+      <body className={`${notoSansThai.className} min-h-full flex flex-col`}>
 <Navbar />
         <div className="relative z-10 flex flex-col flex-1">
           {children}
