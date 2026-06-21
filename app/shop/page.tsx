@@ -34,10 +34,24 @@ export default function ShopPage() {
     getSession().then((s) => setUser(s?.user ?? null)).catch(() => {});
   }, []);
 
-  function openPaddleCheckout(priceId: string, email: string) {
+  async function openPaddleCheckout(priceId: string, email: string) {
+    let discountCode: string | null = null;
+    if (xp >= 500) {
+      try {
+        const res = await fetch("/api/create-discount", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ xp }),
+        });
+        const data = await res.json();
+        discountCode = data.discountCode ?? null;
+      } catch {}
+    }
+
     window.Paddle?.Checkout.open({
       items: [{ priceId, quantity: 1 }],
       customer: { email },
+      ...(discountCode ? { discountCode } : {}),
     });
   }
 
