@@ -106,7 +106,6 @@ export default function TarotPage() {
 
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div style={{ fontSize: 13, marginBottom: 8, color: "var(--text-muted)", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}><Sparkles size={14} /> ไพ่ยิปซี</div>
             <h1 style={{ fontSize: "clamp(28px,5vw,44px)", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" }}>
               ✦ ดูดวงไพ่ยิปซี
             </h1>
