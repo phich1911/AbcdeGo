@@ -108,18 +108,11 @@ export async function syncLeaderboard(xp: number, oldName?: string) {
   };
 
   try {
-    // Remove this user's previous entries (current + any old display name), then insert the latest.
-    const names = Array.from(new Set([name, oldName].filter(Boolean))) as string[];
-    for (const n of names) {
-      await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?name=eq.${encodeURIComponent(n)}`, {
-        method: "DELETE",
-        headers,
-      });
-    }
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard`, {
+    // Upsert by user_id — no more duplicates across devices
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=user_id`, {
       method: "POST",
-      headers: { ...headers, Prefer: "return=minimal" },
-      body: JSON.stringify({ name, xp, avatar }),
+      headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
+      body: JSON.stringify({ user_id: user.id, name, xp, avatar }),
     });
     if (!res.ok) return { error: `HTTP ${res.status}: ${await res.text()}` };
     return { ok: true };

@@ -27,21 +27,11 @@ export async function POST(req: NextRequest) {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
-  const previousNames: string[] = user.user_metadata?.previous_names ?? [];
-  const allNames = Array.from(new Set([name, oldName, ...previousNames].filter(Boolean)));
-
-  for (const n of allNames) {
-    await admin.from("leaderboard").delete().eq("name", n);
-  }
-
-  if (oldName && oldName !== name) {
-    const updatedHistory = Array.from(new Set([oldName, ...previousNames]));
-    await admin.auth.admin.updateUserById(user.id, {
-      user_metadata: { ...user.user_metadata, previous_names: updatedHistory },
-    });
-  }
-
-  const { error: insErr } = await admin.from("leaderboard").insert({ name, xp, avatar: avatar ?? null });
+  // Upsert by user_id — prevents duplicates across devices/name changes
+  const { error: insErr } = await admin.from("leaderboard").upsert(
+    { user_id: user.id, name, xp, avatar: avatar ?? null },
+    { onConflict: "user_id" }
+  );
   if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });
