@@ -50,6 +50,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const [submitted, setSubmitted] = useState(false);
   const [passedSections, setPassedSections] = useState<number[]>([]);
   const [lockedAnswers, setLockedAnswers] = useState<Record<number, boolean>>({});
+  const [timedOut, setTimedOut] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -76,6 +77,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         setTimeLeft((t) => {
           if (t <= 1) {
             clearInterval(timerRef.current!);
+            setTimedOut(true);
             handleSubmit();
             return 0;
           }
@@ -108,6 +110,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     setSectionIdx(0);
     setQuestionIdx(0);
     setSubmitted(false);
+    setTimedOut(false);
     const secs =
       selectedMode === "full"
         ? exam.totalTime * 60
@@ -356,15 +359,27 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     return (
       <main style={{ maxWidth: 760, margin: "0 auto", padding: "80px 16px 48px" }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ fontSize: 56, marginBottom: 12 }}>{allPassed ? "🎉" : "📊"}</div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px", color: allPassed ? "var(--accent-green)" : "var(--text)" }}>
-            {allPassed ? (isFullMode ? "ผ่านการสอบ!" : "ผ่านวิชานี้!") : "ยังไม่ผ่านในครั้งนี้"}
+          <div style={{ fontSize: 56, marginBottom: 12 }}>{allPassed ? "🎉" : timedOut ? "⏰" : "❌"}</div>
+          <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px", color: allPassed ? "var(--accent-green)" : "#ff3b30" }}>
+            {allPassed ? (isFullMode ? "ผ่านการสอบ!" : "ผ่านวิชานี้!") : timedOut ? "หมดเวลา!" : "ไม่ผ่านเกณฑ์"}
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>
             ตอบแล้ว {answeredCount}/{totalQ} ข้อ
             {!isFullMode && ` · ${activeSections[0].title}`}
           </p>
         </div>
+
+        {/* Full mode fail alert */}
+        {isFullMode && !allPassed && (
+          <div className="card" style={{ padding: 20, marginBottom: 20, background: "rgba(255,59,48,0.05)", borderColor: "rgba(255,59,48,0.3)", textAlign: "center" }}>
+            <p style={{ margin: "0 0 6px", fontWeight: 800, fontSize: 16, color: "#ff3b30" }}>
+              {timedOut ? "⏰ หมดเวลาก่อนทำครบ" : "❌ ยังไม่ผ่านเกณฑ์บางวิชา"}
+            </p>
+            <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
+              ต้องผ่านทุกวิชาตามเกณฑ์และทันเวลา — กดสอบใหม่อีกครั้งได้เลย
+            </p>
+          </div>
+        )}
 
         {allPassed && isFullMode && (
           <div className="card" style={{ padding: 20, marginBottom: 20, textAlign: "center", background: "rgba(52,199,89,0.06)", borderColor: "rgba(52,199,89,0.3)" }}>
