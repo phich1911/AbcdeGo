@@ -47,6 +47,8 @@ export default function Navbar() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [nameModalOpen, setNameModalOpen] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -351,6 +353,14 @@ export default function Navbar() {
                         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; (e.currentTarget as HTMLElement).style.transform = ""; }}>
                         ออกจากระบบ
                       </button>
+                      <button
+                        onClick={() => { setUserMenuOpen(false); setDeleteConfirmOpen(true); }}
+                        className="w-full text-left px-3 py-2 text-xs cursor-pointer"
+                        style={{ color: "var(--text-subtle)", transition: "background 0.1s" }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(255,123,114,0.06)"; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
+                        ลบบัญชี
+                      </button>
                       <div style={{ height: 1, background: "var(--border)" }} />
                       <Link href="/privacy" onClick={() => setUserMenuOpen(false)}
                         className="flex items-center px-3 py-2 text-xs cursor-pointer"
@@ -431,6 +441,7 @@ export default function Navbar() {
                 </div>
                 <button onClick={() => { setMenuOpen(false); setEditProfileOpen(true); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--text-muted)" }}>แก้ไขโปรไฟล์</button>
                 <button onClick={async () => { await signOut(); setMenuOpen(false); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--accent-red)" }}>ออกจากระบบ</button>
+                <button onClick={() => { setMenuOpen(false); setDeleteConfirmOpen(true); }} className="px-2 py-2 text-xs text-left hover:bg-white/5 rounded" style={{ color: "var(--text-subtle)" }}>ลบบัญชี</button>
               </div>
             ) : (
               <button onClick={() => { setMenuOpen(false); setAuthOpen(true); }}
@@ -514,6 +525,55 @@ export default function Navbar() {
           onDone={(name) => { setDisplayName(name); setAvatar(getAvatar()); setEditProfileOpen(false); }}
           onClose={() => setEditProfileOpen(false)}
         />
+      )}
+
+      {deleteConfirmOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center px-4"
+          style={{ background: "rgba(1,4,9,0.8)", backdropFilter: "blur(4px)" }}>
+          <div className="w-full max-w-sm rounded-2xl p-6 flex flex-col gap-4"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+            <h2 className="text-lg font-black">ลบบัญชีผู้ใช้</h2>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              การลบบัญชีจะลบข้อมูลทั้งหมดของคุณออกจากระบบ ได้แก่ XP ความก้าวหน้า และคะแนนเกม <strong style={{ color: "var(--accent-red)" }}>ไม่สามารถกู้คืนได้</strong>
+            </p>
+            <div className="flex gap-3 mt-2">
+              <button
+                onClick={() => setDeleteConfirmOpen(false)}
+                disabled={deleteLoading}
+                className="flex-1 px-4 py-2.5 rounded-full font-bold text-sm"
+                style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+              >
+                ยกเลิก
+              </button>
+              <button
+                disabled={deleteLoading}
+                onClick={async () => {
+                  setDeleteLoading(true);
+                  try {
+                    const session = await import("@/lib/supabase").then(m => m.getSession());
+                    const user_id = session?.user?.id;
+                    if (!user_id) return;
+                    const res = await fetch("/api/delete-account", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ user_id }),
+                    });
+                    if (res.ok) {
+                      await signOut();
+                      window.location.href = "/";
+                    }
+                  } finally {
+                    setDeleteLoading(false);
+                  }
+                }}
+                className="flex-1 px-4 py-2.5 rounded-full font-bold text-sm text-white"
+                style={{ background: deleteLoading ? "var(--text-subtle)" : "var(--accent-red)" }}
+              >
+                {deleteLoading ? "กำลังลบ..." : "ลบบัญชี"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
