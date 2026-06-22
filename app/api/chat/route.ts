@@ -40,8 +40,23 @@ function callProvider(url: string, key: string, model: string, messages: unknown
 const REST_MESSAGE =
   "ขออภัยครับ วันนี้มีคนใช้งานผมเยอะมาก ระบบประมวลผล AI เต็มชั่วคราว ผมขอตัวไปพักผ่อนก่อนนะครับ แล้วจะกลับมาคุยกันใหม่ในวันพรุ่งนี้";
 
+const LIMIT_GUEST = 5;
+const LIMIT_USER = 20;
+
 export async function POST(req: NextRequest) {
   const { messages, user } = await req.json();
+
+  // Count user messages in this session
+  const userMsgCount = (messages as { role: string }[]).filter((m) => m.role === "user").length;
+  const limit = user ? LIMIT_USER : LIMIT_GUEST;
+
+  if (userMsgCount > limit) {
+    const hint = user
+      ? "คุณใช้ JarnGo ครบ 20 ข้อความแล้ววันนี้ครับ เริ่มบทสนทนาใหม่พรุ่งนี้ได้เลย 😊"
+      : "คุณใช้ JarnGo ครบ 5 ข้อความแล้วครับ สมัครสมาชิกฟรีเพื่อใช้ได้ถึง 20 ข้อความต่อวัน 🎉";
+    return NextResponse.json({ exhausted: true, message: hint }, { status: 429 });
+  }
+
   const fullMessages = [{ role: "system", content: buildSystemPrompt(user ?? null) }, ...messages];
 
   // 1) Primary: Groq
