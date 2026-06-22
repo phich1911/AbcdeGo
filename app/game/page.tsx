@@ -7,6 +7,8 @@ import { Trophy } from "lucide-react";
 
 type ScoreEntry = { display_name: string; score: number };
 
+const GM_NAMES = new Set(["JACKPHICH", "Elon Musk"]);
+
 const GAMES = [
   {
     href: "/game/wordle",
@@ -103,7 +105,10 @@ export default function GamePage() {
                         <span style={{ fontSize: 13, width: 20, textAlign: "center", flexShrink: 0 }}>
                           {MEDALS[i] ?? <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700 }}>{i + 1}.</span>}
                         </span>
-                        <span className="flex-1 text-xs font-semibold truncate" style={{ color: "var(--text)" }}>{entry.display_name}</span>
+                        <span className="flex-1 text-xs font-semibold truncate" style={{ color: "var(--text)" }}>
+                          {entry.display_name}
+                          {GM_NAMES.has(entry.display_name) && <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 800, color: "#38bdf8", textShadow: "0 0 8px #38bdf8, 0 0 16px #7dd3fc" }}>[GM]</span>}
+                        </span>
                         <span className="text-xs font-bold" style={{ color: "var(--accent)" }}>{entry.score.toLocaleString()} pts</span>
                       </div>
                     ))}
