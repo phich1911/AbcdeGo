@@ -33,7 +33,7 @@ export default function DashboardPage() {
   const [courseProgresses, setCourseProgresses] = useState<number[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [syncDone, setSyncDone] = useState(false);
-  const [syncDebug, setSyncDebug] = useState<string | null>(null);
+  const [syncDebug, setSyncDebug] = useState<string>("loading...");
 
   useEffect(() => {
     const p = getProgress();
@@ -42,22 +42,28 @@ export default function DashboardPage() {
     setCompletedCount(p.completedLessons.length);
     setCourseProgresses(COURSES.map((c) => getCourseProgress(c.id, c.totalLessons)));
     (async () => {
-      const session = await getSession();
-      const u = session?.user ?? null;
-      setUser(u);
-      if (!u) { setSyncDebug("no user session"); return; }
-      await syncProgressFromCloud();
-      const p2 = getProgress();
-      setXp(p2.xp);
-      setStreak(p2.streak);
-      setCompletedCount(p2.completedLessons.length);
-      setCourseProgresses(COURSES.map((c) => getCourseProgress(c.id, c.totalLessons)));
-      if (p2.xp > 0) {
-        const res = await syncLeaderboard(p2.xp);
-        setSyncDebug(JSON.stringify(res));
-        if (res?.ok) setSyncDone(true);
-      } else {
-        setSyncDebug("xp=0, skip");
+      try {
+        const session = await getSession();
+        const u = session?.user ?? null;
+        setUser(u);
+        if (!u) { setSyncDebug("no user session"); return; }
+        setSyncDebug("syncing cloud...");
+        await syncProgressFromCloud();
+        const p2 = getProgress();
+        setXp(p2.xp);
+        setStreak(p2.streak);
+        setCompletedCount(p2.completedLessons.length);
+        setCourseProgresses(COURSES.map((c) => getCourseProgress(c.id, c.totalLessons)));
+        setSyncDebug(`xp=${p2.xp}, calling syncLeaderboard...`);
+        if (p2.xp > 0) {
+          const res = await syncLeaderboard(p2.xp);
+          setSyncDebug(JSON.stringify(res));
+          if (res?.ok) setSyncDone(true);
+        } else {
+          setSyncDebug("xp=0, skip");
+        }
+      } catch (e) {
+        setSyncDebug("CATCH: " + String(e));
       }
     })();
   }, []);
