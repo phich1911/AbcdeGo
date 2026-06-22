@@ -27,16 +27,6 @@ export const PRODUCTS: Product[] = [
       "ทำเรียงตามลำดับ ปลดล็อคทีละวิชา จนครบได้ XP",
     ],
   },
-  {
-    id: "mock-kp-2",
-    title: "ข้อสอบจำลอง ก.พ. ชุดที่ 2",
-    description: "วิชาภาษาไทย 100 ข้อ จับเวลา 150 นาที",
-    category: "ก.พ.",
-    price: 299,
-    paddlePriceId: null,
-    questionCount: 100,
-    timeLimit: 150,
-  },
 ];
 
 // XP discount: every 500 XP = 10 THB off, max 50 THB
