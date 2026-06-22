@@ -57,6 +57,19 @@ export async function getLearnerCount(): Promise<number> {
   }
 }
 
+export async function getTotalLearners(): Promise<number> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/leaderboard?select=name`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, Prefer: "count=exact", "Range-Unit": "items", Range: "0-0" } }
+    );
+    const count = res.headers.get("content-range")?.split("/")[1];
+    return count ? parseInt(count) : 0;
+  } catch {
+    return 0;
+  }
+}
+
 export async function getLeaderboard(limit = 10) {
   // Direct REST fetch — supabase-js client queries can hang on auth locks
   let data: { name: string; xp: number; avatar: string | null }[] = [];

@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLeaderboard } from "@/lib/supabase";
+import { getLeaderboard, getTotalLearners } from "@/lib/supabase";
 import { AVATARS } from "@/lib/avatar";
-import { Trophy, Zap } from "lucide-react";
+import { Trophy, Zap, Users } from "lucide-react";
 
 type Entry = { name: string; xp: number; avatar: string | null };
 
@@ -17,11 +17,14 @@ const MEDALS = [
 
 export default function SiteStats() {
   const [board, setBoard] = useState<Entry[]>([]);
+  const [totalLearners, setTotalLearners] = useState<number>(0);
 
   useEffect(() => {
-    const load = () => getLeaderboard(10).then(setBoard).catch(() => setBoard([]));
+    const load = () => {
+      getLeaderboard(10).then(setBoard).catch(() => setBoard([]));
+      getTotalLearners().then(setTotalLearners).catch(() => {});
+    };
     load();
-    // Re-fetch after the Navbar's leaderboard sync has had time to complete
     const t = setTimeout(load, 2500);
     return () => clearTimeout(t);
   }, []);
@@ -29,6 +32,16 @@ export default function SiteStats() {
   return (
     <section className="px-6 py-16" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
       <div className="max-w-2xl mx-auto">
+        {/* Total learners */}
+        {totalLearners > 0 && (
+          <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-2xl" style={{ background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.15)" }}>
+            <Users size={18} style={{ color: "var(--primary)", flexShrink: 0 }} />
+            <span style={{ fontSize: 14, color: "var(--text-muted)" }}>
+              มีผู้เรียนทั้งหมด <strong style={{ color: "var(--primary)", fontSize: 16 }}>{totalLearners.toLocaleString()}</strong> คนแล้ว
+            </span>
+          </div>
+        )}
+
         {/* Leaderboard */}
         <div className="glass rounded-2xl p-6">
           <h3 className="font-black text-lg mb-4 flex items-center gap-2">
