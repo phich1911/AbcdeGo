@@ -8,6 +8,8 @@ type Message = { from: "user" | "bot"; text: string };
 
 const LIMIT_LOGGED_IN = 15;
 const LIMIT_GUEST = 5;
+const CHAT_HISTORY_KEY = "jarnego_chat_history";
+const MAX_STORED = 40; // max messages to store
 
 function quotaKey() {
   return `chatairrok_count_${new Date().toISOString().slice(0, 10)}`;
@@ -21,14 +23,43 @@ function bumpUsed() {
   localStorage.setItem(quotaKey(), String(getUsed() + 1));
 }
 
+const WELCOME: Message = { from: "bot", text: "สงสัยอะไรถามได้เลยครับ อาจารย์โกพร้อมช่วยตลอด 24 ชม." };
+
+function loadHistory(): Message[] {
+  if (typeof window === "undefined") return [WELCOME];
+  try {
+    const raw = localStorage.getItem(CHAT_HISTORY_KEY);
+    if (!raw) return [WELCOME];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : [WELCOME];
+  } catch {
+    return [WELCOME];
+  }
+}
+
+function saveHistory(msgs: Message[]) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(msgs.slice(-MAX_STORED)));
+  } catch {}
+}
+
 export default function ChatBot() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { from: "bot", text: "สงสัยอะไรถามได้เลยครับ อาจารย์โกพร้อมช่วยตลอด 24 ชม." },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([WELCOME]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Load history on mount
+  useEffect(() => {
+    setMessages(loadHistory());
+  }, []);
+
+  // Save history whenever messages change
+  useEffect(() => {
+    saveHistory(messages);
+  }, [messages]);
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
