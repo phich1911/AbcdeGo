@@ -46,6 +46,7 @@ export default function SiteStats() {
         <div className="glass rounded-2xl p-6">
           <h3 className="font-black text-lg mb-4 flex items-center gap-2">
             <Trophy size={18} style={{ color: "var(--accent)" }} /> <span>ผู้นำตาราง XP</span>
+            <span style={{ marginLeft: "auto", fontSize: 11, fontWeight: 500, color: "var(--text-muted)" }}>Top 10</span>
           </h3>
           {board.length === 0 ? (
             <p className="text-sm text-center py-6" style={{ color: "var(--text-muted)" }}>ยังไม่มีข้อมูล — เป็นคนแรกได้เลย!</p>
