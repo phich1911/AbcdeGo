@@ -33,6 +33,7 @@ export default function DashboardPage() {
   const [courseProgresses, setCourseProgresses] = useState<number[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [syncDone, setSyncDone] = useState(false);
+  const [syncDebug, setSyncDebug] = useState<string | null>(null);
 
   useEffect(() => {
     const p = getProgress();
@@ -44,7 +45,7 @@ export default function DashboardPage() {
       const session = await getSession();
       const u = session?.user ?? null;
       setUser(u);
-      if (!u) return;
+      if (!u) { setSyncDebug("no user session"); return; }
       await syncProgressFromCloud();
       const p2 = getProgress();
       setXp(p2.xp);
@@ -53,7 +54,10 @@ export default function DashboardPage() {
       setCourseProgresses(COURSES.map((c) => getCourseProgress(c.id, c.totalLessons)));
       if (p2.xp > 0) {
         const res = await syncLeaderboard(p2.xp);
+        setSyncDebug(JSON.stringify(res));
         if (res?.ok) setSyncDone(true);
+      } else {
+        setSyncDebug("xp=0, skip");
       }
     })();
   }, []);
@@ -71,6 +75,7 @@ export default function DashboardPage() {
   return (
     <>
       <main className="max-w-4xl mx-auto px-6 pt-28 pb-12">
+        {syncDebug && <div style={{ background: "#1e293b", color: "#f1f5f9", fontSize: 12, padding: "8px 12px", borderRadius: 8, marginBottom: 12, wordBreak: "break-all" }}>🔧 sync: {syncDebug}</div>}
         <h1 className="text-2xl md:text-4xl font-black mb-2">ความก้าวหน้าของคุณ</h1>
         <p style={{ color: "var(--text-muted)" }} className="mb-10">
           ทุกบทเรียนที่เรียนจะบันทึกไว้ที่นี่
