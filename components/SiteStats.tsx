@@ -17,7 +17,7 @@ export default function SiteStats() {
   const [board, setBoard] = useState<Entry[]>([]);
 
   useEffect(() => {
-    const load = () => getLeaderboard(5).then(setBoard).catch(() => setBoard([]));
+    const load = () => getLeaderboard(10).then(setBoard).catch(() => setBoard([]));
     load();
     // Re-fetch after the Navbar's leaderboard sync has had time to complete
     const t = setTimeout(load, 2500);
