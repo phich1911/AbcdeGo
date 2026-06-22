@@ -83,7 +83,7 @@ export default function Navbar() {
         const currentXp = getProgress().xp;
         setXp(currentXp);
         // Guaranteed leaderboard sync on every page load when logged in
-        if (currentXp > 0) syncLeaderboard(currentXp);
+        if (currentXp > 0) syncLeaderboard(currentXp).then((r) => { if (r?.ok) window.dispatchEvent(new Event("leaderboard-updated")); });
       }
     });
 
@@ -97,7 +97,7 @@ export default function Navbar() {
         await pushProgressToCloud();
         const currentXp = getProgress().xp;
         setXp(currentXp);
-        if (currentXp > 0) syncLeaderboard(currentXp);
+        if (currentXp > 0) syncLeaderboard(currentXp).then((r) => { if (r?.ok) window.dispatchEvent(new Event("leaderboard-updated")); });
         if (!user.user_metadata?.display_name) {
           const provider = user.app_metadata?.provider;
           if (provider === "google" || provider === "facebook") {
