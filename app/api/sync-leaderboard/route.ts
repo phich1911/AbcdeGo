@@ -15,17 +15,15 @@ export async function POST(req: NextRequest) {
   if (!name || xp == null) return NextResponse.json({ error: "missing fields" }, { status: 400 });
 
   const auth = req.headers.get("authorization");
-  if (!auth) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-
-  const userClient = createClient(SUPABASE_URL, ANON_KEY, {
-    global: { headers: { Authorization: auth } },
-  });
-  const { data: { user }, error: authErr } = await userClient.auth.getUser();
-  if (!user) return NextResponse.json({ error: "unauthorized", detail: authErr?.message }, { status: 401 });
+  const token = auth?.replace("Bearer ", "").trim();
+  if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
+
+  const { data: { user }, error: authErr } = await admin.auth.getUser(token);
+  if (!user) return NextResponse.json({ error: "unauthorized", detail: authErr?.message }, { status: 401 });
 
   // Upsert by user_id — prevents duplicates across devices/name changes
   const { error: insErr } = await admin.from("leaderboard").upsert(
