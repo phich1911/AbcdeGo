@@ -36,6 +36,12 @@ const KP_SETS = [
     description: "ความรู้ทั่วไป ภาษาอังกฤษ และความรู้และลักษณะการเป็นข้าราชการที่ดี",
     cats: ["สอบ ก.พ."],
   },
+  {
+    slug: "2",
+    label: "ชุดที่ 2",
+    description: "เมทริกซ์ อุปมาอุปไมย ภาษาอังกฤษขั้นสูง PDPA และกฎหมายปกครองเพิ่มเติม",
+    cats: ["สอบ ก.พ."],
+  },
 ];
 
 // Top-level categories shown on /courses
@@ -171,7 +177,7 @@ function CoursesInner() {
 
   // ก.พ. set view — show courses inside a set
   if (catSlug === "kp" && setSlug !== null) {
-    const courses = COURSES.filter((c) => c.category === "สอบ ก.พ.");
+    const courses = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(setSlug));
     return (
       <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
         <div className="flex items-center justify-between mb-5">
@@ -209,7 +215,7 @@ function CoursesInner() {
         <SearchBar query={query} setQuery={setQuery} />
         <div className="grid sm:grid-cols-2 gap-4">
           {KP_SETS.map((set) => {
-            const count = COURSES.filter((c) => c.category === "สอบ ก.พ.").length;
+            const count = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(set.slug)).length;
             return (
               <Link key={set.slug} href={`/courses?cat=kp&set=${set.slug}`}
                 className="card-lg flex flex-col gap-3 p-5" style={{ textDecoration: "none" }}>
