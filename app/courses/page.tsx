@@ -200,6 +200,12 @@ function CoursesInner() {
           </div>
           <Link href="/courses" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← หมวดหมู่</Link>
         </div>
+        <details className="card-lg mb-5" style={{ padding: "14px 18px" }} open>
+          <summary style={{ cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text)", listStyle: "none" }}>
+            📋 เกี่ยวกับการสอบ ก.พ.
+          </summary>
+          <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, whiteSpace: "pre-line", marginTop: 12 }}>{COURSES.find((c) => c.category === "สอบ ก.พ.")?.intro}</p>
+        </details>
         <SearchBar query={query} setQuery={setQuery} />
         <div className="grid sm:grid-cols-2 gap-4">
           {KP_SETS.map((set) => {
