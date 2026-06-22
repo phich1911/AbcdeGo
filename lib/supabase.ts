@@ -102,10 +102,9 @@ export async function submitScore(name: string, xp: number) {
 
 export async function syncLeaderboard(xp: number, oldName?: string) {
   if (xp <= 0) return { error: "xp=0" };
-  // Read session straight from localStorage — supabase-js getSession()/queries can hang on auth locks
   const session = getStoredSession();
   const user = session?.user;
-  if (!user) return { error: "no session" };
+  if (!user || !session?.access_token) return { error: "no session" };
   const name =
     user.user_metadata?.display_name ||
     user.user_metadata?.full_name ||
@@ -113,19 +112,11 @@ export async function syncLeaderboard(xp: number, oldName?: string) {
     user.email?.split("@")[0] ||
     "ผู้ใช้";
   const avatar = typeof window !== "undefined" ? (localStorage.getItem("user_avatar") ?? null) : null;
-
-  const headers: Record<string, string> = {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${session?.access_token ?? SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-  };
-
   try {
-    // Upsert by user_id — no more duplicates across devices
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?on_conflict=user_id`, {
+    const res = await fetch("/api/sync-leaderboard", {
       method: "POST",
-      headers: { ...headers, Prefer: "resolution=merge-duplicates,return=minimal" },
-      body: JSON.stringify({ user_id: user.id, name, xp, avatar }),
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify({ name, xp, avatar, oldName }),
     });
     if (!res.ok) return { error: `HTTP ${res.status}: ${await res.text()}` };
     return { ok: true };
