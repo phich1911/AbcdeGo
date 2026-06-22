@@ -171,7 +171,11 @@ export default function WordlePage() {
       setTimeout(() => {
         setGameState("won");
         setLastGain(gain);
-        setScore(s => s + gain);
+        setScore(s => {
+          const newScore = s + gain;
+          saveGameScore("wordle", newScore).then(() => getTopGameScore("wordle").then(setTopScore));
+          return newScore;
+        });
         setStreak(s => s + 1);
         // Auto-advance to a new word — keep the run going
         setTimeout(() => {
