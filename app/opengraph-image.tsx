@@ -12,7 +12,7 @@ export default function OGImage() {
         style={{
           width: 1200,
           height: 630,
-          background: "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%)",
+          background: "linear-gradient(135deg, #fde9b8 0%, #eeecf7 50%, #cfc7f5 100%)",
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-start",
@@ -26,7 +26,7 @@ export default function OGImage() {
         <div style={{
           position: "absolute", top: -100, right: -100,
           width: 500, height: 500, borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%)",
         }} />
         <div style={{
           position: "absolute", bottom: -80, left: 200,
@@ -45,14 +45,14 @@ export default function OGImage() {
 
         {/* Main heading */}
         <div style={{ display: "flex", gap: 20, marginBottom: 20, lineHeight: 1.1 }}>
-          <span style={{ fontSize: 80, fontWeight: 800, color: "#e6edf3" }}>เรียน</span>
+          <span style={{ fontSize: 80, fontWeight: 800, color: "#1d1d1f" }}>เรียน</span>
           <span style={{ fontSize: 80, fontWeight: 800, background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", backgroundClip: "text", color: "transparent" }}>เล่น</span>
           <span style={{ fontSize: 80, fontWeight: 800, background: "linear-gradient(135deg, #f59e0b, #ef4444)", backgroundClip: "text", color: "transparent" }}>เก่งขึ้น</span>
         </div>
 
         {/* Subtitle */}
-        <p style={{ fontSize: 24, color: "#8b949e", marginBottom: 48, maxWidth: 700, lineHeight: 1.5 }}>
-          รวมวิชาสอบราชการ ก.พ., DSI และวิชา ม.ปลาย — เรียนทีละขั้น รับ XP สะสมเลเวล
+        <p style={{ fontSize: 24, color: "#6e6e73", marginBottom: 48, maxWidth: 700, lineHeight: 1.5 }}>
+          รวมวิชาสอบราชการ ก.พ. และวิชา ม.ปลาย — เรียนทีละขั้น รับ XP สะสมเลเวล
         </p>
 
         {/* Stats row */}
@@ -63,8 +63,8 @@ export default function OGImage() {
             { num: "7,250+", label: "XP รวม" },
           ].map((s) => (
             <div key={s.label} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <span style={{ fontSize: 36, fontWeight: 700, color: "#e6edf3" }}>{s.num}</span>
-              <span style={{ fontSize: 16, color: "#8b949e" }}>{s.label}</span>
+              <span style={{ fontSize: 36, fontWeight: 700, color: "#1d1d1f" }}>{s.num}</span>
+              <span style={{ fontSize: 16, color: "#6e6e73" }}>{s.label}</span>
             </div>
           ))}
         </div>
