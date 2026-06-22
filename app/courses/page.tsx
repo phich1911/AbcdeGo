@@ -28,6 +28,16 @@ const CATEGORY_META: Record<string, { description: string }> = {
   "ภาษาไทย ม.ปลาย": { description: "หลักการใช้ภาษา ทักษะการสื่อสาร และวรรณคดีวรรณกรรม สำหรับระดับ ม.4–ม.6" },
 };
 
+// ก.พ. sets
+const KP_SETS = [
+  {
+    slug: "1",
+    label: "ชุดที่ 1",
+    description: "ความรู้ทั่วไป ภาษาอังกฤษ และความรู้และลักษณะการเป็นข้าราชการที่ดี",
+    cats: ["สอบ ก.พ."],
+  },
+];
+
 // Top-level categories shown on /courses
 const TOP_LEVEL = [
   { slug: "kp", label: "สอบ ก.พ.", description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ.", cats: ["สอบ ก.พ."] },
@@ -84,6 +94,7 @@ function CourseCard({ course, pct }: { course: (typeof COURSES)[0]; pct: number 
 function CoursesInner() {
   const searchParams = useSearchParams();
   const catSlug = searchParams.get("cat");
+  const setSlug = searchParams.get("set");
   const activeCat = catSlug !== null ? (SLUG_TO_CATEGORY[catSlug] ?? null) : null;
   const [progresses, setProgresses] = useState<Record<string, number>>({});
   const [query, setQuery] = useState("");
@@ -147,6 +158,58 @@ function CoursesInner() {
                   <h2 style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>{sub.label}</h2>
                   <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>{sub.description}</p>
                 </div>
+                <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--primary)", fontWeight: 500 }}>
+                  <span>ดูวิชาทั้งหมด</span><span>→</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </main>
+    );
+  }
+
+  // ก.พ. set view — show courses inside a set
+  if (catSlug === "kp" && setSlug !== null) {
+    const courses = COURSES.filter((c) => c.category === "สอบ ก.พ.");
+    return (
+      <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>สอบ ก.พ. — ชุดที่ {setSlug}</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกวิชาที่คุณอยากเรียน</p>
+          </div>
+          <Link href="/courses?cat=kp" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← ชุดข้อสอบ</Link>
+        </div>
+        <SearchBar query={query} setQuery={setQuery} />
+        <div className="grid md:grid-cols-2 gap-3">
+          {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+        </div>
+      </main>
+    );
+  }
+
+  // ก.พ. sets view — show set cards
+  if (catSlug === "kp") {
+    return (
+      <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>สอบ ก.พ.</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>เลือกชุดข้อสอบที่ต้องการเรียน</p>
+          </div>
+          <Link href="/courses" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← หมวดหมู่</Link>
+        </div>
+        <SearchBar query={query} setQuery={setQuery} />
+        <div className="grid sm:grid-cols-2 gap-4">
+          {KP_SETS.map((set) => {
+            const count = COURSES.filter((c) => c.category === "สอบ ก.พ.").length;
+            return (
+              <Link key={set.slug} href={`/courses?cat=kp&set=${set.slug}`}
+                className="card-lg flex flex-col gap-3 p-5" style={{ textDecoration: "none" }}>
+                <span className="badge" style={{ fontSize: 11, width: "fit-content" }}>{count} วิชา</span>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", margin: 0 }}>{set.label}</h2>
+                <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>{set.description}</p>
                 <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--primary)", fontWeight: 500 }}>
                   <span>ดูวิชาทั้งหมด</span><span>→</span>
                 </div>
