@@ -49,6 +49,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const [timeLeft, setTimeLeft] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [passedSections, setPassedSections] = useState<number[]>([]);
+  const [lockedAnswers, setLockedAnswers] = useState<Record<number, boolean>>({});
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -67,8 +68,10 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
       ? exam?.totalTime ?? 0
       : exam?.sections[mode as number]?.timeRecommended ?? 0;
 
+  const isSectionMode = mode !== "full";
+
   useEffect(() => {
-    if (phase === "exam" && !submitted) {
+    if (phase === "exam" && !submitted && !isSectionMode) {
       timerRef.current = setInterval(() => {
         setTimeLeft((t) => {
           if (t <= 1) {
@@ -82,7 +85,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, submitted]);
+  }, [phase, submitted, isSectionMode]);
 
   if (!exam) {
     return <div className="p-10 text-center">ไม่พบข้อสอบนี้</div>;
@@ -101,6 +104,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   function startExam(selectedMode: ExamMode) {
     setMode(selectedMode);
     setAnswers({});
+    setLockedAnswers({});
     setSectionIdx(0);
     setQuestionIdx(0);
     setSubmitted(false);
@@ -113,7 +117,11 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   }
 
   function handleAnswer(choice: number) {
+    if (isSectionMode && lockedAnswers[currentFlatIdx]) return; // already locked
     setAnswers((prev) => ({ ...prev, [currentFlatIdx]: choice }));
+    if (isSectionMode) {
+      setLockedAnswers((prev) => ({ ...prev, [currentFlatIdx]: true }));
+    }
   }
 
   function goNext() {
@@ -475,13 +483,15 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           </div>
         )}
 
-        {/* Timer */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>⏱</span>
-          <span style={{ fontSize: 16, fontWeight: 800, fontVariantNumeric: "tabular-nums", color: timerColor }}>
-            {formatTime(timeLeft)}
-          </span>
-        </div>
+        {/* Timer — hidden in section mode */}
+        {!isSectionMode && (
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>⏱</span>
+            <span style={{ fontSize: 16, fontWeight: 800, fontVariantNumeric: "tabular-nums", color: timerColor }}>
+              {formatTime(timeLeft)}
+            </span>
+          </div>
+        )}
 
         {/* Submit */}
         <button
@@ -506,26 +516,50 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {currentQ?.choices.map((choice, ci) => {
               const selected = answers[currentFlatIdx] === ci;
+              const locked = isSectionMode && lockedAnswers[currentFlatIdx];
+              const isCorrect = ci === currentQ.correct;
+              const showResult = locked;
+              let borderColor = "var(--border)";
+              let bg = "var(--surface)";
+              let color = "var(--text)";
+              if (showResult && isCorrect) { borderColor = "rgba(52,199,89,0.6)"; bg = "rgba(52,199,89,0.1)"; color = "var(--accent-green)"; }
+              else if (showResult && selected && !isCorrect) { borderColor = "rgba(255,59,48,0.5)"; bg = "rgba(255,59,48,0.08)"; color = "#ff3b30"; }
+              else if (!showResult && selected) { borderColor = "var(--primary)"; bg = "rgba(0,122,255,0.08)"; color = "var(--primary)"; }
               return (
                 <button
                   key={ci}
                   onClick={() => handleAnswer(ci)}
+                  disabled={locked}
                   style={{
-                    textAlign: "left", padding: "12px 16px", borderRadius: 12, cursor: "pointer", fontWeight: 500, fontSize: 14, lineHeight: 1.5,
-                    border: `2px solid ${selected ? "var(--primary)" : "var(--border)"}`,
-                    background: selected ? "rgba(0,122,255,0.08)" : "var(--surface)",
-                    color: selected ? "var(--primary)" : "var(--text)",
+                    textAlign: "left", padding: "12px 16px", borderRadius: 12,
+                    cursor: locked ? "default" : "pointer",
+                    fontWeight: 500, fontSize: 14, lineHeight: 1.5,
+                    border: `2px solid ${borderColor}`,
+                    background: bg, color,
                     transition: "all 0.15s",
                   }}
                 >
-                  <span style={{ fontWeight: 700, marginRight: 8, color: "var(--text-muted)" }}>
+                  <span style={{ fontWeight: 700, marginRight: 8, opacity: 0.6 }}>
                     {String.fromCharCode(65 + ci)}.
                   </span>
                   {choice}
+                  {showResult && isCorrect && <span style={{ marginLeft: 8 }}>✓</span>}
                 </button>
               );
             })}
           </div>
+
+          {/* Explanation — section mode only */}
+          {isSectionMode && lockedAnswers[currentFlatIdx] && currentQ?.explanation && (
+            <div style={{ marginTop: 16, padding: "12px 16px", borderRadius: 12, background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.2)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.7 }}>
+              💡 <strong style={{ color: "var(--primary)" }}>เฉลย:</strong> {currentQ.explanation}
+            </div>
+          )}
+          {isSectionMode && lockedAnswers[currentFlatIdx] && !currentQ?.explanation && (
+            <div style={{ marginTop: 16, padding: "10px 14px", borderRadius: 12, background: "rgba(52,199,89,0.06)", border: "1px solid rgba(52,199,89,0.2)", fontSize: 13, color: "var(--accent-green)" }}>
+              ✓ คำตอบที่ถูกต้องคือข้อ {String.fromCharCode(65 + (currentQ?.correct ?? 0))}
+            </div>
+          )}
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
