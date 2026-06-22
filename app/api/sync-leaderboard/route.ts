@@ -30,5 +30,5 @@ export async function POST(req: NextRequest) {
   }
   if (dbErr) return NextResponse.json({ error: dbErr.message }, { status: 500 });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, v: "aaea106" });
 }
