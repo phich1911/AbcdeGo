@@ -41,6 +41,7 @@ const KP_SETS = [
     label: "ชุดที่ 2",
     description: "เมทริกซ์ อุปมาอุปไมย ภาษาอังกฤษขั้นสูง PDPA และกฎหมายปกครองเพิ่มเติม",
     cats: ["สอบ ก.พ."],
+    locked: true,
   },
 ];
 
@@ -216,6 +217,19 @@ function CoursesInner() {
         <div className="grid sm:grid-cols-2 gap-4">
           {KP_SETS.map((set) => {
             const count = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(set.slug)).length;
+            const isLocked = (set as { locked?: boolean }).locked;
+            if (isLocked) {
+              return (
+                <div key={set.slug} className="card-lg flex flex-col gap-3 p-5" style={{ opacity: 0.6, cursor: "default" }}>
+                  <span className="badge" style={{ fontSize: 11, width: "fit-content" }}>🔒 เร็วๆ นี้</span>
+                  <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", margin: 0 }}>{set.label}</h2>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>{set.description}</p>
+                  <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--text-subtle)", fontWeight: 500 }}>
+                    <span>กำลังเตรียมเนื้อหา</span>
+                  </div>
+                </div>
+              );
+            }
             return (
               <Link key={set.slug} href={`/courses?cat=kp&set=${set.slug}`}
                 className="card-lg flex flex-col gap-3 p-5" style={{ textDecoration: "none" }}>
