@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
   if (userMsgCount > limit) {
     const hint = user
-      ? "อาจารย์โกให้โอกาสแค่นี้ก่อนนะ พักก่อน แล้วกลับมาถามโกได้ใหม่ 😄"
+      ? "วันนี้อาจารย์โกตอบไปเยอะแล้วนะ พักก่อน พรุ่งนี้มาถามอาจารย์ใหม่ได้เลย ขอตัวไปพักก่อนเด้อ 😄"
       : "อาจารย์โกให้โอกาสแค่นี้ก่อนนะ ไปสมัครสมาชิกก่อน แล้วกลับมาถามโกได้อีก 20 คำถาม 😄";
     return NextResponse.json({ exhausted: true, message: hint }, { status: 429 });
   }
