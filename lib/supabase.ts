@@ -270,8 +270,14 @@ export async function saveGameScore(game: string, score: number): Promise<boolea
     );
     const existing = existRes.ok ? await existRes.json() : [];
     const best = existing?.[0]?.score ?? -1;
-    // New score is not higher → nothing to do
-    if (score <= best) return true;
+    // New score is not higher → still update display_name in case user changed it
+    if (score <= best) {
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/game_scores?user_id=eq.${user.id}&game=eq.${encodeURIComponent(game)}`,
+        { method: "PATCH", headers: { ...headers, Prefer: "return=minimal" }, body: JSON.stringify({ display_name }) }
+      );
+      return true;
+    }
 
     // Replace: delete all previous rows for this user+game, then insert the new best
     await fetch(
