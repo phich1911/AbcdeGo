@@ -4,6 +4,7 @@ import "./globals.css";
 import ChatBot from "@/components/ChatBot";
 import Navbar from "@/components/Navbar";
 import { Analytics } from "@vercel/analytics/next";
+import { PostHogProvider } from "@/components/PostHogProvider";
 
 const notoSansThai = Noto_Sans_Thai({
   subsets: ["thai", "latin"],
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: `(function(){var t=localStorage.getItem('theme');if(t==='dark'){document.documentElement.classList.remove('light')}else{document.documentElement.classList.add('light')}})()` }} />
       </head>
       <body className={`${notoSansThai.className} min-h-full flex flex-col`}>
+        <PostHogProvider>
 <Navbar />
         <div className="relative z-10 flex flex-col flex-1">
           {children}
@@ -53,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </footer>
 <ChatBot />
         <Analytics />
+        </PostHogProvider>
       </body>
     </html>
   );
