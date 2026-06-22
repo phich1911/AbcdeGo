@@ -104,7 +104,7 @@ export async function syncLeaderboard(xp: number, oldName?: string) {
   if (xp <= 0) return { error: "xp=0" };
   const session = getStoredSession();
   const user = session?.user;
-  if (!user || !session?.access_token) return { error: "no session" };
+  if (!user?.id) return { error: "no session" };
   const name =
     user.user_metadata?.display_name ||
     user.user_metadata?.full_name ||
