@@ -48,8 +48,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
           <p style={{ fontSize: 12, color: "var(--text-subtle)" }}>
             © {new Date().getFullYear()} AbcdeGo
-            {" · "}<a href="/about" style={{ color: "var(--text-muted)", textDecoration: "none" }}>About</a>
-            {" · "}<a href="/contact" style={{ color: "var(--text-muted)", textDecoration: "none" }}>Contact</a>
+            {" · "}<a href="/about" style={{ color: "var(--text-muted)", textDecoration: "none" }}>เกี่ยวกับเรา</a>
+            {" · "}<a href="/contact" style={{ color: "var(--text-muted)", textDecoration: "none" }}>ติดต่อ</a>
             {" · "}<a href="/privacy" style={{ color: "var(--text-muted)", textDecoration: "none" }}>นโยบายความเป็นส่วนตัว</a>
             {" · "}<a href="/terms" style={{ color: "var(--text-muted)", textDecoration: "none" }}>ข้อกำหนดการใช้งาน</a>
           </p>
