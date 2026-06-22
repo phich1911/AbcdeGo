@@ -203,16 +203,16 @@ export default function Navbar() {
             <div ref={dropdownRef} className="relative"
               onMouseEnter={() => { if (coursesCloseTimer.current) clearTimeout(coursesCloseTimer.current); setCoursesOpen(true); }}
               onMouseLeave={() => { coursesCloseTimer.current = setTimeout(() => { setCoursesOpen(false); setOpenGroup(null); }, 150); }}>
-              <button
+              <Link href="/courses"
                 className="flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-                style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontSize: 15, fontWeight: pathname.startsWith("/course") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+                style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontSize: 15, fontWeight: pathname.startsWith("/course") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}
               >
                 คอร์สเรียน
                 <svg width="12" height="12" viewBox="0 0 10 10" fill="currentColor"
                   style={{ transition: "transform 0.15s", transform: coursesOpen ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.5, marginTop: 1 }}>
                   <path d="M1 3l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
                 </svg>
-              </button>
+              </Link>
 
               {coursesOpen && (
                 <div className="absolute top-full left-0 mt-1 w-52 rounded-lg overflow-hidden"
