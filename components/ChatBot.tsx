@@ -6,8 +6,8 @@ import { getProgress } from "@/lib/progress";
 
 type Message = { from: "user" | "bot"; text: string };
 
-const LIMIT_LOGGED_IN = 15;
-const LIMIT_GUEST = 5;
+const LIMIT_LOGGED_IN = 20;
+const LIMIT_GUEST = 3;
 const CHAT_HISTORY_KEY = "jarnego_chat_history";
 const MAX_STORED = 40; // max messages to store
 
