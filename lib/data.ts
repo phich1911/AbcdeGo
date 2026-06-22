@@ -86,7 +86,7 @@ export const COURSES: Course[] = [
   {
     id: "kp-general-2",
     title: "ความรู้ทั่วไป ชุดที่ 2",
-    description: "เมทริกซ์ อุปมาอุปไมย ความน่าจะเป็น และการอ่านเชิงวิเคราะห์ขั้นสูง สำหรับ ก.พ.",
+    description: "อนุกรม เงื่อนไขสัญลักษณ์ เงื่อนไขภาษา คณิตศาสตร์ทั่วไป และภาษาไทย สำหรับ ก.พ.",
     icon: "🧠",
     color: "#0e7490",
     totalLessons: 5,
@@ -98,7 +98,7 @@ export const COURSES: Course[] = [
   {
     id: "kp-english-2",
     title: "ภาษาอังกฤษ ชุดที่ 2",
-    description: "การอ่านเชิงวิเคราะห์ คำศัพท์ระดับสูง Passive Voice และการเขียนเชิงทางการ",
+    description: "Conversation บทสนทนา Vocabulary Grammar และ Reading Comprehension สำหรับ ก.พ.",
     icon: "📖",
     color: "#1d4ed8",
     totalLessons: 4,
@@ -110,7 +110,7 @@ export const COURSES: Course[] = [
   {
     id: "kp-law-2",
     title: "กฎหมายข้าราชการ ชุดที่ 2",
-    description: "PDPA การป้องกันทุจริต รัฐธรรมนูญ และกฎหมายปกครองขั้นสูง",
+    description: "ระเบียบบริหารราชการ บ้านเมืองที่ดี ประมวลจริยธรรม และกฎหมายอาญาต่อตำแหน่งหน้าที่",
     icon: "🏛️",
     color: "#9333ea",
     totalLessons: 4,
