@@ -3093,8 +3093,6 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
-];
-
   // ===== ก.พ. ชุดที่ 2 — ความรู้ทั่วไป =====
   {
     id: "kpg2-1",
@@ -3716,6 +3714,7 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+];
 
 export function getCourse(id: string): Course | undefined {
   return COURSES.find((c) => c.id === id);
