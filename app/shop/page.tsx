@@ -207,6 +207,11 @@ export default function ShopPage() {
                   {isSoon ? "เร็วๆ นี้" : "ซื้อเลย"}
                 </button>
               </div>
+              {!isSoon && (
+                <p style={{ fontSize: 11, color: "var(--text-subtle)", textAlign: "center", margin: "4px 0 0" }}>
+                  ไม่ต้องซื้อก็ได้ ถ้าอยากวัดดวง 🎲
+                </p>
+              )}
             </div>
           );
         })}
