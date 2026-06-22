@@ -238,47 +238,19 @@ export async function signInWithFacebook(): Promise<string | null> {
 // ── Game Scores ──────────────────────────────────────────────────
 
 export async function saveGameScore(game: string, score: number): Promise<boolean> {
-  // Read session from localStorage + direct REST (supabase-js client can hang on auth locks)
   const session = getStoredSession();
   const user = session?.user;
-  if (!user || !session?.access_token) return false;
+  if (!user?.id) return false;
   const display_name =
     user.user_metadata?.display_name ||
     user.user_metadata?.full_name ||
     user.email?.split("@")[0] ||
     "ผู้ใช้";
-  const headers = {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${session.access_token}`,
-    "Content-Type": "application/json",
-  };
   try {
-    // Keep only ONE row per user per game = their personal best (prevents table bloat).
-    // Look up the user's existing best for this game.
-    const existRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/game_scores?select=score&user_id=eq.${user.id}&game=eq.${encodeURIComponent(game)}&order=score.desc&limit=1`,
-      { headers }
-    );
-    const existing = existRes.ok ? await existRes.json() : [];
-    const best = existing?.[0]?.score ?? -1;
-    // New score is not higher → still update display_name in case user changed it
-    if (score <= best) {
-      await fetch(
-        `${SUPABASE_URL}/rest/v1/game_scores?user_id=eq.${user.id}&game=eq.${encodeURIComponent(game)}`,
-        { method: "PATCH", headers: { ...headers, Prefer: "return=minimal" }, body: JSON.stringify({ display_name }) }
-      );
-      return true;
-    }
-
-    // Replace: delete all previous rows for this user+game, then insert the new best
-    await fetch(
-      `${SUPABASE_URL}/rest/v1/game_scores?user_id=eq.${user.id}&game=eq.${encodeURIComponent(game)}`,
-      { method: "DELETE", headers }
-    );
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/game_scores`, {
+    const res = await fetch("/api/save-game-score", {
       method: "POST",
-      headers: { ...headers, Prefer: "return=minimal" },
-      body: JSON.stringify({ user_id: user.id, display_name, game, score }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ game, score, user_id: user.id, display_name }),
     });
     return res.ok;
   } catch {
