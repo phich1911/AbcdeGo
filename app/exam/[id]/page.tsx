@@ -460,7 +460,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
   // ── EXAM ───────────────────────────────────────────────────────
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }} onCopy={(e) => e.preventDefault()} onContextMenu={(e) => e.preventDefault()} onSelectStart={(e) => e.preventDefault()}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", userSelect: "none" }} onCopy={(e) => e.preventDefault()} onContextMenu={(e) => e.preventDefault()}>
       {/* Top bar */}
       <div style={{
         position: "fixed", top: 60, left: 0, right: 0, zIndex: 90,
