@@ -318,10 +318,16 @@ function SearchBar({ query, setQuery }: { query: string; setQuery: (q: string) =
   );
 }
 
+function CoursesPageInner() {
+  const searchParams = useSearchParams();
+  const key = searchParams.toString();
+  return <CoursesInner key={key} />;
+}
+
 export default function CoursesPage() {
   return (
     <Suspense>
-      <CoursesInner />
+      <CoursesPageInner />
     </Suspense>
   );
 }
