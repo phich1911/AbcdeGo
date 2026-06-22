@@ -115,8 +115,8 @@ export async function syncLeaderboard(xp: number, oldName?: string) {
   try {
     const res = await fetch("/api/sync-leaderboard", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
-      body: JSON.stringify({ name, xp, avatar, oldName }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, xp, avatar, user_id: user.id }),
     });
     if (!res.ok) return { error: `HTTP ${res.status}: ${await res.text()}` };
     return { ok: true };
