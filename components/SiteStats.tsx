@@ -59,7 +59,7 @@ export default function SiteStats() {
                   {entry.avatar && (
                     <span style={{ fontSize: 16 }}>{AVATARS.find((a) => a.id === entry.avatar)?.emoji}</span>
                   )}
-                  <span className="flex-1 font-semibold text-sm truncate" style={{ color: "var(--text)" }}>{entry.name}{GM_NAMES.has(entry.name) && <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 800, color: "#38bdf8", textShadow: "0 0 8px #38bdf8, 0 0 16px #7dd3fc" }}>[GM]</span>}</span>
+                  <span className="flex-1 font-semibold text-sm truncate" style={{ color: "var(--text)" }}>{entry.name}{GM_NAMES.has(entry.name) && <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 800, color: "#ef4444", textShadow: "0 0 8px #ef4444, 0 0 16px #fca5a5" }}>[GM]</span>}</span>
                   <span className="badge mr-1" style={{ color: "var(--accent-purple)", borderColor: "rgba(165,160,248,0.3)", background: "rgba(165,160,248,0.08)", fontSize: 11 }}>Lv.{Math.floor(entry.xp / 100) + 1}</span>
                   <span className="text-sm font-semibold flex items-center gap-1" style={{ color: "var(--accent)" }}><Zap size={12} fill="currentColor" /> {entry.xp.toLocaleString()}</span>
                 </div>

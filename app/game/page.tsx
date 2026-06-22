@@ -107,7 +107,7 @@ export default function GamePage() {
                         </span>
                         <span className="flex-1 text-xs font-semibold truncate" style={{ color: "var(--text)" }}>
                           {entry.display_name}
-                          {GM_NAMES.has(entry.display_name) && <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 800, color: "#38bdf8", textShadow: "0 0 8px #38bdf8, 0 0 16px #7dd3fc" }}>[GM]</span>}
+                          {GM_NAMES.has(entry.display_name) && <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 800, color: "#ef4444", textShadow: "0 0 8px #ef4444, 0 0 16px #fca5a5" }}>[GM]</span>}
                         </span>
                         <span className="text-xs font-bold" style={{ color: "var(--accent)" }}>{entry.score.toLocaleString()} pts</span>
                       </div>
