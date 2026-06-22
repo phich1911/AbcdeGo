@@ -1,6 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { getTopGameScores } from "@/lib/supabase";
+import { Trophy } from "lucide-react";
+
+type ScoreEntry = { display_name: string; score: number };
 
 const GAMES = [
   {
@@ -8,6 +13,7 @@ const GAMES = [
     label: "Word Guess",
     icon: "W",
     desc: "Guess the 5-letter word",
+    key: "wordle",
     rules: [
       "เดาคำศัพท์ภาษาอังกฤษ 5 ตัวอักษร",
       "มีโอกาสเดา 6 ครั้ง",
@@ -21,6 +27,7 @@ const GAMES = [
     label: "2048",
     icon: "2048",
     desc: "Merge tiles to win",
+    key: "2048",
     rules: [
       "เลื่อน Tile ด้วยลูกศร (คอม) หรือ Swipe (มือถือ)",
       "Tile ที่มีตัวเลขเหมือนกันจะรวมกันเป็น 2 เท่า",
@@ -30,7 +37,19 @@ const GAMES = [
   },
 ];
 
+const MEDALS = ["🥇", "🥈", "🥉"];
+
 export default function GamePage() {
+  const [scores, setScores] = useState<Record<string, ScoreEntry[]>>({});
+
+  useEffect(() => {
+    GAMES.forEach((g) => {
+      getTopGameScores(g.key, 10).then((data) =>
+        setScores((prev) => ({ ...prev, [g.key]: data }))
+      );
+    });
+  }, []);
+
   return (
     <>
       <main className="flex flex-col items-center pt-24 pb-12 px-4" style={{ minHeight: "100vh" }}>
@@ -56,7 +75,9 @@ export default function GamePage() {
                   เล่นเลย →
                 </span>
               </Link>
-              <div className="p-5">
+
+              {/* Rules */}
+              <div className="p-5" style={{ borderBottom: "1px solid var(--border)" }}>
                 <p className="text-xs font-bold mb-3 uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>วิธีเล่น</p>
                 <ul className="flex flex-col gap-2">
                   {g.rules.map((r, i) => (
@@ -66,6 +87,28 @@ export default function GamePage() {
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* Top 10 */}
+              <div className="p-5">
+                <p className="text-xs font-bold mb-3 flex items-center gap-1.5 uppercase tracking-wider" style={{ color: "var(--text-muted)" }}>
+                  <Trophy size={12} style={{ color: "var(--accent)" }} /> Top 10
+                </p>
+                {(scores[g.key] ?? []).length === 0 ? (
+                  <p className="text-xs" style={{ color: "var(--text-muted)" }}>ยังไม่มีสถิติ — เป็นคนแรกได้เลย!</p>
+                ) : (
+                  <div className="flex flex-col gap-1.5">
+                    {(scores[g.key] ?? []).map((entry, i) => (
+                      <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg" style={{ background: i === 0 ? "rgba(245,158,11,0.08)" : "var(--surface-2)", border: "1px solid var(--border)" }}>
+                        <span style={{ fontSize: 13, width: 20, textAlign: "center", flexShrink: 0 }}>
+                          {MEDALS[i] ?? <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700 }}>{i + 1}.</span>}
+                        </span>
+                        <span className="flex-1 text-xs font-semibold truncate" style={{ color: "var(--text)" }}>{entry.display_name}</span>
+                        <span className="text-xs font-bold" style={{ color: "var(--accent)" }}>{entry.score.toLocaleString()} pts</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ))}

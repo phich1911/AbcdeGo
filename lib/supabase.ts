@@ -295,6 +295,19 @@ export async function saveGameScore(game: string, score: number): Promise<boolea
   }
 }
 
+export async function getTopGameScores(game: string, limit = 10): Promise<{ display_name: string; score: number }[]> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/game_scores?select=display_name,score&game=eq.${encodeURIComponent(game)}&order=score.desc&limit=${limit}`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) return [];
+    return (await res.json()) ?? [];
+  } catch {
+    return [];
+  }
+}
+
 export async function getTopGameScore(game: string): Promise<{ display_name: string; score: number } | null> {
   try {
     const res = await fetch(
