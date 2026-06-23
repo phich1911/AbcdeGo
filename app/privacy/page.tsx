@@ -9,42 +9,54 @@ export default function PrivacyPage() {
       <div className="card-lg" style={{ padding: 32, marginBottom: 24 }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>1. ข้อมูลที่เราเก็บรวบรวม</h2>
         <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8 }}>
-          เราเก็บข้อมูลเฉพาะที่จำเป็นต่อการให้บริการ ได้แก่ อีเมล ชื่อที่แสดง ความคืบหน้าการเรียน (XP, บทเรียนที่เสร็จแล้ว)
-          และข้อมูล OAuth จาก Google หรือ Facebook หากคุณเลือกเข้าสู่ระบบผ่านช่องทางดังกล่าว
+          เราเก็บข้อมูลเฉพาะที่จำเป็นต่อการให้บริการ ได้แก่
         </p>
+        <ul style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 2, paddingLeft: 20, marginTop: 8 }}>
+          <li>อีเมลและชื่อที่แสดง (จากการสมัครด้วยอีเมล หรือ Google OAuth)</li>
+          <li>ความคืบหน้าการเรียน: XP, บทเรียนที่เสร็จแล้ว, streak, วันที่ใช้งานล่าสุด</li>
+          <li>ประวัติการปลดล็อคข้อสอบ e-Exam (ชุดที่ปลดล็อคและวันที่)</li>
+          <li>ข้อมูลบางส่วนถูกบันทึกใน localStorage ของเบราว์เซอร์เพื่อใช้งานได้โดยไม่ต้องเชื่อมต่ออินเทอร์เน็ต</li>
+        </ul>
       </div>
 
       <div className="card-lg" style={{ padding: 32, marginBottom: 24 }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>2. วัตถุประสงค์การใช้ข้อมูล</h2>
         <ul style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 2, paddingLeft: 20 }}>
-          <li>บันทึกและซิงค์ความคืบหน้าการเรียนของคุณข้ามอุปกรณ์</li>
+          <li>บันทึกและซิงค์ความคืบหน้าการเรียนข้ามอุปกรณ์</li>
           <li>แสดงผลบนตาราง Leaderboard (ใช้เฉพาะชื่อที่แสดงและ XP)</li>
+          <li>ตรวจสอบสิทธิ์การเข้าสอบ e-Exam ที่ปลดล็อคด้วย XP</li>
+          <li>ส่งการแจ้งเตือนที่เกี่ยวข้องกับบัญชี (เช่น ยืนยันอีเมล)</li>
           <li>ปรับปรุงประสบการณ์การใช้งานแพลตฟอร์ม</li>
-          <li>ส่งการแจ้งเตือนที่เกี่ยวข้องกับบัญชีของคุณ (เช่น ยืนยันอีเมล)</li>
         </ul>
       </div>
 
       <div className="card-lg" style={{ padding: 32, marginBottom: 24 }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>3. การเก็บรักษาข้อมูล</h2>
         <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8 }}>
-          ข้อมูลของคุณถูกจัดเก็บบน Supabase ซึ่งเป็นบริการฐานข้อมูลที่ได้มาตรฐานความปลอดภัยระดับสากล
-          ข้อมูลความคืบหน้าบางส่วนถูกบันทึกไว้ใน localStorage ของเบราว์เซอร์เพื่อให้ใช้งานได้รวดเร็วโดยไม่ต้องเชื่อมต่ออินเทอร์เน็ต
+          ข้อมูลของคุณถูกจัดเก็บบน Supabase (PostgreSQL) ซึ่งได้มาตรฐานความปลอดภัย SOC 2 Type II
+          และมีการเข้ารหัสข้อมูลทั้งระหว่างการส่งและในฐานข้อมูล
+          เราไม่มีกำหนดระยะเวลาลบข้อมูลอัตโนมัติ คุณสามารถขอลบบัญชีและข้อมูลทั้งหมดได้ตลอดเวลา
         </p>
       </div>
 
       <div className="card-lg" style={{ padding: 32, marginBottom: 24 }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>4. การเปิดเผยข้อมูลต่อบุคคลที่สาม</h2>
         <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8 }}>
-          เราไม่ขาย แลกเปลี่ยน หรือเปิดเผยข้อมูลส่วนตัวของคุณแก่บุคคลภายนอก ยกเว้นในกรณีที่จำเป็นตามกฎหมาย
-          หรือเพื่อการให้บริการที่คุณร้องขอ (เช่น Google OAuth, Facebook OAuth)
+          เราไม่ขาย แลกเปลี่ยน หรือเปิดเผยข้อมูลส่วนตัวของคุณแก่บุคคลภายนอก
+          ยกเว้นผู้ให้บริการที่จำเป็นต่อการดำเนินงาน ได้แก่
         </p>
+        <ul style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 2, paddingLeft: 20, marginTop: 8 }}>
+          <li><strong>Supabase</strong> — ฐานข้อมูลและระบบ Authentication</li>
+          <li><strong>Google OAuth</strong> — หากคุณเลือกเข้าสู่ระบบด้วย Google</li>
+          <li><strong>Vercel</strong> — การ Host เว็บไซต์และ Analytics</li>
+        </ul>
       </div>
 
       <div className="card-lg" style={{ padding: 32, marginBottom: 24 }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>5. คุกกี้และการวิเคราะห์</h2>
         <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8 }}>
           เราใช้ Vercel Analytics เพื่อวิเคราะห์การใช้งานเว็บไซต์ในภาพรวม โดยไม่ระบุตัวตนผู้ใช้
-          ข้อมูลนี้ช่วยให้เราพัฒนาแพลตฟอร์มให้ดียิ่งขึ้น
+          Session token ของ Supabase ถูกเก็บใน localStorage เพื่อรักษาสถานะการเข้าสู่ระบบ
         </p>
       </div>
 
@@ -53,10 +65,10 @@ export default function PrivacyPage() {
         <ul style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 2, paddingLeft: 20 }}>
           <li>ขอดูข้อมูลส่วนตัวที่เราเก็บไว้</li>
           <li>ขอแก้ไขหรืออัปเดตข้อมูลของคุณ</li>
-          <li>ขอลบบัญชีและข้อมูลทั้งหมด</li>
+          <li>ขอลบบัญชีและข้อมูลทั้งหมด (รวมถึงประวัติ XP และการปลดล็อค e-Exam)</li>
         </ul>
         <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8, marginTop: 12 }}>
-          ติดต่อเราได้ที่หน้า <a href="/contact" style={{ color: "var(--primary)" }}>Contact</a> เพื่อใช้สิทธิ์ดังกล่าว
+          ติดต่อเราได้ที่อีเมล <a href="mailto:support@abcdego.com" style={{ color: "var(--primary)" }}>support@abcdego.com</a> เพื่อใช้สิทธิ์ดังกล่าว
         </p>
       </div>
 
@@ -71,8 +83,8 @@ export default function PrivacyPage() {
       <div className="card-lg" style={{ padding: 32 }}>
         <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>8. ติดต่อเรา</h2>
         <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8 }}>
-          หากมีคำถามเกี่ยวกับ Privacy Policy สามารถติดต่อได้ที่หน้า{" "}
-          <a href="/contact" style={{ color: "var(--primary)" }}>Contact</a> หรืออีเมล support@abcdego.com
+          หากมีคำถามเกี่ยวกับ Privacy Policy ติดต่อได้ที่{" "}
+          <a href="mailto:support@abcdego.com" style={{ color: "var(--primary)" }}>support@abcdego.com</a>
         </p>
       </div>
     </main>
