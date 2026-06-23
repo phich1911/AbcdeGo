@@ -85,8 +85,8 @@ export default function EExamPage() {
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>ปลดล็อคข้อสอบจำลองด้วย XP — ไม่มีค่าใช้จ่าย</p>
         </div>
 
-        {/* XP Banner */}
-        <div className="rounded-xl p-5 mb-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+        {/* XP Banner — hide when all exams unlocked */}
+        {E_EXAMS.some((p) => !unlocked.includes(p.examId)) && <div className="rounded-xl p-5 mb-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div className="flex items-center gap-3 mb-3">
             <span style={{ fontSize: 28 }}>⚡</span>
             <div>
@@ -114,7 +114,7 @@ export default function EExamPage() {
           <p className="text-xs mt-1.5 text-right" style={{ color: "var(--text-subtle)" }}>
             {Math.min(xp, XP_COST).toLocaleString()} / {XP_COST.toLocaleString()} XP
           </p>
-        </div>
+        </div>}
 
         {/* Success / Error */}
         {success && (
