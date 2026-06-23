@@ -74,7 +74,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const isSectionMode = mode !== "full";
 
   useEffect(() => {
-    if (phase === "exam" && !submitted && !isSectionMode) {
+    if (phase === "exam" && !submitted) {
       timerRef.current = setInterval(() => {
         setTimeLeft((t) => {
           if (t <= 1) {
@@ -525,15 +525,13 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           </div>
         )}
 
-        {/* Timer — hidden in section mode */}
-        {!isSectionMode && (
-          <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-            <span style={{ fontSize: 12, color: "var(--text-muted)" }}>⏱</span>
-            <span style={{ fontSize: 16, fontWeight: 800, fontVariantNumeric: "tabular-nums", color: timerColor }}>
-              {formatTime(timeLeft)}
-            </span>
-          </div>
-        )}
+        {/* Timer */}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>⏱</span>
+          <span style={{ fontSize: 16, fontWeight: 800, fontVariantNumeric: "tabular-nums", color: timerColor }}>
+            {formatTime(timeLeft)}
+          </span>
+        </div>
 
         {/* Submit */}
         <button
