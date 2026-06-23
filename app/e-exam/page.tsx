@@ -27,12 +27,7 @@ const E_EXAMS: EExamProduct[] = [
     badge: "ก.พ.",
     questionCount: 100,
     timeLimit: 180,
-    highlights: [
-      "วิชาที่ 1 — ความรู้ทั่วไป 50 ข้อ (คณิตศาสตร์ & ภาษาไทย) จับเวลา 50 นาที",
-      "วิชาที่ 2 — ภาษาอังกฤษ 25 ข้อ จับเวลา 25 นาที",
-      "วิชาที่ 3 — ความรู้และลักษณะการเป็นข้าราชการที่ดี 25 ข้อ จับเวลา 25 นาที",
-      "โหมดเต็ม — ข้อสอบรวม 100 ข้อ จับเวลา 180 นาที เหมือนสอบจริง",
-    ],
+    highlights: [],
   },
 ];
 
@@ -164,14 +159,14 @@ export default function EExamPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1 mb-4">
+                {product.highlights.length > 0 && <div className="flex flex-col gap-1 mb-4">
                   {product.highlights.map((h, i) => (
                     <p key={i} className="text-sm flex gap-2" style={{ color: "var(--text-muted)" }}>
                       <span style={{ color: "var(--accent-green)", flexShrink: 0 }}>✓</span>
                       {h}
                     </p>
                   ))}
-                </div>
+                </div>}
 
                 <div className="flex items-center gap-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
                   <div className="flex gap-4 flex-1">
