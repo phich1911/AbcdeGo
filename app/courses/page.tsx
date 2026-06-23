@@ -255,7 +255,7 @@ function CoursesInner() {
     const courses = COURSES.filter((c) => c.category === activeCat);
     const meta = CATEGORY_META[activeCat];
     const intro = courses.find((c) => c.intro)?.intro;
-    const isMplataiSub = ["eng-m", "math-m", "thai-m"].includes(catSlug ?? "");
+    const isMplataiSub = ["eng-m", "math-m", "thai-m", "physics-m"].includes(catSlug ?? "");
     return (
       <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
         <div className="flex items-center justify-between mb-5">
