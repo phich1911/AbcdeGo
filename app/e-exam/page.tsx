@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getProgress, saveProgress, pushProgressToCloud } from "@/lib/progress";
+import { getProgress } from "@/lib/progress";
 import { getUser, getUnlockedExams, unlockExamWithXP } from "@/lib/supabase";
 
 const XP_COST = 1000;
@@ -61,15 +61,8 @@ export default function EExamPage() {
     setLoading(null);
     if (!result.ok) { setError(result.error ?? "เกิดข้อผิดพลาด"); return; }
 
-    // Deduct XP locally then push to cloud to prevent sync restoring old value
-    const p = getProgress();
-    p.xp = Math.max(0, p.xp - XP_COST);
-    saveProgress(p);
-    setXp(p.xp);
-    pushProgressToCloud();
-
     setUnlocked((prev) => [...prev, product.examId]);
-    setSuccess(`ใช้ ${XP_COST.toLocaleString()} XP ปลดล็อค "${product.title}" สำเร็จ!`);
+    setSuccess(`ปลดล็อค "${product.title}" สำเร็จ!`);
     setTimeout(() => setSuccess(null), 4000);
   }
 
@@ -82,7 +75,7 @@ export default function EExamPage() {
         {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--text)" }}>e-Exam</h1>
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>ปลดล็อคข้อสอบจำลองด้วย XP — ไม่มีค่าใช้จ่าย</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>สะสม XP ให้ครบ แล้วปลดล็อคข้อสอบจำลองได้ฟรี — XP ไม่ถูกหัก</p>
         </div>
 
         {/* XP Banner — hide when all exams unlocked */}
@@ -175,7 +168,7 @@ export default function EExamPage() {
                         border: canAfford ? "none" : "1px solid var(--border)",
                       }}
                     >
-                      {isLoading ? "กำลังปลดล็อค..." : `⚡ ปลดล็อค ${XP_COST.toLocaleString()} XP`}
+                      {isLoading ? "กำลังปลดล็อค..." : `⚡ ปลดล็อค (ต้องมี ${XP_COST.toLocaleString()} XP)`}
                     </button>
                   )}
                 </div>

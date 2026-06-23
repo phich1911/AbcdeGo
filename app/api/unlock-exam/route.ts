@@ -36,19 +36,7 @@ export async function POST(req: NextRequest) {
   if (currentXP < xp_cost)
     return NextResponse.json({ error: `XP ไม่พอ (มี ${currentXP} XP, ต้องการ ${xp_cost} XP)` }, { status: 400 });
 
-  // Deduct XP via upsert (PATCH silently no-ops if row doesn't exist)
-  const newXP = currentXP - xp_cost;
-  const deductRes = await fetch(`${SUPABASE_URL}/rest/v1/user_progress?on_conflict=user_id`, {
-    method: "POST",
-    headers: { ...hdrs(), Prefer: "resolution=merge-duplicates,return=representation" },
-    body: JSON.stringify({ user_id, xp: newXP }),
-  });
-  if (!deductRes.ok) return NextResponse.json({ error: "หัก XP ไม่สำเร็จ" }, { status: 500 });
-  const deducted = await deductRes.json();
-  if (!deducted?.length || deducted[0]?.xp !== newXP)
-    return NextResponse.json({ error: "หัก XP ไม่สำเร็จ (ตรวจสอบไม่ผ่าน)" }, { status: 500 });
-
-  // Insert unlock record
+  // Insert unlock record (XP is not deducted — it's a level requirement, not currency)
   const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/user_exams`, {
     method: "POST",
     headers: hdrs(),
@@ -56,5 +44,5 @@ export async function POST(req: NextRequest) {
   });
   if (!insertRes.ok) return NextResponse.json({ error: "บันทึกการปลดล็อคไม่สำเร็จ" }, { status: 500 });
 
-  return NextResponse.json({ ok: true, newXP });
+  return NextResponse.json({ ok: true });
 }
