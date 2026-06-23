@@ -168,12 +168,7 @@ export default function EExamPage() {
                   ))}
                 </div>}
 
-                <div className="flex items-center gap-3 pt-3" style={{ borderTop: "1px solid var(--border)" }}>
-                  <div className="flex gap-4 flex-1">
-                    <span className="text-sm" style={{ color: "var(--text-muted)" }}>📋 {product.questionCount} ข้อ</span>
-                    <span className="text-sm" style={{ color: "var(--text-muted)" }}>⏱ {product.timeLimit} นาที</span>
-                  </div>
-
+                <div className="flex justify-end">
                   {isUnlocked ? (
                     <button
                       onClick={() => router.push(`/exam/${product.examId}`)}
