@@ -18,7 +18,7 @@ export const PRODUCTS: Product[] = [
     description: "ครบ 3 วิชา 100 ข้อ จับเวลา 180 นาที เหมือนสอบจริงทุกอย่าง",
     category: "ก.พ.",
     price: 149,
-    paddlePriceId: null,
+    paddlePriceId: "pri_01kvnfaja4x5y82c7ben28xw2d",
     questionCount: 100,
     timeLimit: 180,
     examId: "kp-mock-1",
