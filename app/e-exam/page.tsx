@@ -69,7 +69,7 @@ export default function EExamPage() {
     pushProgressToCloud();
 
     setUnlocked((prev) => [...prev, product.examId]);
-    setSuccess(`ปลดล็อค "${product.title}" สำเร็จ!`);
+    setSuccess(`ใช้ ${XP_COST.toLocaleString()} XP ปลดล็อค "${product.title}" สำเร็จ!`);
     setTimeout(() => setSuccess(null), 4000);
   }
 
