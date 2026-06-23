@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getProgress, saveProgress } from "@/lib/progress";
+import { getProgress, saveProgress, pushProgressToCloud } from "@/lib/progress";
 import { getUser, getUnlockedExams, unlockExamWithXP } from "@/lib/supabase";
 
 const XP_COST = 1000;
@@ -66,11 +66,12 @@ export default function EExamPage() {
     setLoading(null);
     if (!result.ok) { setError(result.error ?? "เกิดข้อผิดพลาด"); return; }
 
-    // Deduct XP locally
+    // Deduct XP locally then push to cloud to prevent sync restoring old value
     const p = getProgress();
     p.xp = Math.max(0, p.xp - XP_COST);
     saveProgress(p);
     setXp(p.xp);
+    pushProgressToCloud();
 
     setUnlocked((prev) => [...prev, product.examId]);
     setSuccess(`ปลดล็อค "${product.title}" สำเร็จ!`);
@@ -81,7 +82,7 @@ export default function EExamPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
-      <div className="max-w-3xl mx-auto px-4 py-12">
+      <div className="max-w-3xl mx-auto px-4 pt-24 pb-12">
 
         {/* Header */}
         <div className="text-center mb-10">
