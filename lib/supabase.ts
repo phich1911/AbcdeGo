@@ -290,11 +290,12 @@ export async function getTopGameScore(game: string): Promise<{ display_name: str
 export async function getUnlockedExams(): Promise<string[]> {
   const session = getStoredSession();
   const userId = session?.user?.id;
+  const token = session?.access_token ?? SUPABASE_KEY;
   if (!userId) return [];
   try {
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/user_exams?select=exam_id&user_id=eq.${userId}`,
-      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${token}` } }
     );
     if (!res.ok) return [];
     const data: { exam_id: string }[] = await res.json();
