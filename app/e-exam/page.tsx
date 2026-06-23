@@ -141,7 +141,7 @@ export default function EExamPage() {
                 className="rounded-xl p-6"
                 style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
               >
-                <div className="flex items-start gap-3 mb-3">
+                <div className="flex items-center gap-3">
                   <span style={{ fontSize: 28 }}>📝</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -157,22 +157,10 @@ export default function EExamPage() {
                     <h2 className="font-bold mt-1" style={{ color: "var(--text)", fontSize: 17 }}>{product.title}</h2>
                     <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{product.description}</p>
                   </div>
-                </div>
-
-                {product.highlights.length > 0 && <div className="flex flex-col gap-1 mb-4">
-                  {product.highlights.map((h, i) => (
-                    <p key={i} className="text-sm flex gap-2" style={{ color: "var(--text-muted)" }}>
-                      <span style={{ color: "var(--accent-green)", flexShrink: 0 }}>✓</span>
-                      {h}
-                    </p>
-                  ))}
-                </div>}
-
-                <div className="flex justify-end">
                   {isUnlocked ? (
                     <button
                       onClick={() => router.push(`/exam/${product.examId}`)}
-                      className="btn-primary px-5 py-2 text-sm"
+                      className="btn-primary px-5 py-2 text-sm shrink-0"
                     >
                       เข้าสอบ →
                     </button>
