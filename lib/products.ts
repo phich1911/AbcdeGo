@@ -17,7 +17,7 @@ export const PRODUCTS: Product[] = [
     title: "ข้อสอบจำลอง ก.พ. ชุดที่ 1",
     description: "ครบ 3 วิชา 100 ข้อ จับเวลา 180 นาที เหมือนสอบจริงทุกอย่าง",
     category: "ก.พ.",
-    price: 299,
+    price: 149,
     paddlePriceId: null,
     questionCount: 100,
     timeLimit: 180,
