@@ -30,7 +30,7 @@ export type Step =
 export const COURSES: Course[] = [
   {
     id: "kp-general",
-    title: "ความรู้ทั่วไป (ก.พ.)",
+    title: "ความรู้ทั่วไป ชุดที่ 1",
     description: "วิชาความสามารถทั่วไป ตรรกะ คณิตศาสตร์ และภาษาไทย สำหรับสอบ ก.พ.",
     icon: "📝",
     icon3d: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4dd.png",
@@ -58,7 +58,7 @@ export const COURSES: Course[] = [
   },
   {
     id: "kp-english",
-    title: "ภาษาอังกฤษ (ก.พ.)",
+    title: "ภาษาอังกฤษ ชุดที่ 1",
     description: "ข้อสอบภาษาอังกฤษระดับ ก.พ. ไวยากรณ์ คำศัพท์ และการอ่านจับใจความ",
     icon: "🌐",
     icon3d: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f310.png",
@@ -71,7 +71,7 @@ export const COURSES: Course[] = [
   },
   {
     id: "kp-law",
-    title: "ความรู้และลักษณะการเป็นข้าราชการที่ดี",
+    title: "ความรู้และลักษณะการเป็นข้าราชการที่ดี ชุดที่ 1",
     description: "กฎหมายพื้นฐานของข้าราชการ: ระเบียบบริหารราชการแผ่นดิน, บ้านเมืองที่ดี, วิธีปฏิบัติราชการทางปกครอง, จริยธรรม และความผิดต่อตำแหน่งหน้าที่",
     icon: "⚖️",
     icon3d: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/2696-fe0f.png",
