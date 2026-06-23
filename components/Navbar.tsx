@@ -242,22 +242,6 @@ export default function Navbar() {
               ร้านค้า
             </Link>
 
-            <Link
-              href="/about"
-              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/about" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/about" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
-            >
-              เกี่ยวกับเรา
-            </Link>
-
-            <Link
-              href="/contact"
-              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/contact" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/contact" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
-            >
-              ติดต่อ
-            </Link>
-
             <a
               href="https://airrok.com"
               target="_blank"
@@ -411,9 +395,7 @@ export default function Navbar() {
             <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ดูดวง</Link>
             <Link href="/game" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกม</Link>
             <Link href="/shop" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/shop" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/shop" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ร้านค้า</Link>
-            <Link href="/about" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/about" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/about" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกี่ยวกับเรา</Link>
-            <Link href="/contact" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/contact" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/contact" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ติดต่อ</Link>
-            <a href="https://airrok.com" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: "var(--text-muted)", fontWeight: 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เครื่องมือ</a>
+<a href="https://airrok.com" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: "var(--text-muted)", fontWeight: 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เครื่องมือ</a>
             <div style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
             <div className="flex items-center justify-between px-2 py-1.5">
               <span className="text-xs" style={{ color: "var(--text-muted)" }}>
