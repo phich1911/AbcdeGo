@@ -70,7 +70,7 @@ export async function syncProgressFromCloud(): Promise<void> {
   const merged: UserProgress = {
     completedLessons: Array.from(new Set([...local.completedLessons, ...cloud.completed_lessons])),
     lessonScores: local.lessonScores ?? {},
-    xp: Math.max(local.xp, cloud.xp),
+    xp: cloud.xp, // cloud is authoritative (handles XP deductions like e-exam unlock)
     streak: Math.max(local.streak, cloud.streak),
     lastActive: local.lastActive > cloud.last_active ? local.lastActive : cloud.last_active,
   };
