@@ -627,7 +627,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         padding: "10px 16px",
       }}>
         <div style={{ maxWidth: 720, margin: "0 auto", display: "flex", gap: 6, flexWrap: "wrap" }}>
-          {currentSection?.questions.map((_, qi) => {
+          {currentSection?.questions.map((q, qi) => {
             const flatIdx = (sectionOffsets[sectionIdx] ?? 0) + qi;
             const isAnswered = answers[flatIdx] !== undefined;
             const isCurrent = qi === questionIdx;
@@ -642,7 +642,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
                   color: isCurrent ? "#fff" : isAnswered ? "var(--primary)" : "var(--text-muted)",
                 }}
               >
-                {qi + 1}
+                {q.id}
               </button>
             );
           })}
