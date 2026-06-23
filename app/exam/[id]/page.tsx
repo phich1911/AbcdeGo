@@ -550,7 +550,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
         <div className="card" style={{ padding: 28, marginBottom: 20 }}>
           <p style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.7, whiteSpace: "pre-line", margin: "0 0 24px" }}>
-            {currentFlatIdx + 1}. {currentQ?.question}
+            {currentQ?.id}. {currentQ?.question}
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
