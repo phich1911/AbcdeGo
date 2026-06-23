@@ -193,14 +193,6 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-1 flex-1">
 
             {/* HOME */}
-            <Link
-              href="/"
-              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/" ? "var(--text)" : "var(--text-muted)", fontSize: 15, fontWeight: pathname === "/" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
-            >
-              หน้าแรก
-            </Link>
-
             {/* COURSES link */}
             <Link href="/courses"
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
@@ -397,7 +389,6 @@ export default function Navbar() {
         {menuOpen && (
           <div className="md:hidden px-4 py-3 flex flex-col gap-0.5"
             style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}>
-            <Link href="/" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>หน้าแรก</Link>
             <Link href="/courses" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontWeight: pathname.startsWith("/course") ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>คอร์สเรียน</Link>
             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/dashboard" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ความคืบหน้า</Link>
             <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ดูดวง</Link>
