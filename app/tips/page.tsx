@@ -233,6 +233,26 @@ export default function TipsPage() {
         ))}
       </div>
 
+      {/* Related Articles */}
+      <div style={{ marginTop: 56 }}>
+        <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-subtle)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 16 }}>
+          บทความที่เกี่ยวข้อง
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+          {[
+            { href: "/tips/toeic", icon: "🇬🇧", title: "TOEIC คืออะไร?", desc: "โครงสร้าง คะแนน เทคนิค Listening & Reading" },
+          ].map((a) => (
+            <Link key={a.href} href={a.href} style={{ textDecoration: "none" }}>
+              <div className="card" style={{ padding: "18px 20px", transition: "all 0.15s", cursor: "pointer" }}>
+                <p style={{ margin: "0 0 6px", fontSize: 20 }}>{a.icon}</p>
+                <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 14, color: "var(--text)" }}>{a.title}</p>
+                <p style={{ margin: 0, fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6 }}>{a.desc}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* CTA */}
       <div className="card" style={{ marginTop: 56, padding: "32px 28px", textAlign: "center", background: "var(--surface)" }}>
         <p style={{ fontSize: 22, fontWeight: 700, margin: "0 0 8px", color: "var(--text)" }}>
