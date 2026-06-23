@@ -284,3 +284,40 @@ export async function getTopGameScore(game: string): Promise<{ display_name: str
     return null;
   }
 }
+
+// ── e-Exam Unlock ────────────────────────────────────────────────
+
+export async function getUnlockedExams(): Promise<string[]> {
+  const session = getStoredSession();
+  const userId = session?.user?.id;
+  if (!userId) return [];
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/user_exams?select=exam_id&user_id=eq.${userId}`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) return [];
+    const data: { exam_id: string }[] = await res.json();
+    return data.map((r) => r.exam_id);
+  } catch {
+    return [];
+  }
+}
+
+export async function unlockExamWithXP(examId: string, xpCost: number): Promise<{ ok: boolean; error?: string }> {
+  const session = getStoredSession();
+  const userId = session?.user?.id;
+  if (!userId) return { ok: false, error: "กรุณาเข้าสู่ระบบก่อน" };
+  try {
+    const res = await fetch("/api/unlock-exam", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: userId, exam_id: examId, xp_cost: xpCost }),
+    });
+    const body = await res.json();
+    if (!res.ok) return { ok: false, error: body.error ?? "เกิดข้อผิดพลาด" };
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "เกิดข้อผิดพลาด" };
+  }
+}

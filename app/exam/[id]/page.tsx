@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
 import type { MockExam, ExamSection } from "@/lib/exam-data/kp-mock-1";
 import { completeLesson } from "@/lib/progress";
-import { syncLeaderboard } from "@/lib/supabase";
+import { syncLeaderboard, getUnlockedExams } from "@/lib/supabase";
 
 const EXAMS: Record<string, MockExam> = {
   "kp-mock-1": KP_MOCK_1,
@@ -51,10 +51,12 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const [passedSections, setPassedSections] = useState<number[]>([]);
   const [lockedAnswers, setLockedAnswers] = useState<Record<number, boolean>>({});
   const [timedOut, setTimedOut] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState<boolean | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (id) setPassedSections(getPassedSections(id));
+    getUnlockedExams().then((list) => setIsUnlocked(list.includes(id)));
   }, [id]);
 
   // Derive which sections are active for the current mode
@@ -168,6 +170,31 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const answeredCount = Object.keys(answers).length;
   const timerColor = timeLeft < 600 ? "#ff3b30" : timeLeft < 1800 ? "#ff9500" : "var(--accent-green)";
   const isFullMode = mode === "full";
+
+  // ── UNLOCK GATE ────────────────────────────────────────────────
+  if (isUnlocked === null) {
+    return (
+      <main style={{ maxWidth: 760, margin: "0 auto", padding: "80px 16px", textAlign: "center" }}>
+        <p style={{ color: "var(--text-muted)" }}>กำลังตรวจสอบสิทธิ์...</p>
+      </main>
+    );
+  }
+
+  if (!isUnlocked) {
+    return (
+      <main style={{ maxWidth: 760, margin: "0 auto", padding: "80px 16px", textAlign: "center" }}>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>ยังไม่ได้ปลดล็อค</h2>
+        <p style={{ color: "var(--text-muted)", marginBottom: 24 }}>ใช้ 1,000 XP เพื่อปลดล็อคข้อสอบชุดนี้</p>
+        <button
+          onClick={() => router.push("/e-exam")}
+          className="btn-primary px-6 py-2.5"
+        >
+          ไปหน้า e-Exam →
+        </button>
+      </main>
+    );
+  }
 
   // ── INTRO ──────────────────────────────────────────────────────
   if (phase === "intro") {
