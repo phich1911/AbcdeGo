@@ -499,7 +499,7 @@ const section2: ExamSection = {
   questionCount: 25,
   totalScore: 50,
   passingPercent: 50,
-  timeRecommended: 50,
+  timeRecommended: 45,
   questions: [
     // ── Conversation (Q51–55) ────────────────────────────────
     {
@@ -781,7 +781,7 @@ const section3: ExamSection = {
   questionCount: 25,
   totalScore: 50,
   passingPercent: 60,
-  timeRecommended: 40,
+  timeRecommended: 45,
   questions: [
     // ── 1. พ.ร.บ.ระเบียบบริหารราชการแผ่นดิน ─────────────────
     {
