@@ -278,7 +278,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         badge: passedSections.includes(i) ? "✓ ผ่านแล้ว" : "ฝึกรายวิชา",
         badgeColor: passedSections.includes(i) ? "rgba(52,199,89,0.12)" : "rgba(0,122,255,0.12)",
         value: i as ExamMode,
-        locked: i > 0 && !passedSections.includes(i - 1),
+        locked: false,
       })),
       {
         label: "ข้อสอบจำลองเต็มรูปแบบ",
@@ -286,7 +286,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         badge: "แนะนำ",
         badgeColor: "rgba(52,199,89,0.12)",
         value: "full" as ExamMode,
-        locked: exam.sections.some((_, i) => !passedSections.includes(i)),
+        locked: false,
       },
     ];
 
