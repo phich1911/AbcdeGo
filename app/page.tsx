@@ -54,10 +54,6 @@ export default async function Home() {
       {/* Hero */}
       <section style={{ borderBottom: "1px solid var(--border)", padding: "72px 24px 56px" }}>
         <div className="max-w-4xl mx-auto">
-          <span className="badge" style={{ color: "var(--accent-green)", borderColor: "rgba(63,185,80,0.4)", background: "rgba(63,185,80,0.08)", marginBottom: 20, display: "inline-block" }}>
-            ✦ เรียนฟรี · ไม่ต้องสมัครสมาชิกก็เริ่มได้
-          </span>
-
           <h1 style={{ fontSize: "clamp(32px, 5.5vw, 58px)", fontWeight: 800, color: "var(--text)", lineHeight: 1.15, marginBottom: 20, letterSpacing: "-0.03em" }}>
             เรียนฟรี ได้ XP{" "}
             <span style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
