@@ -149,6 +149,7 @@ export default function EExamPage() {
                     </div>
                     <h2 className="font-bold mt-1" style={{ color: "var(--text)", fontSize: 17 }}>{product.title}</h2>
                     <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{product.description}</p>
+                    <p className="text-xs mt-1 font-semibold" style={{ color: "#ef4444" }}>⚠️ ยังไม่มีใครผ่านข้อสอบชุดนี้ — ลองเป็นคนแรกไหม?</p>
                   </div>
                   {isUnlocked ? (
                     <button
