@@ -13,6 +13,7 @@ const SLUG_TO_CATEGORY: Record<string, string> = {
   "math-m": "คณิตศาสตร์ ม.ปลาย",
   "thai-m": "ภาษาไทย ม.ปลาย",
   "physics-m": "ฟิสิกส์ ม.ปลาย",
+  "law": "กฎหมาย",
 };
 
 const CATEGORY_SLUGS: Record<string, string> = {
@@ -21,6 +22,7 @@ const CATEGORY_SLUGS: Record<string, string> = {
   "คณิตศาสตร์ ม.ปลาย": "math-m",
   "ภาษาไทย ม.ปลาย": "thai-m",
   "ฟิสิกส์ ม.ปลาย": "physics-m",
+  "กฎหมาย": "law",
 };
 
 const CATEGORY_META: Record<string, { description: string }> = {
@@ -29,6 +31,7 @@ const CATEGORY_META: Record<string, { description: string }> = {
   "คณิตศาสตร์ ม.ปลาย": { description: "จำนวนและพีชคณิต เรขาคณิต สถิติ และแคลคูลัส สำหรับระดับ ม.4–ม.6" },
   "ภาษาไทย ม.ปลาย": { description: "หลักการใช้ภาษา ทักษะการสื่อสาร และวรรณคดีวรรณกรรม สำหรับระดับ ม.4–ม.6" },
   "ฟิสิกส์ ม.ปลาย": { description: "กลศาสตร์ คลื่น ไฟฟ้า ความร้อน และฟิสิกส์สมัยใหม่ สำหรับระดับ ม.4–ม.6" },
+  "กฎหมาย": { description: "รัฐธรรมนูญ กฎหมายแพ่ง กฎหมายอาญา และกฎหมายที่เกี่ยวข้องกับการสอบราชการ" },
 };
 
 // ก.พ. sets
@@ -55,6 +58,7 @@ const TOP_LEVEL = [
     description: "ภาษาอังกฤษ คณิตศาสตร์ และภาษาไทย สำหรับระดับ ม.4–ม.6",
     cats: ["ภาษาอังกฤษ ม.ปลาย", "คณิตศาสตร์ ม.ปลาย", "ภาษาไทย ม.ปลาย", "ฟิสิกส์ ม.ปลาย"],
   },
+  { slug: "law", label: "กฎหมาย", description: "รัฐธรรมนูญ กฎหมายแพ่ง กฎหมายอาญา และกฎหมายที่เกี่ยวข้องกับการสอบราชการ", cats: ["กฎหมาย"] },
 ];
 
 // Sub-categories inside มัธยมศึกษาตอนปลาย
