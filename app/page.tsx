@@ -54,22 +54,18 @@ export default async function Home() {
       {/* Hero */}
       <section style={{ borderBottom: "1px solid var(--border)", padding: "72px 24px 56px" }}>
         <div className="max-w-4xl mx-auto">
-          <h1 style={{ fontSize: "clamp(32px, 5.5vw, 58px)", fontWeight: 800, color: "var(--text)", lineHeight: 1.15, marginBottom: 20, letterSpacing: "-0.03em" }}>
-            เรียนฟรี ได้ XP{" "}
-            <span style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              แลกของได้จริง
-            </span>
-            <br />
-            <span style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              แข่งอันดับ
-            </span>
-            {" "}ทั่วประเทศ
+          <h1 style={{ fontSize: "clamp(40px, 7vw, 72px)", fontWeight: 800, lineHeight: 1.1, marginBottom: 20, letterSpacing: "-0.03em" }}>
+            <span style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>เรียน</span>
+            {" "}
+            <span style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>เล่น</span>
+            {" "}
+            <span style={{ color: "var(--text)" }}>เก่งขึ้น</span>
           </h1>
 
           <p style={{ fontSize: 17, color: "var(--text-muted)", maxWidth: 560, marginBottom: 32, lineHeight: 1.7 }}>
-            แพลตฟอร์มเรียนออนไลน์สำหรับนักเรียน ม.ปลาย และคนเตรียมสอบราชการ
-            — เรียนแล้วได้ XP จริง แลกสินค้าได้ แข่ง Leaderboard ได้
-            และยังมีข้อสอบจำลองจับเวลาเสมือนสอบจริง
+            แพลตฟอร์มเรียนออนไลน์ฟรี ม.ปลาย + สอบราชการ ก.พ. / ภาค ข.
+            สะสม XP แข่ง Leaderboard ทั่วประเทศ แลกสินค้าได้จริง
+            มีเกม ดูดวง และข้อสอบจำลองจับเวลาเสมือนจริง
           </p>
 
           <div className="flex gap-3 flex-wrap" style={{ marginBottom: 40 }}>
