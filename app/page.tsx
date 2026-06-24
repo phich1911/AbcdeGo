@@ -9,7 +9,7 @@ const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "AbcdeGo — เรียนฟรี ได้ XP แลกของได้จริง",
+  title: "AbcdeGo",
   description: "แพลตฟอร์มเรียนออนไลน์ฟรี ม.ปลาย + สอบราชการ ก.พ. ภาค ข. สะสม XP แข่งอันดับทั่วประเทศ แลกส่วนลดสินค้า ปลดล็อคข้อสอบจำลองจับเวลาเสมือนจริง",
 };
 
