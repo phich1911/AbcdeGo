@@ -39,7 +39,7 @@ export default function AdminExamPage() {
   return (
     <main style={{ maxWidth: 860, margin: "0 auto", padding: "80px 16px 64px" }}>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}>🔐 Admin — ตรวจข้อสอบ</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}> Admin — ตรวจข้อสอบ</h1>
         <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{KP_MOCK_1.title}</p>
       </div>
 
@@ -99,7 +99,7 @@ export default function AdminExamPage() {
                   }}>
                     <span style={{ flexShrink: 0, opacity: 0.5 }}>{["ก", "ข", "ค", "ง"][ci]}.</span>
                     {choice}
-                    {show && isCorrect && <span style={{ marginLeft: "auto" }}>✓</span>}
+                    {show && isCorrect && <span style={{ marginLeft: "auto" }}>✓ </span>}
                   </div>
                 );
               })}
@@ -107,7 +107,7 @@ export default function AdminExamPage() {
 
             {showAnswer[q.id] && q.explanation && (
               <div style={{ marginTop: 10, padding: "10px 14px", borderRadius: 8, background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.15)", fontSize: 12, color: "var(--text-muted)", lineHeight: 1.7 }}>
-                💡 {q.explanation}
+                 {q.explanation}
               </div>
             )}
           </div>

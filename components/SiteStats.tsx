@@ -57,7 +57,7 @@ export default function SiteStats() {
                 <div key={i} className="flex items-center gap-3 px-3 py-2.5 rounded-lg" style={{ background: i === 0 ? "rgba(240,136,62,0.08)" : "var(--surface-2)", border: "1px solid var(--border)" }}>
                   <span className="w-7 text-center flex items-center justify-center">{MEDALS[i] ?? <span style={{ fontWeight: 700, fontSize: 12, color: "var(--text-muted)" }}>{i + 1}.</span>}</span>
                   {entry.avatar && (
-                    <span style={{ fontSize: 16 }}>{AVATARS.find((a) => a.id === entry.avatar)?.emoji}</span>
+                    <span style={{ fontSize: 10, fontWeight: 700 }}>{AVATARS.find((a) => a.id === entry.avatar)?.label}</span>
                   )}
                   <span className="flex-1 font-semibold text-sm truncate" style={{ color: "var(--text)" }}>{entry.name}{GM_NAMES.has(entry.name) && <span style={{ marginLeft: 6, fontSize: 11, fontWeight: 800, color: "#ef4444", textShadow: "0 0 8px #ef4444, 0 0 16px #fca5a5" }}>[GM]</span>}</span>
                   <span className="badge mr-1" style={{ color: "var(--accent-purple)", borderColor: "rgba(165,160,248,0.3)", background: "rgba(165,160,248,0.08)", fontSize: 11 }}>Lv.{Math.floor(entry.xp / 100) + 1}</span>

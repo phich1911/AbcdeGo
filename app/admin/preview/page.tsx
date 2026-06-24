@@ -36,7 +36,7 @@ export default function AdminPreviewPage() {
     <main className="max-w-5xl mx-auto px-6 pt-24 pb-16">
       <div className="mb-6">
         <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full" style={{ background: "rgba(239,68,68,0.15)", color: "var(--accent-red)" }}>
-          🔒 Admin Only
+           Admin Only
         </span>
         <h1 className="text-3xl font-black mt-3 mb-1">Preview ชุดที่ 2</h1>
         <p style={{ color: "var(--text-muted)" }} className="text-sm">ดูเนื้อหาทุกบทเรียน ก่อน unlock ให้ผู้ใช้</p>
@@ -75,7 +75,7 @@ export default function AdminPreviewPage() {
             >
               <div className="text-xs mb-1" style={{ color: "var(--text-muted)" }}>บทที่ {l.order}</div>
               <div className="text-sm font-bold leading-snug">{l.title}</div>
-              <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>⚡ {l.xpReward} XP · {l.steps.length} steps</div>
+              <div className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>{l.xpReward} XP · {l.steps.length} steps</div>
             </button>
           ))}
         </div>
@@ -92,7 +92,7 @@ export default function AdminPreviewPage() {
               <div className="glass rounded-2xl p-5">
                 <h2 className="text-xl font-black mb-1">{lesson.title}</h2>
                 <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  {lesson.steps.length} steps · ⚡ {lesson.xpReward} XP
+                  {lesson.steps.length} steps · {lesson.xpReward} XP
                 </p>
               </div>
 
@@ -113,7 +113,7 @@ export default function AdminPreviewPage() {
                             color: step.type === "info" ? "var(--primary-light)" : step.type === "quiz" ? "var(--accent-green)" : "var(--accent)",
                           }}
                         >
-                          {step.type === "info" ? "📖 INFO" : step.type === "quiz" ? "✅ QUIZ" : "✏️ FILL"}
+                          {step.type === "info" ? " INFO" : step.type === "quiz" ? "✓ QUIZ" : "️ FILL"}
                         </span>
                         <span className="font-bold text-sm">
                           {step.type === "info" ? step.title : step.question.slice(0, 60) + (step.question.length > 60 ? "..." : "")}
@@ -159,7 +159,7 @@ export default function AdminPreviewPage() {
                         {step.type === "fill" && (
                           <div className="mt-4 flex flex-col gap-3">
                             <p className="font-bold">{step.question}</p>
-                            <div className="text-sm" style={{ color: "var(--text-muted)" }}>💡 {step.hint}</div>
+                            <div className="text-sm" style={{ color: "var(--text-muted)" }}> {step.hint}</div>
                             <div className="px-4 py-3 rounded-xl text-sm font-bold" style={{ background: "rgba(245,158,11,0.12)", color: "var(--accent)", border: "1px solid rgba(245,158,11,0.3)" }}>
                               ✓ คำตอบ: {step.answer}
                             </div>

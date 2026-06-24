@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const articles = [
   {
     href: "/tips/kp",
-    icon: "🏛️",
+    icon: "",
     tag: "ก.พ.",
     title: "เทคนิคทำข้อสอบ ก.พ. ครบทุกวิชา",
     desc: "อนุกรม · คณิตศาสตร์ · ภาษาไทย · เงื่อนไขสัญลักษณ์ · ภาษาอังกฤษ · กฎหมายข้าราชการ · บริหารเวลา 180 นาที",
@@ -22,7 +22,7 @@ const articles = [
   },
   {
     href: "/tips/toeic",
-    icon: "🎧",
+    icon: "",
     tag: "TOEIC",
     title: "TOEIC คืออะไร? ครบทุกอย่างในหน้าเดียว",
     desc: "โครงสร้างข้อสอบ · คะแนนมาตรฐาน · เทคนิค Listening & Reading · วิธีเตรียมตัว",

@@ -166,7 +166,7 @@ const section1: ExamSection = {
         "ข้อสรุปที่ 1 ผิด และข้อสรุปที่ 2 ผิด",
       ],
       correct: 1,
-      explanation: "z/2=(x+y)/2 → x>(x+y)/2 ↔ x>y (ถูก) ✓ แต่ y>(x+y)/2 ↔ y>x (ผิด เพราะ x>y)",
+      explanation: "z/2=(x+y)/2 → x>(x+y)/2  x>y (ถูก) ✓ แต่ y>(x+y)/2  y>x (ผิด เพราะ x>y)",
     },
     {
       id: 18,
@@ -238,7 +238,7 @@ const section1: ExamSection = {
         "ข้อสรุปที่ 1 ผิด และข้อสรุปที่ 2 ผิด",
       ],
       correct: 2,
-      explanation: "A=30, B=20 → A−B=10≠5 ผิด แต่ A/B=30/20=1.5 ✓",
+      explanation: "A=30, B=20 → A−B=10≠5 ผิด แต่ A/B=30/20=1.5 ✓ ",
     },
     {
       id: 24,

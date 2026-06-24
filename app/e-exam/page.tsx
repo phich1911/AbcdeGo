@@ -81,7 +81,7 @@ export default function EExamPage() {
         {/* XP Banner */}
         <div className="rounded-xl p-5 mb-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div className="flex items-center gap-3 mb-3">
-            <span style={{ fontSize: 28 }}>⚡</span>
+            <span style={{ fontSize: 28 }}></span>
             <div>
               <p className="font-bold" style={{ color: "var(--text)", fontSize: 17 }}>
                 XP ของคุณ: {xp.toLocaleString()} XP
@@ -135,7 +135,7 @@ export default function EExamPage() {
                 style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
               >
                 <div className="flex items-center gap-3">
-                  <span style={{ fontSize: 28 }}>📝</span>
+                  <span style={{ fontSize: 28 }}></span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "var(--primary)", color: "#fff" }}>
@@ -168,7 +168,7 @@ export default function EExamPage() {
                         border: canAfford ? "none" : "1px solid var(--border)",
                       }}
                     >
-                      {isLoading ? "กำลังปลดล็อค..." : `⚡ ปลดล็อค (ต้องมี ${XP_COST.toLocaleString()} XP)`}
+                      {isLoading ? "กำลังปลดล็อค..." : `ปลดล็อค (ต้องมี ${XP_COST.toLocaleString()} XP)`}
                     </button>
                   )}
                 </div>

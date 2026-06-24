@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     id: "what",
-    icon: "📖",
+    icon: "",
     title: "TOEIC คืออะไร?",
     content: (
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -32,13 +32,13 @@ const sections = [
   },
   {
     id: "structure",
-    icon: "📋",
+    icon: "",
     title: "โครงสร้างข้อสอบ TOEIC",
     content: (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <div className="card" style={{ padding: 20 }}>
-            <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: 16, color: "var(--text)" }}>🎧 Listening</p>
+            <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: 16, color: "var(--text)" }}> Listening</p>
             <p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--text-muted)" }}>100 ข้อ · 45 นาที</p>
             <ul style={{ margin: "8px 0 0", padding: "0 0 0 18px", fontSize: 13, color: "var(--text-muted)", lineHeight: 2 }}>
               <li>Part 1: Photographs (6 ข้อ)</li>
@@ -48,7 +48,7 @@ const sections = [
             </ul>
           </div>
           <div className="card" style={{ padding: 20 }}>
-            <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: 16, color: "var(--text)" }}>📖 Reading</p>
+            <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: 16, color: "var(--text)" }}> Reading</p>
             <p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--text-muted)" }}>100 ข้อ · 75 นาที</p>
             <ul style={{ margin: "8px 0 0", padding: "0 0 0 18px", fontSize: 13, color: "var(--text-muted)", lineHeight: 2 }}>
               <li>Part 5: Incomplete Sentences (30 ข้อ)</li>
@@ -59,7 +59,7 @@ const sections = [
         </div>
         <div className="card" style={{ padding: 16, background: "rgba(0,122,255,0.05)", border: "1px solid rgba(0,122,255,0.15)" }}>
           <p style={{ margin: 0, fontSize: 14, color: "var(--text-muted)", lineHeight: 1.8 }}>
-            💡 <strong style={{ color: "var(--text)" }}>รวม 200 ข้อ · 2 ชั่วโมง</strong> · คะแนนเต็ม 990 คะแนน (Listening 495 + Reading 495) · ไม่มีหักคะแนนข้อที่ผิด
+             <strong style={{ color: "var(--text)" }}>รวม 200 ข้อ · 2 ชั่วโมง</strong> · คะแนนเต็ม 990 คะแนน (Listening 495 + Reading 495) · ไม่มีหักคะแนนข้อที่ผิด
           </p>
         </div>
       </div>
@@ -67,7 +67,7 @@ const sections = [
   },
   {
     id: "score",
-    icon: "🎯",
+    icon: "",
     title: "คะแนน TOEIC เท่าไหร่ถึงพอ?",
     content: (
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -93,7 +93,7 @@ const sections = [
   },
   {
     id: "tips-listening",
-    icon: "🎧",
+    icon: "",
     title: "เทคนิคทำ Listening",
     content: (
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -113,7 +113,7 @@ const sections = [
   },
   {
     id: "tips-reading",
-    icon: "📖",
+    icon: "",
     title: "เทคนิคทำ Reading",
     content: (
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -133,7 +133,7 @@ const sections = [
   },
   {
     id: "prepare",
-    icon: "📅",
+    icon: "",
     title: "วิธีเตรียมตัวสอบ TOEIC",
     content: (
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>

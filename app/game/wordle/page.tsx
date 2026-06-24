@@ -258,7 +258,7 @@ export default function WordlePage() {
 
         {topScore && (
           <div className="flex items-center gap-2 mb-4 px-4 py-2 rounded-xl" style={{ background: "var(--surface)", border: "1px solid var(--border)", fontSize: 13 }}>
-            <span style={{ fontSize: 18 }}>🏆</span>
+            <span style={{ fontSize: 18 }}></span>
             <span style={{ color: "var(--text-muted)" }}>Top:</span>
             <span style={{ fontWeight: 700, color: "var(--text)" }}>{topScore.display_name}</span>
             <span style={{ color: "var(--accent)", fontWeight: 600 }}>{topScore.score} pts</span>

@@ -94,7 +94,7 @@ function CourseCard({ course, pct }: { course: (typeof COURSES)[0]; pct: number 
         </div>
         <div className="flex justify-between mt-3" style={{ fontSize: 12 }}>
           <span style={{ color: "var(--text-muted)" }}>{course.totalLessons} บทเรียน</span>
-          <span style={{ color: "var(--accent)", fontWeight: 500 }}>⚡ {course.xpReward} XP</span>
+          <span style={{ color: "var(--accent)", fontWeight: 500 }}>{course.xpReward} XP</span>
         </div>
       </div>
     </Link>
@@ -212,7 +212,7 @@ function CoursesInner() {
         </div>
         <details className="card-lg mb-5" style={{ padding: "14px 18px" }} open>
           <summary style={{ cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text)", listStyle: "none" }}>
-            📋 เกี่ยวกับการสอบ ก.พ.
+            เกี่ยวกับการสอบ ก.พ.
           </summary>
           <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, whiteSpace: "pre-line", marginTop: 12 }}>{COURSES.find((c) => c.category === "สอบ ก.พ.")?.intro}</p>
         </details>
@@ -224,7 +224,7 @@ function CoursesInner() {
             if (isLocked) {
               return (
                 <div key={set.slug} className="card-lg flex flex-col gap-3 p-5" style={{ opacity: 0.6, cursor: "default" }}>
-                  <span className="badge" style={{ fontSize: 11, width: "fit-content" }}>🔒 เร็วๆ นี้</span>
+                  <span className="badge" style={{ fontSize: 11, width: "fit-content" }}> เร็วๆ นี้</span>
                   <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", margin: 0 }}>{set.label}</h2>
                   <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>{set.description}</p>
                   <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--text-subtle)", fontWeight: 500 }}>
@@ -271,7 +271,7 @@ function CoursesInner() {
         {intro && (
           <details className="card-lg mb-5" style={{ padding: "14px 18px" }} open>
             <summary style={{ cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text)", listStyle: "none" }}>
-              📋 เกี่ยวกับการสอบ
+              เกี่ยวกับการสอบ
             </summary>
             <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, whiteSpace: "pre-line", marginTop: 12 }}>{intro}</p>
           </details>

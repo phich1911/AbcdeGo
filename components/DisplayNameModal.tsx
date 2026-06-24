@@ -62,9 +62,9 @@ export default function DisplayNameModal({ current, onDone, onClose }: Props) {
           <div className="flex flex-col items-center gap-2">
             <div
               className="flex items-center justify-center rounded-full"
-              style={{ width: 64, height: 64, background: avatar.bg, fontSize: 32 }}
+              style={{ width: 64, height: 64, background: avatar.bg, fontSize: 11, fontWeight: 800, color: "#fff", letterSpacing: "0.05em" }}
             >
-              {avatar.emoji}
+              {avatar.label}
             </div>
             <p className="text-xs" style={{ color: "var(--text-muted)" }}>Choose your avatar</p>
           </div>
@@ -80,14 +80,17 @@ export default function DisplayNameModal({ current, onDone, onClose }: Props) {
                   width: "100%",
                   aspectRatio: "1",
                   background: a.bg,
-                  fontSize: 20,
+                  fontSize: 8,
+                  fontWeight: 800,
+                  color: "#fff",
+                  letterSpacing: "0.03em",
                   outline: selectedAvatar === a.id ? "2px solid var(--primary)" : "2px solid transparent",
                   outlineOffset: 2,
                   opacity: selectedAvatar === a.id ? 1 : 0.65,
                 }}
                 title={a.id}
               >
-                {a.emoji}
+                {a.label}
               </button>
             ))}
           </div>

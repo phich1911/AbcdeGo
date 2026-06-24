@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const tips = [
   {
-    icon: "🔢",
+    icon: "",
     title: "อนุกรมตัวเลข (Number Series)",
     keywords: "เทคนิคอนุกรม ก.พ.",
     content: [
@@ -36,7 +36,7 @@ const tips = [
     ],
   },
   {
-    icon: "📐",
+    icon: "",
     title: "คณิตศาสตร์ทั่วไป",
     keywords: "เทคนิคคณิตศาสตร์สอบ ก.พ.",
     content: [
@@ -59,7 +59,7 @@ const tips = [
     ],
   },
   {
-    icon: "🇹🇭",
+    icon: "",
     title: "ภาษาไทย",
     keywords: "เทคนิคภาษาไทย ก.พ.",
     content: [
@@ -82,7 +82,7 @@ const tips = [
     ],
   },
   {
-    icon: "🔣",
+    icon: "",
     title: "เงื่อนไขสัญลักษณ์ (อสมการ)",
     keywords: "เทคนิคเงื่อนไขสัญลักษณ์ ก.พ.",
     content: [
@@ -105,7 +105,7 @@ const tips = [
     ],
   },
   {
-    icon: "🇬🇧",
+    icon: "",
     title: "ภาษาอังกฤษ",
     keywords: "เทคนิคภาษาอังกฤษ ก.พ.",
     content: [
@@ -128,7 +128,7 @@ const tips = [
     ],
   },
   {
-    icon: "⚖️",
+    icon: "️",
     title: "ความรู้และลักษณะการเป็นข้าราชการที่ดี",
     keywords: "เทคนิคกฎหมายข้าราชการ ก.พ.",
     content: [
@@ -151,7 +151,7 @@ const tips = [
     ],
   },
   {
-    icon: "⏱️",
+    icon: "️",
     title: "บริหารเวลา 180 นาที",
     keywords: "บริหารเวลาสอบ ก.พ. 180 นาที",
     content: [
@@ -245,14 +245,14 @@ export default function TipsPage() {
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
           {[
-            { href: "#อนุกรมตัวเลข (Number Series)", icon: "🔢", title: "อนุกรมตัวเลข", desc: "ผลต่างชั้น 1-2 และอนุกรมเรขาคณิต" },
-            { href: "#คณิตศาสตร์ทั่วไป", icon: "📐", title: "คณิตศาสตร์ทั่วไป", desc: "เปอร์เซ็นต์ ตาราง โจทย์คำพูด" },
-            { href: "#ภาษาไทย", icon: "🇹🇭", title: "ภาษาไทย", desc: "อุปมา เรียงประโยค เงื่อนไขภาษา" },
-            { href: "#เงื่อนไขสัญลักษณ์ (อสมการ)", icon: "🔣", title: "เงื่อนไขสัญลักษณ์", desc: "แทนค่า พิสูจน์ข้อสรุป" },
-            { href: "#ภาษาอังกฤษ", icon: "🇬🇧", title: "ภาษาอังกฤษ ก.พ.", desc: "Vocabulary Grammar Reading" },
-            { href: "#ความรู้และลักษณะการเป็นข้าราชการที่ดี", icon: "⚖️", title: "กฎหมายข้าราชการ", desc: "จริยธรรม โครงสร้างกฎหมายหลัก" },
-            { href: "#บริหารเวลา 180 นาที", icon: "⏱️", title: "บริหารเวลา 180 นาที", desc: "แบ่งเวลาและกลยุทธ์ตอบข้อสอบ" },
-            { href: "/tips/toeic", icon: "📝", title: "TOEIC คืออะไร?", desc: "โครงสร้าง คะแนน เทคนิค Listening & Reading" },
+            { href: "#อนุกรมตัวเลข (Number Series)", icon: "", title: "อนุกรมตัวเลข", desc: "ผลต่างชั้น 1-2 และอนุกรมเรขาคณิต" },
+            { href: "#คณิตศาสตร์ทั่วไป", icon: "", title: "คณิตศาสตร์ทั่วไป", desc: "เปอร์เซ็นต์ ตาราง โจทย์คำพูด" },
+            { href: "#ภาษาไทย", icon: "", title: "ภาษาไทย", desc: "อุปมา เรียงประโยค เงื่อนไขภาษา" },
+            { href: "#เงื่อนไขสัญลักษณ์ (อสมการ)", icon: "", title: "เงื่อนไขสัญลักษณ์", desc: "แทนค่า พิสูจน์ข้อสรุป" },
+            { href: "#ภาษาอังกฤษ", icon: "", title: "ภาษาอังกฤษ ก.พ.", desc: "Vocabulary Grammar Reading" },
+            { href: "#ความรู้และลักษณะการเป็นข้าราชการที่ดี", icon: "️", title: "กฎหมายข้าราชการ", desc: "จริยธรรม โครงสร้างกฎหมายหลัก" },
+            { href: "#บริหารเวลา 180 นาที", icon: "️", title: "บริหารเวลา 180 นาที", desc: "แบ่งเวลาและกลยุทธ์ตอบข้อสอบ" },
+            { href: "/tips/toeic", icon: "", title: "TOEIC คืออะไร?", desc: "โครงสร้าง คะแนน เทคนิค Listening & Reading" },
           ].map((a) => (
             <Link key={a.href} href={a.href} style={{ textDecoration: "none" }}>
               <div className="card" style={{ padding: "18px 20px", transition: "all 0.15s", cursor: "pointer" }}>

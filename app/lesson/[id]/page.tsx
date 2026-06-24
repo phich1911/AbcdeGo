@@ -191,7 +191,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)" }}
               >
                 <p className="font-bold text-sm mb-1" style={{ color: "var(--accent)" }}>
-                  ⚡ XP ของคุณกำลังจะหาย!
+                  XP ของคุณกำลังจะหาย!
                 </p>
                 <p className="text-xs mb-3" style={{ color: "var(--text-muted)" }}>
                   สมัครฟรีเพื่อบันทึก {earnedXp} XP และขึ้นตารางผู้นำ
@@ -431,7 +431,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         {/* XP preview */}
         <div className="mt-4 flex justify-between text-sm" style={{ color: "var(--text-muted)" }}>
           <span>ตอบถูกทุกข้อ = {lesson.xpReward} XP</span>
-          <span>⚡ สะสมแล้ว <strong style={{ color: "var(--accent)" }}>{earnedXp}</strong> XP</span>
+          <span>สะสมแล้ว <strong style={{ color: "var(--accent)" }}>{earnedXp}</strong> XP</span>
         </div>
       </main>
     </>

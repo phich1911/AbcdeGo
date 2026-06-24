@@ -134,7 +134,7 @@ export default function DashboardPage() {
                     />
                   </div>
                   <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-                    {course.totalLessons} บทเรียน · ⚡ {course.xpReward} XP
+                    {course.totalLessons} บทเรียน · {course.xpReward} XP
                   </p>
                 </div>
               </Link>

@@ -183,7 +183,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   if (!isUnlocked) {
     return (
       <main style={{ maxWidth: 760, margin: "0 auto", padding: "80px 16px", textAlign: "center" }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🔒</div>
+        <div style={{ fontSize: 48, marginBottom: 16 }}></div>
         <h2 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>ยังไม่ได้ปลดล็อค</h2>
         <p style={{ color: "var(--text-muted)", marginBottom: 24 }}>ใช้ 1,000 XP เพื่อปลดล็อคข้อสอบชุดนี้</p>
         <button
@@ -201,7 +201,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     return (
       <main style={{ maxWidth: 760, margin: "0 auto", padding: "80px 16px 48px" }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>📋</div>
+          <div style={{ fontSize: 48, marginBottom: 12 }}></div>
           <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 8px" }}>
             {exam.title}
           </h1>
@@ -243,7 +243,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>
-                    ⏱ แนะนำ {sec.timeRecommended} นาที
+                     แนะนำ {sec.timeRecommended} นาที
                   </p>
                 </div>
               </div>
@@ -328,7 +328,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
                 <div>
                   <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: 15, color: "var(--text)", display: "flex", alignItems: "center", gap: 6 }}>
-                    {opt.locked && <span>🔒</span>}
+                    {opt.locked && <span></span>}
                     {opt.label}
                   </p>
                   <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
@@ -386,7 +386,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     return (
       <main style={{ maxWidth: 760, margin: "0 auto", padding: "80px 16px 48px" }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ fontSize: 56, marginBottom: 12 }}>{allPassed ? "🎉" : timedOut ? "⏰" : "❌"}</div>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>{allPassed ? "" : timedOut ? "" : "✗"}</div>
           <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px", color: allPassed ? "var(--accent-green)" : "#ff3b30" }}>
             {allPassed ? (isFullMode ? "ผ่านการสอบ!" : "ผ่านวิชานี้!") : timedOut ? "หมดเวลา!" : "ไม่ผ่านเกณฑ์"}
           </h1>
@@ -400,7 +400,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         {isFullMode && !allPassed && (
           <div className="card" style={{ padding: 20, marginBottom: 20, background: "rgba(255,59,48,0.05)", borderColor: "rgba(255,59,48,0.3)", textAlign: "center" }}>
             <p style={{ margin: "0 0 6px", fontWeight: 800, fontSize: 16, color: "#ff3b30" }}>
-              {timedOut ? "⏰ หมดเวลาก่อนทำครบ" : "❌ ยังไม่ผ่านเกณฑ์บางวิชา"}
+              {timedOut ? " หมดเวลาก่อนทำครบ" : "✗ ยังไม่ผ่านเกณฑ์บางวิชา"}
             </p>
             <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
               ต้องผ่านทุกวิชาตามเกณฑ์และทันเวลา — กดสอบใหม่อีกครั้งได้เลย
@@ -411,7 +411,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         {allPassed && isFullMode && (
           <div className="card" style={{ padding: 20, marginBottom: 20, textAlign: "center", background: "rgba(52,199,89,0.06)", borderColor: "rgba(52,199,89,0.3)" }}>
             <p style={{ margin: "0 0 4px", fontWeight: 800, fontSize: 18, color: "var(--accent-green)" }}>
-              ⚡ +{exam.xpReward.toLocaleString()} XP
+              +{exam.xpReward.toLocaleString()} XP
             </p>
             <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
               ได้รับยศ: <strong style={{ color: "var(--primary)" }}>{exam.rankReward}</strong>
@@ -422,7 +422,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         {allPassed && !isFullMode && sectionXp > 0 && (
           <div className="card" style={{ padding: 16, marginBottom: 20, textAlign: "center", background: "rgba(52,199,89,0.06)", borderColor: "rgba(52,199,89,0.3)" }}>
             <p style={{ margin: 0, fontSize: 14, color: "var(--text-muted)" }}>
-              ⚡ ทำครบ 3 วิชาในโหมดเต็มรูปแบบเพื่อรับ <strong style={{ color: "var(--accent-green)" }}>{exam.xpReward.toLocaleString()} XP</strong>
+              ทำครบ 3 วิชาในโหมดเต็มรูปแบบเพื่อรับ <strong style={{ color: "var(--accent-green)" }}>{exam.xpReward.toLocaleString()} XP</strong>
             </p>
           </div>
         )}
@@ -456,7 +456,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         {!allPassed && (
           <div className="card" style={{ padding: 16, marginBottom: 20, background: "rgba(255,59,48,0.04)", borderColor: "rgba(255,59,48,0.2)" }}>
             <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
-              💡 ลองทบทวนบทเรียนในคอร์สฟรีแล้วกลับมาสอบใหม่ได้เลย
+               ลองทบทวนบทเรียนในคอร์สฟรีแล้วกลับมาสอบใหม่ได้เลย
             </p>
           </div>
         )}
@@ -527,7 +527,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
         {/* Timer */}
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>⏱</span>
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}></span>
           <span style={{ fontSize: 16, fontWeight: 800, fontVariantNumeric: "tabular-nums", color: timerColor }}>
             {formatTime(timeLeft)}
           </span>
@@ -583,7 +583,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
                     {String.fromCharCode(65 + ci)}.
                   </span>
                   {choice}
-                  {showResult && isCorrect && <span style={{ marginLeft: 8 }}>✓</span>}
+                  {showResult && isCorrect && <span style={{ marginLeft: 8 }}>✓ </span>}
                 </button>
               );
             })}
@@ -592,7 +592,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           {/* Explanation — section mode only */}
           {isSectionMode && lockedAnswers[currentFlatIdx] && currentQ?.explanation && (
             <div style={{ marginTop: 16, padding: "12px 16px", borderRadius: 12, background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.2)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.7 }}>
-              💡 <strong style={{ color: "var(--primary)" }}>เฉลย:</strong> {currentQ.explanation}
+               <strong style={{ color: "var(--primary)" }}>เฉลย:</strong> {currentQ.explanation}
             </div>
           )}
           {isSectionMode && lockedAnswers[currentFlatIdx] && !currentQ?.explanation && (

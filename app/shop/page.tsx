@@ -18,8 +18,8 @@ declare global {
 }
 
 const CATEGORY_ICON: Record<string, string> = {
-  "ก.พ.": "📝",
-  "DSI": "🔎",
+  "ก.พ.": "",
+  "DSI": "",
 };
 
 export default function ShopPage() {
@@ -104,7 +104,7 @@ export default function ShopPage() {
       {/* XP Discount Banner */}
       <div className="card" style={{ padding: "20px 24px", marginBottom: 32, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 32 }}>⚡</span>
+          <span style={{ fontSize: 32 }}></span>
           <div>
             <p style={{ margin: 0, fontWeight: 700, fontSize: 16 }}>XP ของคุณ: {xp.toLocaleString()} XP</p>
             <p style={{ margin: "2px 0 0", fontSize: 13, color: "var(--text-muted)" }}>
@@ -121,7 +121,7 @@ export default function ShopPage() {
                 <div style={{ height: "100%", borderRadius: 3, background: xp >= threshold ? "var(--accent-green)" : "var(--primary)", width: `${Math.min((xp / threshold) * 100, 100)}%`, transition: "width 0.4s" }} />
               </div>
               <span style={{ fontSize: 12, color: xp >= threshold ? "var(--accent-green)" : "var(--text-muted)" }}>
-                {xp >= threshold ? "✓" : ""} {threshold} XP = ลด {(threshold / 500) * 10} ฿
+                {xp >= threshold ? "✓ " : ""} {threshold} XP = ลด {(threshold / 500) * 10} ฿
               </span>
             </div>
           ))}
@@ -151,7 +151,7 @@ export default function ShopPage() {
           return (
             <div key={product.id} className="card-lg" style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16, opacity: isSoon ? 0.85 : 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 28 }}>{CATEGORY_ICON[product.category] ?? "📄"}</span>
+                <span style={{ fontSize: 28 }}>{CATEGORY_ICON[product.category] ?? ""}</span>
                 <div>
                   <span style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 500 }}>{product.category}</span>
                   <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, lineHeight: 1.3 }}>{product.title}</h3>
@@ -164,7 +164,7 @@ export default function ShopPage() {
                 <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 4 }}>
                   {product.highlights.map((h) => (
                     <li key={h} style={{ fontSize: 12, color: "var(--text-muted)", display: "flex", gap: 6, alignItems: "flex-start" }}>
-                      <span style={{ color: "var(--accent-green)", fontWeight: 700, flexShrink: 0 }}>✓</span>
+                      <span style={{ color: "var(--accent-green)", fontWeight: 700, flexShrink: 0 }}>✓ </span>
                       {h}
                     </li>
                   ))}
@@ -209,7 +209,7 @@ export default function ShopPage() {
               </div>
               {!isSoon && (
                 <p style={{ fontSize: 11, color: "var(--text-subtle)", textAlign: "center", margin: "4px 0 0" }}>
-                  ไม่ต้องซื้อก็ได้ ถ้าอยากวัดดวง 🎲
+                  ไม่ต้องซื้อก็ได้ ถ้าอยากวัดดวง 
                 </p>
               )}
             </div>

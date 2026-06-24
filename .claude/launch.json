@@ -1,1 +1,1 @@
-{"version":"0.0.1","configurations":[{"name":"abcdego","runtimeExecutable":"D:\\Terminal\\npm.cmd","runtimeArgs":["run","dev"],"cwd":"D:\\Claude Ai\\AbcdeGo","port":3000}]}
+{"version":"0.0.1","configurations":[{"name":"abcdego","runtimeExecutable":"D:\\Terminal\\npm.cmd","runtimeArgs":["run","dev"],"cwd":"D:\\Claude Ai\\AbcdeGo","port":3001}]}

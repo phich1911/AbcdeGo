@@ -278,7 +278,7 @@ export default function Navbar() {
             <div className="ml-auto flex items-center gap-2">
               {/* XP badge */}
               <span className="badge" style={{ color: "var(--accent)", borderColor: "rgba(240,136,62,0.3)", background: "rgba(240,136,62,0.08)", fontSize: 12 }}>
-                ⚡ {xp} XP
+                {xp} XP
               </span>
 
               {/* Theme toggle */}
@@ -288,7 +288,7 @@ export default function Navbar() {
                 style={{ color: "var(--text-muted)", fontSize: 14, border: "1px solid var(--border)" }}
                 title={isDark ? "Light mode" : "Dark mode"}
               >
-                {isDark ? "☀" : "☾"}
+                {isDark ? "" : "☾"}
               </button>
 
               {/* Auth */}
@@ -301,7 +301,7 @@ export default function Navbar() {
                     style={{ background: avatar?.bg ?? "var(--primary)", fontSize: 16 }}
                     title={userEmail}
                   >
-                    {avatar ? avatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
+                    {avatar ? avatar.label : (displayName || userEmail!)[0].toUpperCase()}
                   </button>
                   {userMenuOpen && (
                     <div className="absolute top-full right-0 mt-1 rounded-lg overflow-hidden min-w-[200px]"
@@ -310,13 +310,13 @@ export default function Navbar() {
                       onMouseLeave={() => { userMenuCloseTimer.current = setTimeout(() => setUserMenuOpen(false), 150); }}>
                       <div className="px-3 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
                         <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 36, height: 36, background: avatar?.bg ?? "var(--primary)", fontSize: 20 }}>
-                          {avatar ? avatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
+                          {avatar ? avatar.label : (displayName || userEmail!)[0].toUpperCase()}
                         </div>
                         <div className="min-w-0">
                         {displayName && <p className="text-sm font-semibold truncate" style={{ color: "var(--text)" }}>{displayName}{userEmail === "phich1911@gmail.com" && <span style={{ color: "#ef4444", marginLeft: 4 }}>[GM]</span>}</p>}
                         <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{userEmail}</p>
                         <div className="flex flex-col gap-1 mt-2">
-                          <span className="badge" style={{ color: "var(--accent)", borderColor: "rgba(240,136,62,0.3)", background: "rgba(240,136,62,0.08)", width: "fit-content" }}>⚡ {xp} XP</span>
+                          <span className="badge" style={{ color: "var(--accent)", borderColor: "rgba(240,136,62,0.3)", background: "rgba(240,136,62,0.08)", width: "fit-content" }}>{xp} XP</span>
                           <span className="badge" style={{ color: "var(--accent-purple)", borderColor: "rgba(165,160,248,0.3)", background: "rgba(165,160,248,0.08)", width: "fit-content" }}>Lv.{Math.floor(xp / 100) + 1}</span>
                         </div>
                         </div>
@@ -415,7 +415,7 @@ export default function Navbar() {
                 className="flex items-center justify-center w-7 h-7 rounded-md"
                 style={{ color: "var(--text-muted)", fontSize: 14, border: "1px solid var(--border)" }}
               >
-                {isDark ? "☀" : "☾"}
+                {isDark ? "" : "☾"}
               </button>
             </div>
             <div style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
@@ -423,11 +423,11 @@ export default function Navbar() {
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-2 px-2 py-1.5">
                   <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 28, height: 28, background: avatar?.bg ?? "var(--primary)", fontSize: 16 }}>
-                    {avatar ? avatar.emoji : (displayName || userEmail)[0].toUpperCase()}
+                    {avatar ? avatar.label : (displayName || userEmail)[0].toUpperCase()}
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold truncate" style={{ color: "var(--text)" }}>{displayName || userEmail}</p>
-                    <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>⚡ {xp} XP · Lv.{Math.floor(xp / 100) + 1}</p>
+                    <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{xp} XP · Lv.{Math.floor(xp / 100) + 1}</p>
                   </div>
                 </div>
                 <button onClick={() => { setMenuOpen(false); setEditProfileOpen(true); }} className="px-2 py-2 text-sm text-left hover:bg-white/5 rounded" style={{ color: "var(--text-muted)" }}>แก้ไขโปรไฟล์</button>
