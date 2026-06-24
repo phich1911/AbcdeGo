@@ -288,7 +288,7 @@ export default function Navbar() {
                 style={{ color: "var(--text-muted)", fontSize: 14, border: "1px solid var(--border)" }}
                 title={isDark ? "Light mode" : "Dark mode"}
               >
-                {isDark ? "" : "☾"}
+                {isDark ? "☀" : "☾"}
               </button>
 
               {/* Auth */}
@@ -415,7 +415,7 @@ export default function Navbar() {
                 className="flex items-center justify-center w-7 h-7 rounded-md"
                 style={{ color: "var(--text-muted)", fontSize: 14, border: "1px solid var(--border)" }}
               >
-                {isDark ? "" : "☾"}
+                {isDark ? "☀" : "☾"}
               </button>
             </div>
             <div style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
