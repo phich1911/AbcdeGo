@@ -52,7 +52,7 @@ export default async function Home() {
     <main className="flex-1" style={{ paddingTop: 60 }}>
 
       {/* Hero */}
-      <section style={{ borderBottom: "1px solid var(--border)", padding: "72px 24px 56px", background: "linear-gradient(135deg, rgba(254,243,199,0.6) 0%, rgba(255,237,213,0.4) 20%, rgba(237,233,254,0.5) 60%, rgba(221,214,254,0.6) 100%)", backgroundAttachment: "local" }}>
+      <section className="hero-bg" style={{ borderBottom: "1px solid var(--border)", padding: "72px 24px 56px" }}>
         <div className="max-w-4xl mx-auto">
           <h1 style={{ fontSize: "clamp(40px, 7vw, 72px)", fontWeight: 800, lineHeight: 1.1, marginBottom: 20, letterSpacing: "-0.03em" }}>
             <span style={{ background: "linear-gradient(135deg, #3b82f6, #8b5cf6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>เรียน</span>

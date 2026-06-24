@@ -179,6 +179,24 @@ a.card-lg:hover, button.card-lg:hover {
 .animate-bounce-in { animation: bounce-in 0.3s ease forwards; }
 .animate-shake { animation: shake 0.35s ease; }
 
+/* Hero gradient */
+.hero-bg {
+  background: linear-gradient(135deg,
+    rgba(56,139,253,0.12) 0%,
+    rgba(139,92,246,0.10) 40%,
+    rgba(240,136,62,0.08) 80%,
+    rgba(30,40,60,0.0) 100%
+  );
+}
+html.light .hero-bg {
+  background: linear-gradient(135deg,
+    rgba(254,243,199,0.7) 0%,
+    rgba(255,237,213,0.5) 25%,
+    rgba(237,233,254,0.6) 65%,
+    rgba(221,214,254,0.7) 100%
+  );
+}
+
 /* Logo theme switching */
 .logo-dark { display: none; filter: invert(1); }
 .logo-light { display: block; }
