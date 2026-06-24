@@ -60,6 +60,16 @@ export default async function Home() {
             <span style={{ background: "linear-gradient(135deg, #f59e0b, #ef4444)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>เล่น</span>
             {" "}
             <span style={{ color: "var(--text)" }}>เก่งขึ้น</span>
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: "inline-block", width: "0.75em", height: "0.75em", marginLeft: "0.15em", verticalAlign: "0.05em" }}>
+              <polyline points="4,36 16,22 26,28 44,8" stroke="url(#trendGrad)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              <polyline points="34,8 44,8 44,18" stroke="url(#trendGrad)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              <defs>
+                <linearGradient id="trendGrad" x1="4" y1="36" x2="44" y2="8" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#22c55e"/>
+                  <stop offset="100%" stopColor="#16a34a"/>
+                </linearGradient>
+              </defs>
+            </svg>
           </h1>
 
           <p style={{ fontSize: 17, color: "var(--text-muted)", maxWidth: 560, marginBottom: 32, lineHeight: 1.7 }}>
