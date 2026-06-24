@@ -213,24 +213,12 @@ export const COURSES: Course[] = [
     intro: `สาระแคลคูลัสและเพิ่มเติม (Calculus and More)\nระดับมัธยมปลาย ม.4 – ม.6\n\nเนื้อหาครอบคลุม\n• ลิมิตและความต่อเนื่อง\n• อนุพันธ์และการประยุกต์\n• อินทิกรัลและพื้นที่\n• จำนวนเชิงซ้อน`,
   },
   // ===== ฟิสิกส์ ม.ปลาย =====
-  { id: "physics-1",  title: "ธรรมชาติและพัฒนาการทางฟิสิกส์", description: "ธรรมชาติของฟิสิกส์ หน่วย SI และการวัด ระดับ ม.4–ม.6", icon: "⚛️", color: "#0284c7", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-2",  title: "การเคลื่อนที่แนวตรง", description: "ระยะทาง การกระจัด ความเร็ว ความเร่ง และสมการการเคลื่อนที่ ระดับ ม.4–ม.6", icon: "➡️", color: "#0369a1", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-3",  title: "แรงและกฎการเคลื่อนที่", description: "กฎของนิวตัน 3 ข้อ แรงลัพธ์ และการประยุกต์ใช้ ระดับ ม.4–ม.6", icon: "💪", color: "#0e7490", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-4",  title: "สมดุลกล", description: "เงื่อนไขสมดุล โมเมนต์ และจุดศูนย์กลางมวล ระดับ ม.4–ม.6", icon: "⚖️", color: "#0891b2", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-5",  title: "งานและพลังงาน", description: "งาน พลังงานจลน์ พลังงานศักย์ กฎอนุรักษ์พลังงาน และกำลัง ระดับ ม.4–ม.6", icon: "⚡", color: "#0284c7", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-6",  title: "โมเมนตัมและการชน", description: "โมเมนตัม แรงกระตุ้น กฎอนุรักษ์โมเมนตัม การชนยืดหยุ่นและไม่ยืดหยุ่น ระดับ ม.4–ม.6", icon: "🎱", color: "#0369a1", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-7",  title: "การเคลื่อนที่แนวโค้ง", description: "โพรเจกไทล์ การเคลื่อนที่เป็นวงกลม และแรงสู่ศูนย์กลาง ระดับ ม.4–ม.6", icon: "🏹", color: "#0e7490", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-8",  title: "การเคลื่อนที่แบบฮาร์มอนิกอย่างง่าย", description: "SHM แอมพลิจูด คาบ ความถี่ ลูกตุ้มและสปริง ระดับ ม.4–ม.6", icon: "🔁", color: "#0891b2", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-9",  title: "คลื่น", description: "ประเภทคลื่น สมการคลื่น การสะท้อน หักเห แทรกสอด และเลี้ยวเบน ระดับ ม.4–ม.6", icon: "🌊", color: "#0284c7", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-10", title: "แสงเชิงคลื่นและแสงเชิงรังสี", description: "กฎการสะท้อน หักเห เลนส์ กระจก และการแทรกสอดของแสง ระดับ ม.4–ม.6", icon: "💡", color: "#0369a1", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-11", title: "เสียง", description: "ธรรมชาติของเสียง ความเข้ม เสียงก้อง และปรากฏการณ์ดอปเปลอร์ ระดับ ม.4–ม.6", icon: "🔊", color: "#0e7490", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-12", title: "ไฟฟ้าสถิต", description: "ประจุไฟฟ้า กฎคูลอมบ์ สนามไฟฟ้า และศักย์ไฟฟ้า ระดับ ม.4–ม.6", icon: "⚡", color: "#0891b2", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-13", title: "ไฟฟ้ากระแส", description: "กฎโอห์ม วงจรอนุกรม-ขนาน กำลังไฟฟ้า ระดับ ม.4–ม.6", icon: "🔌", color: "#0284c7", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-14", title: "แม่เหล็กและไฟฟ้า", description: "สนามแม่เหล็ก แรงแม่เหล็ก และการเหนี่ยวนำแม่เหล็กไฟฟ้า ระดับ ม.4–ม.6", icon: "🧲", color: "#0369a1", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-15", title: "ความร้อนและแก๊ส", description: "เทอร์โมไดนามิกส์ กฎแก๊สอุดมคติ และกฎการอนุรักษ์พลังงาน ระดับ ม.4–ม.6", icon: "🌡️", color: "#0e7490", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-16", title: "ของแข็งและของไหล", description: "ความเค้น ความเครียด ความดันของไหล แรงลอยตัว และสมการแบร์นูลลี ระดับ ม.4–ม.6", icon: "💧", color: "#0891b2", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-17", title: "ฟิสิกส์อะตอม", description: "แบบจำลองอะตอม ควอนตัม โฟโตอิเล็กทริก และสเปกตรัม ระดับ ม.4–ม.6", icon: "🔬", color: "#0284c7", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
-  { id: "physics-18", title: "ฟิสิกส์นิวเคลียร์และฟิสิกส์อนุภาค", description: "กัมมันตรังสี ครึ่งชีวิต ฟิชชัน ฟิวชัน ระดับ ม.4–ม.6", icon: "☢️", color: "#0369a1", totalLessons: 1, xpReward: 90, tag: "ม.ปลาย", category: "ฟิสิกส์ ม.ปลาย" },
+  { id: "phys-m4t1", title: "ฟิสิกส์ ม.4 เทอม 1", description: "ธรรมชาติของฟิสิกส์ · การเคลื่อนที่แนวตรง · แรงและกฎการเคลื่อนที่", icon: "⚛️", color: "#0284c7", totalLessons: 3, xpReward: 270, tag: "ม.4", category: "ฟิสิกส์ ม.ปลาย" },
+  { id: "phys-m4t2", title: "ฟิสิกส์ ม.4 เทอม 2", description: "สมดุลกล · งานและพลังงาน · โมเมนตัมและการชน · การเคลื่อนที่แนวโค้ง", icon: "⚖️", color: "#0369a1", totalLessons: 4, xpReward: 360, tag: "ม.4", category: "ฟิสิกส์ ม.ปลาย" },
+  { id: "phys-m5t1", title: "ฟิสิกส์ ม.5 เทอม 1", description: "การเคลื่อนที่แบบ SHM · คลื่น · แสงเชิงคลื่นและแสงเชิงรังสี", icon: "🌊", color: "#0e7490", totalLessons: 3, xpReward: 270, tag: "ม.5", category: "ฟิสิกส์ ม.ปลาย" },
+  { id: "phys-m5t2", title: "ฟิสิกส์ ม.5 เทอม 2", description: "เสียง · ไฟฟ้าสถิต · ไฟฟ้ากระแส", icon: "🔌", color: "#0891b2", totalLessons: 3, xpReward: 270, tag: "ม.5", category: "ฟิสิกส์ ม.ปลาย" },
+  { id: "phys-m6t1", title: "ฟิสิกส์ ม.6 เทอม 1", description: "แม่เหล็กและไฟฟ้า · ความร้อนและแก๊ส · ของแข็งและของไหล", icon: "🧲", color: "#0284c7", totalLessons: 3, xpReward: 270, tag: "ม.6", category: "ฟิสิกส์ ม.ปลาย" },
+  { id: "phys-m6t2", title: "ฟิสิกส์ ม.6 เทอม 2", description: "ฟิสิกส์อะตอม · ฟิสิกส์นิวเคลียร์และฟิสิกส์อนุภาค", icon: "☢️", color: "#0369a1", totalLessons: 2, xpReward: 180, tag: "ม.6", category: "ฟิสิกส์ ม.ปลาย" },
   // ===== ภาษาอังกฤษ ม.ปลาย =====
   {
     id: "eng-grammar",
@@ -3742,7 +3730,7 @@ export const LESSONS: Lesson[] = [
   // ===== ฟิสิกส์ ม.ปลาย =====
   {
     id: "phys-1",
-    courseId: "physics-1",
+    courseId: "phys-m4t1",
     title: "ธรรมชาติและพัฒนาการทางฟิสิกส์",
     order: 1,
     xpReward: 90,
@@ -3755,7 +3743,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-2",
-    courseId: "physics-2",
+    courseId: "phys-m4t1",
     title: "การเคลื่อนที่แนวตรง",
     order: 2,
     xpReward: 90,
@@ -3768,7 +3756,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-3",
-    courseId: "physics-3",
+    courseId: "phys-m4t1",
     title: "แรงและกฎการเคลื่อนที่",
     order: 3,
     xpReward: 90,
@@ -3781,7 +3769,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-4",
-    courseId: "physics-4",
+    courseId: "phys-m4t2",
     title: "สมดุลกล",
     order: 4,
     xpReward: 90,
@@ -3794,7 +3782,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-5",
-    courseId: "physics-5",
+    courseId: "phys-m4t2",
     title: "งานและพลังงาน",
     order: 5,
     xpReward: 90,
@@ -3807,7 +3795,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-6",
-    courseId: "physics-6",
+    courseId: "phys-m4t2",
     title: "โมเมนตัมและการชน",
     order: 6,
     xpReward: 90,
@@ -3820,7 +3808,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-7",
-    courseId: "physics-7",
+    courseId: "phys-m4t2",
     title: "การเคลื่อนที่แนวโค้ง",
     order: 7,
     xpReward: 90,
@@ -3833,7 +3821,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-8",
-    courseId: "physics-8",
+    courseId: "phys-m5t1",
     title: "การเคลื่อนที่แบบฮาร์มอนิกอย่างง่าย",
     order: 8,
     xpReward: 90,
@@ -3846,7 +3834,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-9",
-    courseId: "physics-9",
+    courseId: "phys-m5t1",
     title: "คลื่น",
     order: 9,
     xpReward: 90,
@@ -3859,7 +3847,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-10",
-    courseId: "physics-10",
+    courseId: "phys-m5t1",
     title: "แสงเชิงคลื่นและแสงเชิงรังสี",
     order: 10,
     xpReward: 90,
@@ -3872,7 +3860,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-11",
-    courseId: "physics-11",
+    courseId: "phys-m5t2",
     title: "เสียง",
     order: 11,
     xpReward: 90,
@@ -3885,7 +3873,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-12",
-    courseId: "physics-12",
+    courseId: "phys-m5t2",
     title: "ไฟฟ้าสถิต",
     order: 12,
     xpReward: 90,
@@ -3898,7 +3886,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-13",
-    courseId: "physics-13",
+    courseId: "phys-m5t2",
     title: "ไฟฟ้ากระแส",
     order: 13,
     xpReward: 90,
@@ -3911,7 +3899,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-14",
-    courseId: "physics-14",
+    courseId: "phys-m6t1",
     title: "แม่เหล็กและไฟฟ้า",
     order: 14,
     xpReward: 90,
@@ -3924,7 +3912,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-15",
-    courseId: "physics-15",
+    courseId: "phys-m6t1",
     title: "ความร้อนและแก๊ส",
     order: 15,
     xpReward: 90,
@@ -3937,7 +3925,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-16",
-    courseId: "physics-16",
+    courseId: "phys-m6t1",
     title: "ของแข็งและของไหล",
     order: 16,
     xpReward: 90,
@@ -3950,7 +3938,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-17",
-    courseId: "physics-17",
+    courseId: "phys-m6t2",
     title: "ฟิสิกส์อะตอม",
     order: 17,
     xpReward: 90,
@@ -3963,7 +3951,7 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "phys-18",
-    courseId: "physics-18",
+    courseId: "phys-m6t2",
     title: "ฟิสิกส์นิวเคลียร์และฟิสิกส์อนุภาค",
     order: 18,
     xpReward: 90,
