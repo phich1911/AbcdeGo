@@ -11,8 +11,23 @@ import AuthModal from "@/components/AuthModal";
 import DisplayNameModal from "@/components/DisplayNameModal";
 import Fuse from "fuse.js";
 
-const fuse = new Fuse(COURSES, {
-  keys: ["title", "description", "tag", "category"],
+type SearchItem = { title: string; description: string; tag: string; href: string; kind: "course" | "article" | "game" | "page" };
+
+const ALL_ITEMS: SearchItem[] = [
+  ...COURSES.map((c) => ({ title: c.title, description: c.description, tag: c.tag, href: `/course/${c.id}`, kind: "course" as const })),
+  { title: "เทคนิคทำข้อสอบ ก.พ. ครบทุกวิชา", description: "อนุกรม คณิตศาสตร์ ภาษาไทย เงื่อนไขสัญลักษณ์ ภาษาอังกฤษ กฎหมายข้าราชการ บริหารเวลา", tag: "บทความ", href: "/tips/kp", kind: "article" },
+  { title: "TOEIC คืออะไร? ครบทุกอย่างในหน้าเดียว", description: "โครงสร้างข้อสอบ คะแนนมาตรฐาน เทคนิค Listening Reading วิธีเตรียมตัว", tag: "บทความ", href: "/tips/toeic", kind: "article" },
+  { title: "E-Exam ข้อสอบจำลอง ก.พ.", description: "ข้อสอบจำลองจับเวลาเสมือนจริง 100 ข้อ ปลดล็อคด้วย XP", tag: "E-Exam", href: "/e-exam", kind: "page" },
+  { title: "เกม 2048", description: "เกม 2048 เลื่อนตัวเลขรวมกันให้ได้ 2048", tag: "เกม", href: "/game/2048", kind: "game" },
+  { title: "เกม Wordle ภาษาไทย", description: "ทายคำภาษาไทย 5 ตัวอักษรใน 6 ครั้ง", tag: "เกม", href: "/game/wordle", kind: "game" },
+  { title: "ดูดวง", description: "ดูดวงความรัก การงาน การเงิน แบบ interactive", tag: "ดูดวง", href: "/tarot", kind: "page" },
+  { title: "Leaderboard อันดับ XP", description: "อันดับผู้เรียนทั่วประเทศ แข่ง XP ขึ้น Level", tag: "อันดับ", href: "/leaderboard", kind: "page" },
+  { title: "ร้านค้า แลก XP", description: "แลก XP เป็นส่วนลดสินค้าหรือของรางวัล", tag: "ร้านค้า", href: "/shop", kind: "page" },
+  { title: "ความคืบหน้าการเรียน", description: "ดูสถิติ XP และความก้าวหน้าของคุณ", tag: "โปรไฟล์", href: "/dashboard", kind: "page" },
+];
+
+const fuse = new Fuse(ALL_ITEMS, {
+  keys: ["title", "description", "tag"],
   threshold: 0.4,
 });
 
@@ -159,7 +174,7 @@ export default function Navbar() {
   }
 
   const searchResults = searchQuery.trim()
-    ? fuse.search(searchQuery).map((r) => r.item)
+    ? fuse.search(searchQuery).slice(0, 8).map((r) => r.item)
     : [];
 
   const navLinkStyle = (active: boolean) => ({
@@ -463,12 +478,12 @@ export default function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ค้นหาคอร์ส..."
+                placeholder="ค้นหาคอร์ส บทความ เกม ดูดวง..."
                 className="flex-1 bg-transparent outline-none text-sm"
                 style={{ color: "var(--text)", caretColor: "var(--primary)" }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && searchResults.length > 0) {
-                    router.push(`/course/${searchResults[0].id}`);
+                    router.push(searchResults[0].href);
                     closeSearch();
                   }
                 }}
@@ -479,17 +494,17 @@ export default function Navbar() {
             <div className="mt-1.5 rounded-lg overflow-hidden"
               style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}>
               {searchResults.length === 0 ? (
-                <p className="px-4 py-5 text-sm text-center" style={{ color: "var(--text-muted)" }}>ไม่พบคอร์สที่ตรงกัน</p>
+                <p className="px-4 py-5 text-sm text-center" style={{ color: "var(--text-muted)" }}>ไม่พบผลลัพธ์ที่ตรงกัน</p>
               ) : (
-                searchResults.map((course, i) => (
-                  <Link key={course.id} href={`/course/${course.id}`} onClick={closeSearch}
+                searchResults.map((item, i) => (
+                  <Link key={item.href} href={item.href} onClick={closeSearch}
                     className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-white/5"
                     style={{ borderTop: i > 0 ? "1px solid var(--border)" : undefined }}>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate" style={{ color: "var(--text)" }}>{course.title}</p>
-                      <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{course.description}</p>
+                      <p className="text-sm font-medium truncate" style={{ color: "var(--text)" }}>{item.title}</p>
+                      <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{item.description}</p>
                     </div>
-                    <span className="badge" style={{ fontSize: 11, flexShrink: 0 }}>{course.tag}</span>
+                    <span className="badge" style={{ fontSize: 11, flexShrink: 0 }}>{item.tag}</span>
                   </Link>
                 ))
               )}
