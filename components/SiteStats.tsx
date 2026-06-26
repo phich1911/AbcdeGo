@@ -10,9 +10,9 @@ type Entry = { name: string; xp: number; avatar: string | null };
 const GM_NAMES = new Set(["JACKPHICH", "Elon Musk"]);
 
 const MEDALS = [
-  <span key="1" style={{ fontWeight: 900, color: "#f59e0b", fontSize: 13 }}>01</span>,
-  <span key="2" style={{ fontWeight: 900, color: "#94a3b8", fontSize: 13 }}>02</span>,
-  <span key="3" style={{ fontWeight: 900, color: "#cd7c2f", fontSize: 13 }}>03</span>,
+  <span key="1" style={{ fontWeight: 900, color: "#f59e0b", fontSize: 16 }}>🥇</span>,
+  <span key="2" style={{ fontWeight: 900, color: "#94a3b8", fontSize: 16 }}>🥈</span>,
+  <span key="3" style={{ fontWeight: 900, color: "#cd7c2f", fontSize: 16 }}>🥉</span>,
 ];
 
 export default function SiteStats() {
