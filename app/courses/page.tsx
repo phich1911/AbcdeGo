@@ -59,6 +59,8 @@ const TOP_LEVEL = [
     cats: ["ภาษาอังกฤษ ม.ปลาย", "คณิตศาสตร์ ม.ปลาย", "ภาษาไทย ม.ปลาย", "ฟิสิกส์ ม.ปลาย"],
   },
   { slug: "law", label: "กฎหมาย", description: "รัฐธรรมนูญ กฎหมายแพ่ง กฎหมายอาญา และกฎหมายที่เกี่ยวข้องกับการสอบราชการ", cats: ["กฎหมาย"] },
+  { slug: "toeic", label: "TOEIC", description: "เตรียมสอบ TOEIC ทักษะ Listening และ Reading สำหรับการทำงานและสมัครงาน", cats: ["TOEIC"], comingSoon: true },
+  { slug: "civil", label: "ข้าราชการ", description: "ความรู้เกี่ยวกับระบบราชการ จริยธรรม และการพัฒนาตนเองสำหรับข้าราชการ", cats: ["ข้าราชการ"], comingSoon: true },
 ];
 
 // Sub-categories inside มัธยมศึกษาตอนปลาย
@@ -299,6 +301,18 @@ function CoursesInner() {
       <div className="grid sm:grid-cols-3 gap-4">
         {TOP_LEVEL.map((item) => {
           const count = COURSES.filter((c) => item.cats.includes(c.category ?? "")).length;
+          if ((item as { comingSoon?: boolean }).comingSoon) {
+            return (
+              <div key={item.slug} className="card-lg flex flex-col gap-3 p-5" style={{ opacity: 0.6, cursor: "default" }}>
+                <span className="badge" style={{ fontSize: 11, width: "fit-content" }}>เร็วๆ นี้</span>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", margin: 0 }}>{item.label}</h2>
+                <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>{item.description}</p>
+                <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--text-subtle)", fontWeight: 500 }}>
+                  <span>กำลังเตรียมเนื้อหา</span>
+                </div>
+              </div>
+            );
+          }
           return (
             <Link key={item.slug} href={`/courses?cat=${item.slug}`}
               className="card-lg flex flex-col gap-3 p-5" style={{ textDecoration: "none" }}>
