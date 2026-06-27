@@ -75,11 +75,20 @@ export default function CoursePage({ params }: { params: Promise<{ id: string }>
             </Link>
           )}
           {progress === 100 && (
-            <div
-              className="inline-block mt-6 px-6 py-3 rounded-full font-bold"
-              style={{ background: "rgba(16,185,129,0.15)", color: "var(--accent-green)" }}
-            >
-              ✦ เรียนจบแล้ว!
+            <div className="flex flex-col items-center gap-3 mt-6">
+              <div
+                className="inline-block px-6 py-3 rounded-full font-bold"
+                style={{ background: "rgba(16,185,129,0.15)", color: "var(--accent-green)" }}
+              >
+                ✦ เรียนจบแล้ว!
+              </div>
+              <Link
+                href="/courses"
+                className="inline-block px-6 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
+                style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+              >
+                🎉 ดูคอร์สอื่น
+              </Link>
             </div>
           )}
         </div>
