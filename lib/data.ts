@@ -223,6 +223,8 @@ export const COURSES: Course[] = [
   { id: "law-civil-service", title: "พ.ร.บ. ระเบียบข้าราชการพลเรือน พ.ศ. 2551", description: "ก.พ. · ก.พ.ค. · ประเภทตำแหน่ง · วินัย · การดำเนินการทางวินัย · การออกจากราชการ · อุทธรณ์และร้องทุกข์", icon: "⚖️", color: "#7c3aed", totalLessons: 5, xpReward: 450, tag: "กฎหมาย", category: "กฎหมาย" },
   { id: "law-admin-org", title: "พ.ร.บ. ระเบียบบริหารราชการแผ่นดิน พ.ศ. 2534", description: "โครงสร้างราชการส่วนกลาง · ส่วนภูมิภาค · ส่วนท้องถิ่น · การมอบอำนาจ · ก.พ.ร.", icon: "🏛️", color: "#1d4ed8", totalLessons: 5, xpReward: 450, tag: "กฎหมาย", category: "กฎหมาย" },
   { id: "law-info-access", title: "พ.ร.บ. ข้อมูลข่าวสารของราชการ พ.ศ. 2540", description: "สิทธิรับรู้ข้อมูล · การเปิดเผย · ข้อมูลลับ · ข้อมูลส่วนบุคคล · คณะกรรมการ", icon: "📋", color: "#0f766e", totalLessons: 5, xpReward: 450, tag: "กฎหมาย", category: "กฎหมาย" },
+  // ===== ข้าราชการ =====
+  { id: "civil-amlo", title: "สำนักงาน ปปง.", description: "พระราชบัญญัติป้องกันและปราบปรามการฟอกเงิน · อำนาจหน้าที่ · กระบวนการตรวจสอบธุรกรรม", icon: "🏦", color: "#7c2d12", totalLessons: 0, xpReward: 0, tag: "ข้าราชการ", category: "ข้าราชการ" },
   // ===== ภาษาอังกฤษ ม.ปลาย =====
   {
     id: "eng-grammar",
