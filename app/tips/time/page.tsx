@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "เทคนิคโกงเวลา — สูตรลับจากทฤษฎีสัมพัทธภาพ — AbcdeGo",
+  title: "สูตรโกงเวลา — สูตรลับจากทฤษฎีสัมพัทธภาพ — AbcdeGo",
   description:
     "เวลาไม่ได้เท่ากันทุกคน ไอน์สไตน์พิสูจน์แล้ว รวมเทคนิคบริหารเวลาที่ปรับใช้จากทฤษฎีสัมพัทธภาพ ให้คุณ \"โกง\" เวลาได้จริงในชีวิตประจำวันและการเตรียมสอบ",
   openGraph: {
-    title: "เทคนิคโกงเวลา — สูตรลับจากทฤษฎีสัมพัทธภาพ",
+    title: "สูตรโกงเวลา — สูตรลับจากทฤษฎีสัมพัทธภาพ",
     description: "เวลาไม่ได้เท่ากันทุกคน ปรับใช้แนวคิดฟิสิกส์มาบริหารชีวิตจริง",
   },
 };
@@ -117,7 +117,7 @@ export default function TimeTipsPage() {
           บริหารเวลา
         </span>
         <h1 style={{ fontSize: "clamp(28px,5vw,42px)", fontWeight: 800, margin: "8px 0 12px", letterSpacing: "-0.02em", color: "var(--text)" }}>
-          เทคนิคโกงเวลา
+          สูตรโกงเวลา
         </h1>
         <p style={{ fontSize: 16, color: "var(--text-muted)", margin: 0, lineHeight: 1.7, maxWidth: 560, marginInline: "auto" }}>
           ปรับใช้ทฤษฎีสัมพัทธภาพของไอน์สไตน์ — เวลาไม่ได้เท่ากันทุกคน คุณออกแบบมันได้

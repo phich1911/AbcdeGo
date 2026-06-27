@@ -32,7 +32,7 @@ const articles = [
     href: "/tips/time",
     icon: "",
     tag: "บริหารเวลา",
-    title: "เทคนิคโกงเวลา",
+    title: "สูตรโกงเวลา",
     desc: "Flow State · นาฬิกาชีวภาพ · สูตรสัมพัทธภาพปรับใช้จริง",
     mins: "6 นาที",
   },

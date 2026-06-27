@@ -203,7 +203,7 @@ export default function InterviewTipsPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
           {[
             { href: "/tips/kp", icon: "📝", title: "เทคนิคทำข้อสอบ ก.พ.", desc: "อนุกรม คณิต ภาษาไทย ภาษาอังกฤษ กฎหมาย" },
-            { href: "/tips/time", icon: "⏱️", title: "เทคนิคโกงเวลา", desc: "Flow State นาฬิกาชีวภาพ ทฤษฎีสัมพัทธภาพ" },
+            { href: "/tips/time", icon: "⏱️", title: "สูตรโกงเวลา", desc: "Flow State นาฬิกาชีวภาพ ทฤษฎีสัมพัทธภาพ" },
             { href: "/tips/toeic", icon: "🎧", title: "TOEIC คืออะไร?", desc: "โครงสร้าง คะแนน เทคนิค Listening & Reading" },
           ].map((a) => (
             <Link key={a.href} href={a.href} style={{ textDecoration: "none" }}>
