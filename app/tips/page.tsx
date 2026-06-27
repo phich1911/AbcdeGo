@@ -28,6 +28,14 @@ const articles = [
     desc: "โครงสร้างข้อสอบ · คะแนนมาตรฐาน · เทคนิค Listening & Reading · วิธีเตรียมตัว",
     mins: "8 นาที",
   },
+  {
+    href: "/tips/time",
+    icon: "",
+    tag: "บริหารเวลา",
+    title: "เทคนิคโกงเวลา",
+    desc: "Flow State · นาฬิกาชีวภาพ · สูตรสัมพัทธภาพปรับใช้จริง",
+    mins: "6 นาที",
+  },
 ];
 
 export default function TipsIndexPage() {
