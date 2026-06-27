@@ -216,25 +216,32 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                   บทเรียนถัดไป → {nextLesson.title}
                 </button>
               )}
+              {!nextLesson && (
+                <button
+                  onClick={() => router.push("/courses")}
+                  className="w-full px-6 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
+                  style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+                >
+                  🎉 ดูคอร์สอื่น
+                </button>
+              )}
               <div className="flex gap-3 w-full">
                 <button
                   onClick={() => router.push(`/course/${lesson.courseId}`)}
                   className="flex-1 px-4 py-3 rounded-full font-bold"
-                  style={{
-                    background: nextLesson ? "transparent" : "linear-gradient(135deg, var(--primary), var(--primary-light))",
-                    border: nextLesson ? "1px solid var(--border)" : "none",
-                    color: nextLesson ? "var(--text-muted)" : "#fff",
-                  }}
+                  style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
                 >
                   กลับไปที่คอร์ส
                 </button>
-                <button
-                  onClick={() => router.push("/courses")}
-                  className="flex-1 px-4 py-3 rounded-full font-bold"
-                  style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
-                >
-                  ดูคอร์สอื่น
-                </button>
+                {nextLesson && (
+                  <button
+                    onClick={() => router.push("/courses")}
+                    className="flex-1 px-4 py-3 rounded-full font-bold"
+                    style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+                  >
+                    ดูคอร์สอื่น
+                  </button>
+                )}
               </div>
             </div>
           </div>
