@@ -39,7 +39,7 @@ export default function TipsIndexPage() {
           บทความ
         </span>
         <h1 style={{ fontSize: "clamp(26px,5vw,38px)", fontWeight: 800, margin: "8px 0 12px", letterSpacing: "-0.02em", color: "var(--text)" }}>
-          เทคนิคเตรียมสอบ
+          คลังความรู้
         </h1>
         <p style={{ fontSize: 15, color: "var(--text-muted)", margin: 0, lineHeight: 1.8 }}>
           รวมบทความเทคนิคสอบ ก.พ. TOEIC และภาษาอังกฤษ — อ่านฟรี ไม่ต้องสมัคร
