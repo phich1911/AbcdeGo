@@ -41,9 +41,6 @@ export default function TipsIndexPage() {
         <h1 style={{ fontSize: "clamp(26px,5vw,38px)", fontWeight: 800, margin: "8px 0 12px", letterSpacing: "-0.02em", color: "var(--text)" }}>
           คลังความรู้
         </h1>
-        <p style={{ fontSize: 15, color: "var(--text-muted)", margin: 0, lineHeight: 1.8 }}>
-          รวมบทความและความรู้เตรียมสอบ ก.พ. TOEIC และภาษาอังกฤษ
-        </p>
       </div>
 
       {/* Article Cards */}
