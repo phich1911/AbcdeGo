@@ -18,6 +18,7 @@ const ALL_ITEMS: SearchItem[] = [
   { title: "ความรู้ทำข้อสอบ ก.พ. ครบทุกวิชา", description: "อนุกรม คณิตศาสตร์ ภาษาไทย เงื่อนไขสัญลักษณ์ ภาษาอังกฤษ กฎหมายข้าราชการ บริหารเวลา", tag: "บทความ", href: "/tips/kp", kind: "article" },
   { title: "TOEIC คืออะไร? ครบทุกอย่างในหน้าเดียว", description: "โครงสร้างข้อสอบ คะแนนมาตรฐาน ความรู้ Listening Reading วิธีเตรียมตัว", tag: "บทความ", href: "/tips/toeic", kind: "article" },
   { title: "เทคนิคโกงเวลา", description: "Flow State นาฬิกาชีวภาพ ทฤษฎีสัมพัทธภาพ ปรับใช้จริงในชีวิตและการสอบ", tag: "บทความ", href: "/tips/time", kind: "article" },
+  { title: "เทคนิคการสอบสัมภาษณ์", description: "การแต่งกาย ภาษากาย ตอบคำถามยาก และ Checklist ก่อนวันสัมภาษณ์", tag: "บทความ", href: "/tips/interview", kind: "article" },
   { title: "E-Exam ข้อสอบจำลอง ก.พ.", description: "ข้อสอบจำลองจับเวลาเสมือนจริง 100 ข้อ ปลดล็อคด้วย XP", tag: "E-Exam", href: "/e-exam", kind: "page" },
   { title: "เกม 2048", description: "เกม 2048 เลื่อนตัวเลขรวมกันให้ได้ 2048", tag: "เกม", href: "/game/2048", kind: "game" },
   { title: "เกม Wordle ภาษาไทย", description: "ทายคำภาษาไทย 5 ตัวอักษรใน 6 ครั้ง", tag: "เกม", href: "/game/wordle", kind: "game" },

@@ -36,6 +36,14 @@ const articles = [
     desc: "Flow State · นาฬิกาชีวภาพ · สูตรสัมพัทธภาพปรับใช้จริง",
     mins: "6 นาที",
   },
+  {
+    href: "/tips/interview",
+    icon: "",
+    tag: "สัมภาษณ์",
+    title: "เทคนิคการสอบสัมภาษณ์",
+    desc: "การแต่งกาย · ภาษากาย · ตอบคำถามยาก · Checklist ก่อนวันสัมภาษณ์",
+    mins: "7 นาที",
+  },
 ];
 
 export default function TipsIndexPage() {
