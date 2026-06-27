@@ -15,8 +15,8 @@ type SearchItem = { title: string; description: string; tag: string; href: strin
 
 const ALL_ITEMS: SearchItem[] = [
   ...COURSES.map((c) => ({ title: c.title, description: c.description, tag: c.tag, href: `/course/${c.id}`, kind: "course" as const })),
-  { title: "เทคนิคทำข้อสอบ ก.พ. ครบทุกวิชา", description: "อนุกรม คณิตศาสตร์ ภาษาไทย เงื่อนไขสัญลักษณ์ ภาษาอังกฤษ กฎหมายข้าราชการ บริหารเวลา", tag: "บทความ", href: "/tips/kp", kind: "article" },
-  { title: "TOEIC คืออะไร? ครบทุกอย่างในหน้าเดียว", description: "โครงสร้างข้อสอบ คะแนนมาตรฐาน เทคนิค Listening Reading วิธีเตรียมตัว", tag: "บทความ", href: "/tips/toeic", kind: "article" },
+  { title: "ความรู้ทำข้อสอบ ก.พ. ครบทุกวิชา", description: "อนุกรม คณิตศาสตร์ ภาษาไทย เงื่อนไขสัญลักษณ์ ภาษาอังกฤษ กฎหมายข้าราชการ บริหารเวลา", tag: "บทความ", href: "/tips/kp", kind: "article" },
+  { title: "TOEIC คืออะไร? ครบทุกอย่างในหน้าเดียว", description: "โครงสร้างข้อสอบ คะแนนมาตรฐาน ความรู้ Listening Reading วิธีเตรียมตัว", tag: "บทความ", href: "/tips/toeic", kind: "article" },
   { title: "E-Exam ข้อสอบจำลอง ก.พ.", description: "ข้อสอบจำลองจับเวลาเสมือนจริง 100 ข้อ ปลดล็อคด้วย XP", tag: "E-Exam", href: "/e-exam", kind: "page" },
   { title: "เกม 2048", description: "เกม 2048 เลื่อนตัวเลขรวมกันให้ได้ 2048", tag: "เกม", href: "/game/2048", kind: "game" },
   { title: "เกม Wordle ภาษาไทย", description: "ทายคำภาษาไทย 5 ตัวอักษรใน 6 ครั้ง", tag: "เกม", href: "/game/wordle", kind: "game" },
@@ -254,7 +254,7 @@ export default function Navbar() {
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
               style={{ color: pathname === "/tips" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/tips" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
-              เทคนิค
+              ความรู้
             </Link>
 
             <Link
@@ -423,7 +423,7 @@ export default function Navbar() {
             <Link href="/courses" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontWeight: pathname.startsWith("/course") ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>คอร์สเรียน</Link>
             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/dashboard" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ความคืบหน้า</Link>
             <Link href="/news" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/news" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/news" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ข่าวสาร</Link>
-            <Link href="/tips" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tips" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tips" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เทคนิค</Link>
+            <Link href="/tips" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tips" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tips" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ความรู้</Link>
             <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ดูดวง</Link>
             <Link href="/game" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกม</Link>
             <Link href="/e-exam" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/e-exam" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/e-exam" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>e-Exam</Link>
