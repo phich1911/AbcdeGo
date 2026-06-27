@@ -42,7 +42,7 @@ export default function TipsIndexPage() {
           คลังความรู้
         </h1>
         <p style={{ fontSize: 15, color: "var(--text-muted)", margin: 0, lineHeight: 1.8 }}>
-          รวมบทความเทคนิคสอบ ก.พ. TOEIC และภาษาอังกฤษ — อ่านฟรี ไม่ต้องสมัคร
+          รวมบทความและความรู้เตรียมสอบ ก.พ. TOEIC และภาษาอังกฤษ
         </p>
       </div>
 
