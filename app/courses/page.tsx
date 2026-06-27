@@ -14,6 +14,7 @@ const SLUG_TO_CATEGORY: Record<string, string> = {
   "thai-m": "ภาษาไทย ม.ปลาย",
   "physics-m": "ฟิสิกส์ ม.ปลาย",
   "law": "กฎหมาย",
+  "civil": "ข้าราชการ",
 };
 
 const CATEGORY_SLUGS: Record<string, string> = {
@@ -23,6 +24,7 @@ const CATEGORY_SLUGS: Record<string, string> = {
   "ภาษาไทย ม.ปลาย": "thai-m",
   "ฟิสิกส์ ม.ปลาย": "physics-m",
   "กฎหมาย": "law",
+  "ข้าราชการ": "civil",
 };
 
 const CATEGORY_META: Record<string, { description: string }> = {
@@ -32,6 +34,7 @@ const CATEGORY_META: Record<string, { description: string }> = {
   "ภาษาไทย ม.ปลาย": { description: "หลักการใช้ภาษา ทักษะการสื่อสาร และวรรณคดีวรรณกรรม สำหรับระดับ ม.4–ม.6" },
   "ฟิสิกส์ ม.ปลาย": { description: "กลศาสตร์ คลื่น ไฟฟ้า ความร้อน และฟิสิกส์สมัยใหม่ สำหรับระดับ ม.4–ม.6" },
   "กฎหมาย": { description: "รัฐธรรมนูญ กฎหมายแพ่ง กฎหมายอาญา และกฎหมายที่เกี่ยวข้องกับการสอบราชการ" },
+  "ข้าราชการ": { description: "ความรู้เกี่ยวกับระบบราชการ จริยธรรม และการพัฒนาตนเองสำหรับข้าราชการ" },
 };
 
 // ก.พ. sets
