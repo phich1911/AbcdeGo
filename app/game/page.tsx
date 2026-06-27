@@ -39,7 +39,7 @@ const GAMES = [
   },
 ];
 
-const MEDALS = ["", "", ""];
+const MEDALS = ["🥇", "🥈", "🥉"];
 
 export default function GamePage() {
   const [scores, setScores] = useState<Record<string, ScoreEntry[]>>({});
