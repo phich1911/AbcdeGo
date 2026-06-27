@@ -60,7 +60,7 @@ const TOP_LEVEL = [
   },
   { slug: "law", label: "กฎหมาย", description: "รัฐธรรมนูญ กฎหมายแพ่ง กฎหมายอาญา และกฎหมายที่เกี่ยวข้องกับการสอบราชการ", cats: ["กฎหมาย"] },
   { slug: "toeic", label: "TOEIC", description: "เตรียมสอบ TOEIC ทักษะ Listening และ Reading สำหรับการทำงานและสมัครงาน", cats: ["TOEIC"], comingSoon: true },
-  { slug: "civil", label: "ข้าราชการ", description: "ความรู้เกี่ยวกับระบบราชการ จริยธรรม และการพัฒนาตนเองสำหรับข้าราชการ", cats: ["ข้าราชการ"], comingSoon: true },
+  { slug: "civil", label: "ข้าราชการ", description: "ความรู้เกี่ยวกับระบบราชการ จริยธรรม และการพัฒนาตนเองสำหรับข้าราชการ", cats: ["ข้าราชการ"] },
 ];
 
 // Sub-categories inside มัธยมศึกษาตอนปลาย
