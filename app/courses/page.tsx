@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { COURSES } from "@/lib/data";
 import { getCourseProgress } from "@/lib/progress";
-import { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Fuse from "fuse.js";
 
@@ -65,6 +65,11 @@ const TOP_LEVEL = [
   { slug: "toeic", label: "TOEIC", description: "เตรียมสอบ TOEIC ทักษะ Listening และ Reading สำหรับการทำงานและสมัครงาน", cats: ["TOEIC"], comingSoon: true },
   { slug: "civil", label: "ข้าราชการ", description: "ความรู้เกี่ยวกับระบบราชการ จริยธรรม และการพัฒนาตนเองสำหรับข้าราชการ", cats: ["ข้าราชการ"] },
 ];
+
+// Groups inside ข้าราชการ
+const CIVIL_GROUPS: Record<string, { label: string; icon: string; description: string }> = {
+  amlo: { label: "สำนักงาน ปปง.", icon: "🏦", description: "พระราชบัญญัติป้องกันและปราบปรามการฟอกเงิน · กฎกระทรวงแบ่งส่วนราชการ" },
+};
 
 // Sub-categories inside มัธยมศึกษาตอนปลาย
 const MPLATAI_SUBS = [
@@ -259,12 +264,91 @@ function CoursesInner() {
     );
   }
 
+  // ข้าราชการ — group sub-view (e.g. ?cat=civil&sub=amlo)
+  const subSlug = searchParams.get("sub");
+  if (catSlug === "civil" && subSlug !== null) {
+    const groupMeta = CIVIL_GROUPS[subSlug];
+    const courses = COURSES.filter((c) => c.category === "ข้าราชการ" && (c as { group?: string }).group === subSlug);
+    return (
+      <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{groupMeta?.icon} {groupMeta?.label}</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{groupMeta?.description}</p>
+          </div>
+          <Link href="/courses?cat=civil" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← ข้าราชการ</Link>
+        </div>
+        <SearchBar query={query} setQuery={setQuery} />
+        <div className="grid md:grid-cols-2 gap-3">
+          {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+        </div>
+      </main>
+    );
+  }
+
   // Subject category view — show courses
   if (activeCat !== null) {
-    const courses = COURSES.filter((c) => c.category === activeCat);
+    const allCourses = COURSES.filter((c) => c.category === activeCat);
     const meta = CATEGORY_META[activeCat];
-    const intro = courses.find((c) => c.intro)?.intro;
+    const intro = allCourses.find((c) => c.intro)?.intro;
     const isMplataiSub = ["eng-m", "math-m", "thai-m", "physics-m"].includes(catSlug ?? "");
+
+    // For ข้าราชการ: render group cards + ungrouped course cards
+    let courseCards: React.ReactNode;
+    if (catSlug === "civil") {
+      const ungrouped = allCourses.filter((c) => !(c as { group?: string }).group);
+      const groupsPresent = Object.keys(CIVIL_GROUPS).filter((g) =>
+        allCourses.some((c) => (c as { group?: string }).group === g)
+      );
+      courseCards = (
+        <div className="grid md:grid-cols-2 gap-3">
+          {groupsPresent.map((g) => {
+            const gm = CIVIL_GROUPS[g];
+            const groupCourses = allCourses.filter((c) => (c as { group?: string }).group === g);
+            const totalLessons = groupCourses.reduce((s, c) => s + c.totalLessons, 0);
+            const totalXp = groupCourses.reduce((s, c) => s + c.xpReward, 0);
+            const avgPct = groupCourses.length
+              ? Math.round(groupCourses.reduce((s, c) => s + (progresses[c.id] ?? 0), 0) / groupCourses.length)
+              : 0;
+            return (
+              <Link key={g} href={`/courses?cat=civil&sub=${g}`}
+                className="card-lg flex flex-col gap-3 p-4 transition-colors hover:border-[color:var(--text-subtle)]"
+                style={{ textDecoration: "none" }}>
+                <div className="flex gap-1.5">
+                  <span className="badge" style={{ fontSize: 11 }}>ข้าราชการ</span>
+                  <span className="badge" style={{ fontSize: 11 }}>{groupCourses.length} วิชา</span>
+                </div>
+                <div>
+                  <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 3 }}>{gm.icon} {gm.label}</h2>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>{gm.description}</p>
+                </div>
+                <div className="mt-auto">
+                  <div className="flex justify-between mb-1.5" style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                    <span>ความก้าวหน้า</span>
+                    <span style={{ color: avgPct > 0 ? "var(--primary)" : undefined }}>{avgPct}%</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: `${avgPct}%` }} />
+                  </div>
+                  <div className="flex justify-between mt-3" style={{ fontSize: 12 }}>
+                    <span style={{ color: "var(--text-muted)" }}>{totalLessons} บทเรียน</span>
+                    <span style={{ color: "var(--accent)", fontWeight: 500 }}>{totalXp} XP</span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+          {ungrouped.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+        </div>
+      );
+    } else {
+      courseCards = (
+        <div className="grid md:grid-cols-2 gap-3">
+          {allCourses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+        </div>
+      );
+    }
+
     return (
       <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
         <div className="flex items-center justify-between mb-5">
@@ -286,9 +370,7 @@ function CoursesInner() {
           </details>
         )}
         <SearchBar query={query} setQuery={setQuery} />
-        <div className="grid md:grid-cols-2 gap-3">
-          {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
-        </div>
+        {courseCards}
       </main>
     );
   }
