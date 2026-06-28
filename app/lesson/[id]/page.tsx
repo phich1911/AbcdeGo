@@ -256,7 +256,17 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         {/* Top bar */}
         <div className="flex items-center gap-4 mb-8">
           <button
-            onClick={() => router.push(`/course/${lesson.courseId}`)}
+            onClick={() => {
+              if (step.type === "info" && stepIndex > 0) {
+                setStepIndex((s) => s - 1);
+                setSelected(null);
+                setFillInput("");
+                setAnswered(false);
+                setCorrect(false);
+              } else {
+                router.push(`/course/${lesson.courseId}`);
+              }
+            }}
             className="text-xl p-2 rounded-full transition-colors hover:bg-white/5"
             style={{ color: "var(--text-muted)" }}
           >
