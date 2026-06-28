@@ -11,6 +11,7 @@ export type Course = {
   category?: string;
   intro?: string;
   kpSet?: number;
+  group?: string;
 };
 
 export type Lesson = {
