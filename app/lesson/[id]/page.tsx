@@ -31,7 +31,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [authOpen, setAuthOpen] = useState(false);
   const [earnedXp, setEarnedXp] = useState(0);
-  const [stepEarned, setStepEarned] = useState(false);
+  const [earnedSteps, setEarnedSteps] = useState<Set<number>>(new Set());
   const [correctCount, setCorrectCount] = useState(0);
 
   const answerableCount = lesson.steps.filter((s) => s.type !== "info").length;
@@ -62,12 +62,19 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const step = lesson.steps[stepIndex];
   const progress = Math.round((stepIndex / lesson.steps.length) * 100);
 
+  function prevStep() {
+    setSelected(null);
+    setFillInput("");
+    setAnswered(false);
+    setCorrect(false);
+    setStepIndex((s) => s - 1);
+  }
+
   function nextStep() {
     setSelected(null);
     setFillInput("");
     setAnswered(false);
     setCorrect(false);
-    setStepEarned(false);
     if (stepIndex + 1 >= lesson.steps.length) {
       const updated = completeLesson(lesson.id, earnedXp, { correct: correctCount, total: answerableCount });
       syncLeaderboard(updated.xp);
@@ -85,10 +92,10 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     setAnswered(true);
     if (step.type === "quiz" && idx === step.correct) {
       setCorrect(true);
-      if (!stepEarned) {
+      if (!earnedSteps.has(stepIndex)) {
         setEarnedXp((x) => x + xpPerStep);
         setCorrectCount((c) => c + 1);
-        setStepEarned(true);
+        setEarnedSteps((prev) => new Set([...prev, stepIndex]));
       }
     } else {
       setCorrect(false);
@@ -103,10 +110,10 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     const isCorrect = fillInput.trim().toLowerCase() === step.answer.toLowerCase();
     setCorrect(isCorrect);
     if (isCorrect) {
-      if (!stepEarned) {
+      if (!earnedSteps.has(stepIndex)) {
         setEarnedXp((x) => x + xpPerStep);
         setCorrectCount((c) => c + 1);
-        setStepEarned(true);
+        setEarnedSteps((prev) => new Set([...prev, stepIndex]));
       }
     } else {
       setShake(true);
@@ -256,7 +263,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
         {/* Top bar */}
         <div className="flex items-center gap-4 mb-8">
           <button
-            onClick={() => router.push(`/course/${lesson.courseId}`)}
+            onClick={() => stepIndex > 0 ? prevStep() : router.push(`/course/${lesson.courseId}`)}
             className="text-xl p-2 rounded-full transition-colors hover:bg-white/5"
             style={{ color: "var(--text-muted)" }}
           >
