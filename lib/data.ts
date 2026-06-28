@@ -227,8 +227,8 @@ export const COURSES: Course[] = [
   { id: "law-security", title: "ระเบียบสำนักนายกรัฐมนตรีว่าด้วยการรักษาความปลอดภัยแห่งชาติ พ.ศ. 2552", description: "กรช. · ชั้นความลับ 3 ระดับ · การรักษาความปลอดภัยบุคคล/สถานที่/ประชุมลับ · การละเมิด", icon: "🔐", color: "#0f172a", totalLessons: 5, xpReward: 450, tag: "กฎหมาย", category: "กฎหมาย" },
   { id: "law-tort", title: "พ.ร.บ. ความรับผิดทางละเมิดของเจ้าหน้าที่ พ.ศ. 2539", description: "เจ้าหน้าที่ · หน่วยงานของรัฐ · การไล่เบี้ย · จงใจ/ประมาทเลินเล่ออย่างร้ายแรง · อายุความ", icon: "⚖️", color: "#7c3aed", totalLessons: 4, xpReward: 360, tag: "กฎหมาย", category: "กฎหมาย" },
   // ===== ข้าราชการ =====
-  { id: "civil-amlo", title: "สำนักงาน ปปง. — พ.ร.บ. ป้องกันและปราบปรามการฟอกเงิน", description: "ความผิดมูลฐาน · ธุรกรรมสงสัย · คณะกรรมการ ปปง. · การอายัดทรัพย์ · บทกำหนดโทษ", icon: "🏦", color: "#7c2d12", totalLessons: 5, xpReward: 450, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
-  { id: "civil-amlo-reg", title: "สำนักงาน ปปง. — กฎกระทรวงแบ่งส่วนราชการ พ.ศ. 2565", description: "ภารกิจ · โครงสร้าง · หน้าที่และอำนาจของแต่ละกอง", icon: "🏛️", color: "#7c2d12", totalLessons: 2, xpReward: 180, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
+  { id: "civil-amlo", title: "พ.ร.บ. ป้องกันและปราบปรามการฟอกเงิน", description: "ความผิดมูลฐาน · ธุรกรรมสงสัย · คณะกรรมการ ปปง. · การอายัดทรัพย์ · บทกำหนดโทษ", icon: "🏦", color: "#7c2d12", totalLessons: 5, xpReward: 450, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
+  { id: "civil-amlo-reg", title: "กฎกระทรวงแบ่งส่วนราชการ ปปง. พ.ศ. 2565", description: "ภารกิจ · โครงสร้าง · หน้าที่และอำนาจของแต่ละกอง", icon: "🏛️", color: "#7c2d12", totalLessons: 2, xpReward: 180, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
   { id: "civil-dsi", title: "กรมสอบสวนคดีพิเศษ (DSI)", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ", icon: "🔍", color: "#1e3a5f", totalLessons: 5, xpReward: 450, tag: "ข้าราชการ", category: "ข้าราชการ" },
   // ===== ภาษาอังกฤษ ม.ปลาย =====
   {
