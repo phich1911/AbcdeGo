@@ -69,6 +69,7 @@ const TOP_LEVEL = [
 // Groups inside ข้าราชการ
 const CIVIL_GROUPS: Record<string, { label: string; icon: string; description: string }> = {
   amlo: { label: "สำนักงาน ปปง.", icon: "🏦", description: "พระราชบัญญัติป้องกันและปราบปรามการฟอกเงิน · กฎกระทรวงแบ่งส่วนราชการ" },
+  dsi: { label: "กรมสอบสวนคดีพิเศษ (DSI)", icon: "🔍", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ" },
 };
 
 // Sub-categories inside มัธยมศึกษาตอนปลาย

@@ -229,7 +229,7 @@ export const COURSES: Course[] = [
   // ===== ข้าราชการ =====
   { id: "civil-amlo", title: "พ.ร.บ. ป้องกันและปราบปรามการฟอกเงิน", description: "ความผิดมูลฐาน · ธุรกรรมสงสัย · คณะกรรมการ ปปง. · การอายัดทรัพย์ · บทกำหนดโทษ", icon: "🏦", color: "#7c2d12", totalLessons: 5, xpReward: 450, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
   { id: "civil-amlo-reg", title: "กฎกระทรวงแบ่งส่วนราชการ ปปง. พ.ศ. 2565", description: "ภารกิจ · โครงสร้าง · หน้าที่และอำนาจของแต่ละกอง", icon: "🏛️", color: "#7c2d12", totalLessons: 2, xpReward: 180, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
-  { id: "civil-dsi", title: "กรมสอบสวนคดีพิเศษ (DSI)", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ", icon: "🔍", color: "#1e3a5f", totalLessons: 5, xpReward: 450, tag: "ข้าราชการ", category: "ข้าราชการ" },
+  { id: "civil-dsi", title: "พ.ร.บ. การสอบสวนคดีพิเศษ พ.ศ. 2547", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ", icon: "🔍", color: "#1e3a5f", totalLessons: 5, xpReward: 450, tag: "ข้าราชการ", category: "ข้าราชการ", group: "dsi" },
   // ===== ภาษาอังกฤษ ม.ปลาย =====
   {
     id: "eng-grammar",
