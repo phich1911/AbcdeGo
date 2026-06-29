@@ -50,6 +50,18 @@ export default function ChatBot() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (chatRef.current && !chatRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
 
   // Load history on mount
   useEffect(() => {
@@ -168,7 +180,7 @@ export default function ChatBot() {
   }
 
   return (
-    <>
+    <div ref={chatRef}>
       {open && (
         <div
           className="fixed bottom-20 right-5 z-[200] flex flex-col rounded-lg overflow-hidden"
@@ -282,6 +294,6 @@ export default function ChatBot() {
         )}
       </button>
       </div>
-    </>
+    </div>
   );
 }
