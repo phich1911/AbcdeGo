@@ -207,6 +207,15 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
             )}
 
             <div className="flex flex-col items-center gap-3 mt-4 w-full max-w-xs mx-auto">
+              {correctCount < answerableCount && (
+                <button
+                  onClick={() => { setStepIndex(0); setAnswered(false); setSelected(null); setFillInput(""); setCorrect(false); setEarnedXp(0); setCorrectCount(0); setStepEarned(false); setDone(false); }}
+                  className="w-full px-6 py-3 rounded-full font-bold transition-all hover:scale-105"
+                  style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
+                >
+                  ลองใหม่ ({correctCount}/{answerableCount} ถูก)
+                </button>
+              )}
               {nextLesson && (
                 <button
                   onClick={() => router.push(`/lesson/${nextLesson.id}`)}
@@ -366,24 +375,13 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
 
               {answered && (
                 <div className="flex gap-3 self-end">
-                  {!correct && (
-                    <button
-                      onClick={() => { setStepIndex(0); setAnswered(false); setSelected(null); setFillInput(""); setCorrect(false); setEarnedXp(0); setCorrectCount(0); setStepEarned(false); }}
-                      className="px-8 py-3 rounded-full font-bold transition-all hover:scale-105"
-                      style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
-                    >
-                      ลองใหม่ทั้งหมด
-                    </button>
-                  )}
-                  {correct && (
-                    <button
-                      onClick={nextStep}
-                      className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
-                      style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
-                    >
-                      ต่อไป →
-                    </button>
-                  )}
+                  <button
+                    onClick={nextStep}
+                    className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
+                    style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+                  >
+                    ต่อไป →
+                  </button>
                 </div>
               )}
             </div>
@@ -442,16 +440,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     ตรวจ
                   </button>
                 )}
-                {answered && !correct && (
-                  <button
-                    onClick={() => { setStepIndex(0); setAnswered(false); setSelected(null); setFillInput(""); setCorrect(false); setEarnedXp(0); setCorrectCount(0); setStepEarned(false); }}
-                    className="px-8 py-3 rounded-full font-bold transition-all hover:scale-105"
-                    style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
-                  >
-                    ลองใหม่ทั้งหมด
-                  </button>
-                )}
-                {answered && correct && (
+                {answered && (
                   <button
                     onClick={nextStep}
                     className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
