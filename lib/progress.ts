@@ -6,6 +6,7 @@ import { getLessonsForCourse } from "@/lib/data";
 export type UserProgress = {
   completedLessons: string[];
   lessonScores: Record<string, { correct: number; total: number }>;
+  lessonXp?: Record<string, number>;
   xp: number;
   streak: number;
   lastActive: string;
@@ -24,7 +25,7 @@ export function getProgress(): UserProgress {
 }
 
 function defaultProgress(): UserProgress {
-  return { completedLessons: [], lessonScores: {}, xp: 0, streak: 1, lastActive: new Date().toISOString() };
+  return { completedLessons: [], lessonScores: {}, lessonXp: {}, xp: 0, streak: 1, lastActive: new Date().toISOString() };
 }
 
 export function saveProgress(p: UserProgress) {
@@ -35,9 +36,13 @@ export function saveProgress(p: UserProgress) {
 export function completeLesson(lessonId: string, xpReward: number, score?: { correct: number; total: number }): UserProgress {
   const p = getProgress();
   if (!p.lessonScores) p.lessonScores = {};
-  if (!p.completedLessons.includes(lessonId)) {
-    p.completedLessons.push(lessonId);
-    p.xp += xpReward;
+  if (!p.lessonXp) p.lessonXp = {};
+  if (!p.completedLessons.includes(lessonId)) p.completedLessons.push(lessonId);
+  const prevXp = p.lessonXp[lessonId] ?? 0;
+  const delta = xpReward - prevXp;
+  if (delta > 0) {
+    p.xp += delta;
+    p.lessonXp[lessonId] = xpReward;
   }
   if (score) p.lessonScores[lessonId] = score;
   p.lastActive = new Date().toISOString();
