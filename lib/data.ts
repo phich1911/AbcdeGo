@@ -26,7 +26,7 @@ export type Lesson = {
 export type Step =
   | { type: "info"; content: string; title: string }
   | { type: "quiz"; question: string; choices: string[]; correct: number; explanation: string }
-  | { type: "fill"; question: string; answer: string; hint: string };
+  | { type: "fill"; question: string; answer: string; hint: string; explanation?: string };
 
 export const COURSES: Course[] = [
   {
