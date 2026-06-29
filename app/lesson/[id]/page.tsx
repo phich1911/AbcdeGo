@@ -368,11 +368,11 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 <div className="flex gap-3 self-end">
                   {!correct && (
                     <button
-                      onClick={() => { setAnswered(false); setSelected(null); }}
+                      onClick={() => { setStepIndex(0); setAnswered(false); setSelected(null); setFillInput(""); setCorrect(false); setEarnedXp(0); setCorrectCount(0); setStepEarned(false); }}
                       className="px-8 py-3 rounded-full font-bold transition-all hover:scale-105"
                       style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
                     >
-                      ลองใหม่
+                      ลองใหม่ทั้งหมด
                     </button>
                   )}
                   {correct && (
@@ -444,11 +444,11 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                 )}
                 {answered && !correct && (
                   <button
-                    onClick={() => { setAnswered(false); setFillInput(""); }}
+                    onClick={() => { setStepIndex(0); setAnswered(false); setSelected(null); setFillInput(""); setCorrect(false); setEarnedXp(0); setCorrectCount(0); setStepEarned(false); }}
                     className="px-8 py-3 rounded-full font-bold transition-all hover:scale-105"
                     style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
                   >
-                    ลองใหม่
+                    ลองใหม่ทั้งหมด
                   </button>
                 )}
                 {answered && correct && (
