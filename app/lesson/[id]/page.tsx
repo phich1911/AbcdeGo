@@ -425,7 +425,10 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                     color: correct ? "var(--accent-green)" : "var(--accent-red)",
                   }}
                 >
-                  {correct ? `✓ ถูกต้อง! +${xpPerStep} XP` : "✗ ยังไม่ถูก — ลองใหม่ได้เลย"}
+                  <p className="font-bold mb-1">
+                    {correct ? `✓ ถูกต้อง! +${xpPerStep} XP` : `✗ ยังไม่ถูก — คำตอบที่ถูก: "${step.answer}"`}
+                  </p>
+                  {step.explanation && <p className="text-sm opacity-90">{step.explanation}</p>}
                 </div>
               )}
 
