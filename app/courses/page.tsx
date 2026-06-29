@@ -70,6 +70,7 @@ const TOP_LEVEL = [
 const CIVIL_GROUPS: Record<string, { label: string; icon: string; description: string }> = {
   amlo: { label: "สำนักงาน ปปง. (AMLO)", icon: "🏦", description: "พระราชบัญญัติป้องกันและปราบปรามการฟอกเงิน · กฎกระทรวงแบ่งส่วนราชการ" },
   dsi: { label: "กรมสอบสวนคดีพิเศษ (DSI)", icon: "🔍", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ" },
+  moj: { label: "นักวิชาการยุติธรรม (สป.ยธ.)", icon: "🏛️", description: "กระทรวงยุติธรรม · สำนักงานปลัดกระทรวงยุติธรรม · นักวิชาการยุติธรรมปฏิบัติการ" },
 };
 
 // Sub-categories inside มัธยมศึกษาตอนปลาย
@@ -297,20 +298,33 @@ function CoursesInner() {
     // For ข้าราชการ: render group cards + ungrouped course cards
     let courseCards: React.ReactNode;
     if (catSlug === "civil") {
-      const ungrouped = allCourses.filter((c) => !(c as { group?: string }).group);
-      const groupsPresent = Object.keys(CIVIL_GROUPS).filter((g) =>
-        allCourses.some((c) => (c as { group?: string }).group === g)
-      );
+      const ungrouped = allCourses.filter((c) => !c.group);
       courseCards = (
         <div className="grid md:grid-cols-2 gap-3">
-          {groupsPresent.map((g) => {
+          {Object.keys(CIVIL_GROUPS).map((g) => {
             const gm = CIVIL_GROUPS[g];
-            const groupCourses = allCourses.filter((c) => (c as { group?: string }).group === g);
+            const groupCourses = allCourses.filter((c) => c.group === g);
+            const hasContent = groupCourses.length > 0;
             const totalLessons = groupCourses.reduce((s, c) => s + c.totalLessons, 0);
             const totalXp = groupCourses.reduce((s, c) => s + c.xpReward, 0);
-            const avgPct = groupCourses.length
+            const avgPct = hasContent
               ? Math.round(groupCourses.reduce((s, c) => s + (progresses[c.id] ?? 0), 0) / groupCourses.length)
               : 0;
+            if (!hasContent) {
+              return (
+                <div key={g} className="card-lg flex flex-col gap-3 p-4" style={{ opacity: 0.5, cursor: "default" }}>
+                  <div className="flex gap-1.5">
+                    <span className="badge" style={{ fontSize: 11 }}>ข้าราชการ</span>
+                    <span className="badge" style={{ fontSize: 11 }}>เร็วๆ นี้</span>
+                  </div>
+                  <div>
+                    <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 3 }}>{gm.icon} {gm.label}</h2>
+                    <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>{gm.description}</p>
+                  </div>
+                  <div className="mt-auto" style={{ fontSize: 12, color: "var(--text-subtle)" }}>กำลังเตรียมเนื้อหา</div>
+                </div>
+              );
+            }
             return (
               <Link key={g} href={`/courses?cat=civil&sub=${g}`}
                 className="card-lg flex flex-col gap-3 p-4 transition-colors hover:border-[color:var(--text-subtle)]"
