@@ -80,7 +80,6 @@ export default async function Home() {
           {/* Stats */}
           <div className="flex gap-8 flex-wrap">
             {[
-              { num: "2,400+", label: "ผู้เข้าใช้งาน" },
               { num: String(COURSES.length), label: "วิชา" },
               { num: String(totalLessons), label: "บทเรียน" },
             ].map((s) => (
