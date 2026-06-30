@@ -73,7 +73,7 @@ export default async function Home() {
               เริ่มเรียนเลย →
             </Link>
             <Link href="/e-exam" className="btn-secondary" style={{ padding: "11px 24px", fontSize: 15 }}>
-              ปลดล็อคข้อสอบด้วย XP
+              ลองข้อสอบ e-Exam
             </Link>
           </div>
 
