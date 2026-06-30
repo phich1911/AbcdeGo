@@ -1,4 +1,5 @@
 import { getLeaderboard } from "@/lib/supabase";
+import { AVATARS } from "@/lib/avatar";
 
 export const metadata = {
   title: "Leaderboard — AbcdeGo",
@@ -58,13 +59,18 @@ export default async function LeaderboardPage() {
                 </div>
 
                 {/* Avatar */}
-                <div style={{
-                  width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
-                  background: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: entry.avatar ? 20 : 14, fontWeight: 700, color: "#fff",
-                }}>
-                  {entry.avatar ?? entry.name[0]?.toUpperCase()}
-                </div>
+                {(() => {
+                  const avatar = AVATARS.find((a) => a.id === entry.avatar);
+                  return (
+                    <div style={{
+                      width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+                      background: avatar?.bg ?? "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: avatar ? 20 : 14, fontWeight: 700, color: "#fff",
+                    }}>
+                      {avatar?.emoji ?? entry.name[0]?.toUpperCase()}
+                    </div>
+                  );
+                })()}
 
                 {/* Name + Level */}
                 <div style={{ flex: 1, minWidth: 0 }}>
