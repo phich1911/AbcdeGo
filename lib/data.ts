@@ -231,7 +231,8 @@ export const COURSES: Course[] = [
   { id: "civil-amlo-reg", title: "กฎกระทรวงแบ่งส่วนราชการ ปปง. พ.ศ. 2565", description: "ภารกิจ · โครงสร้าง · หน้าที่และอำนาจของแต่ละกอง", icon: "🏛️", color: "#7c2d12", totalLessons: 2, xpReward: 180, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
   { id: "civil-amlo-civil", title: "มาตรการทางแพ่งตามกฎหมายฟอกเงิน", description: "มาตรา 49 · การริบทรัพย์ · อายัด-ยึด-ริบ · สิทธิผู้มีส่วนได้เสีย · ผู้เสียหายโดยตรง", icon: "⚖️", color: "#7c2d12", totalLessons: 3, xpReward: 270, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
   { id: "civil-amlo-intro", title: "ความรู้เบื้องต้น AML/CFT", description: "การฟอกเงิน · 3 ขั้นตอน · FATF · KYC/CDD · มาตรการป้องกัน-ปราบปราม · กฎหมาย ปกอ. · ความเสี่ยง NPO", icon: "🧠", color: "#7c2d12", totalLessons: 3, xpReward: 270, tag: "ข้าราชการ", category: "ข้าราชการ", group: "amlo" },
-  { id: "civil-dsi", title: "พ.ร.บ. การสอบสวนคดีพิเศษ พ.ศ. 2547", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ · วิสัยทัศน์ พันธกิจ ยุทธศาสตร์", icon: "🔍", color: "#1e3a5f", totalLessons: 6, xpReward: 540, tag: "ข้าราชการ", category: "ข้าราชการ", group: "dsi" },
+  { id: "civil-dsi", title: "พ.ร.บ. การสอบสวนคดีพิเศษ พ.ศ. 2547", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ", icon: "🔍", color: "#1e3a5f", totalLessons: 5, xpReward: 450, tag: "ข้าราชการ", category: "ข้าราชการ", group: "dsi" },
+  { id: "civil-dsi-vision", title: "วิสัยทัศน์ พันธกิจ ยุทธศาสตร์ DSI", description: "วิสัยทัศน์ · พันธกิจ · ยุทธศาสตร์ 4 ด้าน ของกรมสอบสวนคดีพิเศษ", icon: "🎯", color: "#1e3a5f", totalLessons: 1, xpReward: 90, tag: "ข้าราชการ", category: "ข้าราชการ", group: "dsi" },
   // ===== ภาษาอังกฤษ ม.ปลาย =====
   {
     id: "eng-grammar",
@@ -5966,10 +5967,10 @@ export const LESSONS: Lesson[] = [
     ],
   },
   {
-    id: "dsi-6",
-    courseId: "civil-dsi",
+    id: "dsi-vision-1",
+    courseId: "civil-dsi-vision",
     title: "วิสัยทัศน์ พันธกิจ ยุทธศาสตร์ กรมสอบสวนคดีพิเศษ",
-    order: 6,
+    order: 1,
     xpReward: 90,
     steps: [
       {
