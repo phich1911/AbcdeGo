@@ -1,56 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getSession } from "@/lib/supabase";
-import { getProgress } from "@/lib/progress";
-
-type Message = { from: "user" | "bot"; text: string };
-
-const LIMIT_LOGGED_IN = 20;
-const LIMIT_GUEST = 3;
-const CHAT_HISTORY_KEY = "jarnego_chat_history";
-const MAX_STORED = 40; // max messages to store
-
-function quotaKey() {
-  return `chatairrok_count_${new Date().toISOString().slice(0, 10)}`;
-}
-function getUsed() {
-  if (typeof window === "undefined") return 0;
-  return parseInt(localStorage.getItem(quotaKey()) || "0", 10);
-}
-function bumpUsed() {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(quotaKey(), String(getUsed() + 1));
-}
-
-const WELCOME: Message = { from: "bot", text: "สงสัยอะไรถามได้เลยครับ อาจารย์โกพร้อมช่วยตลอด 24 ชม." };
-
-function loadHistory(): Message[] {
-  if (typeof window === "undefined") return [WELCOME];
-  try {
-    const raw = localStorage.getItem(CHAT_HISTORY_KEY);
-    if (!raw) return [WELCOME];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : [WELCOME];
-  } catch {
-    return [WELCOME];
-  }
-}
-
-function saveHistory(msgs: Message[]) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(msgs.slice(-MAX_STORED)));
-  } catch {}
-}
+import Link from "next/link";
+import { useJarnGoChat } from "@/lib/useJarnGoChat";
 
 export default function ChatBot() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([WELCOME]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
+  const { messages, input, setInput, loading, send, bottomRef } = useJarnGoChat();
 
   useEffect(() => {
     if (!open) return;
@@ -63,121 +20,9 @@ export default function ChatBot() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [open]);
 
-  // Load history on mount
-  useEffect(() => {
-    setMessages(loadHistory());
-  }, []);
-
-  // Save history whenever messages change
-  useEffect(() => {
-    saveHistory(messages);
-  }, [messages]);
-
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, open]);
-
-  async function send() {
-    const text = input.trim();
-    if (!text || loading) return;
-
-    // Who is asking?
-    const session = await getSession();
-    const user = session?.user;
-    const loggedIn = !!user;
-    const limit = loggedIn ? LIMIT_LOGGED_IN : LIMIT_GUEST;
-
-    // Daily question limit
-    if (getUsed() >= limit) {
-      setInput("");
-      const msg = loggedIn
-        ? "โอ้โห ถามมาเยอะมากเลยนะ สมองไม่เมื่อยบ้างเหรอ  พักก่อนแล้วพรุ่งนี้ค่อยมาใหม่นะครับ"
-        : "ถามมาเยอะเลยนะ อาจารย์โกไม่ได้ขี้เหนียวหรอก แต่ login ก่อนนะครับ แล้วจะได้คุยกันอีกเพียบเลย ";
-      setMessages((prev) => [...prev, { from: "user", text }, { from: "bot", text: msg }]);
-      return;
-    }
-
-    setInput("");
-
-    // Personalization (Level 1: name + XP + Level) — only when logged in
-    let userCtx: { name: string; xp: number; level: number } | null = null;
-    if (loggedIn) {
-      const name =
-        user.user_metadata?.display_name ||
-        user.user_metadata?.full_name ||
-        user.email?.split("@")[0] ||
-        "ผู้ใช้";
-      const xp = getProgress().xp;
-      userCtx = { name, xp, level: Math.floor(xp / 100) + 1 };
-    }
-
-    const history = messages.map((m) => ({
-      role: m.from === "user" ? "user" : "assistant",
-      content: m.text,
-    }));
-
-    setMessages((prev) => [...prev, { from: "user", text }, { from: "bot", text: "" }]);
-    setLoading(true);
-    bumpUsed();
-
-    try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...history, { role: "user", content: text }], user: userCtx }),
-      });
-
-      // Both AI providers exhausted → polite resting message
-      if (!res.ok) {
-        let msg = "ขอโทษครับ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง";
-        try {
-          const data = await res.json();
-          if (data?.message) msg = data.message;
-        } catch {}
-        setMessages((prev) => {
-          const next = [...prev];
-          next[next.length - 1] = { from: "bot", text: msg };
-          return next;
-        });
-        return;
-      }
-
-      if (!res.body) throw new Error("no body");
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let botText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        for (const line of chunk.split("\n")) {
-          if (!line.startsWith("data: ")) continue;
-          const data = line.slice(6).trim();
-          if (data === "[DONE]") break;
-          try {
-            const delta = JSON.parse(data).choices?.[0]?.delta?.content;
-            if (delta) {
-              botText += delta;
-              setMessages((prev) => {
-                const next = [...prev];
-                next[next.length - 1] = { from: "bot", text: botText };
-                return next;
-              });
-            }
-          } catch {}
-        }
-      }
-    } catch {
-      setMessages((prev) => {
-        const next = [...prev];
-        next[next.length - 1] = { from: "bot", text: "ขอโทษครับ เกิดข้อผิดพลาด ลองใหม่อีกครั้ง" };
-        return next;
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
+  }, [messages, open, bottomRef]);
 
   return (
     <div ref={chatRef}>
@@ -201,7 +46,14 @@ export default function ChatBot() {
               </p>
               <p style={{ fontSize: 11, color: "var(--text-muted)" }}>Powered by Groq · Llama 3.3</p>
             </div>
-            <button onClick={() => setOpen(false)} style={{ color: "var(--text-muted)", fontSize: 16 }} className="hover:opacity-70">✕</button>
+            <div className="flex items-center gap-3">
+              <Link href="/chat" title="ขยายเต็มจอ" style={{ color: "var(--text-muted)" }} className="hover:opacity-70">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+                  <path d="M6 2H2v4M10 14h4v-4M2 2l5 5M14 14l-5-5" />
+                </svg>
+              </Link>
+              <button onClick={() => setOpen(false)} style={{ color: "var(--text-muted)", fontSize: 16 }} className="hover:opacity-70">✕</button>
+            </div>
           </div>
 
           {/* Messages */}
