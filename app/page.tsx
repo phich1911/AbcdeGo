@@ -3,6 +3,7 @@ import SiteStatsWrapper from "@/components/SiteStatsWrapper";
 import { COURSES } from "@/lib/data";
 import { getPopularCourseIds } from "@/lib/popular-courses";
 import { getRegisteredUserCount } from "@/lib/registered-count";
+import { getLeaderboard } from "@/lib/supabase";
 
 const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
 
@@ -43,9 +44,10 @@ const WHO_FOR = [
 ];
 
 export default async function Home() {
-  const [popularIds, learnerCount] = await Promise.all([
+  const [popularIds, learnerCount, topLeader] = await Promise.all([
     getPopularCourseIds(),
     getRegisteredUserCount(),
+    getLeaderboard(1).then((rows) => rows[0] ?? null),
   ]);
 
   return (
@@ -71,6 +73,7 @@ export default async function Home() {
           {learnerCount > 0 && (
             <p style={{ fontSize: 14, color: "var(--primary)", marginBottom: 32 }}>
               ขอบคุณผู้เรียนทั้งหมด {learnerCount.toLocaleString()} คนที่ร่วมเดินทางไปด้วยกัน 🙏
+              {topLeader && ` · 🏆 อันดับ 1 ตอนนี้: ${topLeader.name} (${topLeader.xp.toLocaleString()} XP)`}
             </p>
           )}
 
