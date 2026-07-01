@@ -2,7 +2,7 @@ import Link from "next/link";
 import SiteStatsWrapper from "@/components/SiteStatsWrapper";
 import { COURSES } from "@/lib/data";
 import { getPopularCourseIds } from "@/lib/popular-courses";
-import { getLearnerCount } from "@/lib/supabase";
+import { getRegisteredUserCount } from "@/lib/registered-count";
 
 const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
 
@@ -45,7 +45,7 @@ const WHO_FOR = [
 export default async function Home() {
   const [popularIds, learnerCount] = await Promise.all([
     getPopularCourseIds(),
-    getLearnerCount(),
+    getRegisteredUserCount(),
   ]);
 
   return (

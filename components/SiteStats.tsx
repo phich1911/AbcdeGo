@@ -22,7 +22,7 @@ export default function SiteStats() {
   useEffect(() => {
     const load = () => {
       getLeaderboard(10).then(setBoard).catch(() => setBoard([]));
-      fetch("/api/learner-count").then(r => r.json()).then(d => setTotalLearners(d.count ?? 0)).catch(() => {});
+      fetch("/api/user-count").then(r => r.json()).then(d => setTotalLearners(d.count ?? 0)).catch(() => {});
     };
     load();
     const t = setTimeout(load, 3000);
