@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import ChatBot from "@/components/ChatBot";
+import FeedbackButton from "@/components/FeedbackButton";
 import Navbar from "@/components/Navbar";
 import { Analytics } from "@vercel/analytics/next";
 import { PostHogProvider } from "@/components/PostHogProvider";
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </p>
         </footer>
 <ChatBot />
+<FeedbackButton />
         <Analytics />
         </PostHogProvider>
       </body>
