@@ -257,7 +257,7 @@ function CoursesInner() {
           <summary style={{ cursor: "pointer", fontSize: 14, fontWeight: 700, color: "var(--text)", listStyle: "none" }}>
             เกี่ยวกับการสอบ ก.พ.
           </summary>
-          <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, whiteSpace: "pre-line", marginTop: 12 }}>{COURSES.find((c) => c.category === "สอบ ก.พ.")?.intro}</p>
+          <p style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, whiteSpace: "pre-line", marginTop: 12 }}>{COURSES.find((c) => c.category === "สอบ ก.พ." && c.intro)?.intro}</p>
         </details>
         <SearchBar query={query} setQuery={setQuery} />
         <div className="grid sm:grid-cols-2 gap-4">
