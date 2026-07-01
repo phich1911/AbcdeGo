@@ -38,7 +38,7 @@ export default function SiteStats() {
           <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-2xl" style={{ background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.15)" }}>
             <Users size={18} style={{ color: "var(--primary)", flexShrink: 0 }} />
             <span style={{ fontSize: 14, color: "var(--text-muted)" }}>
-              มีผู้เรียนทั้งหมด <strong style={{ color: "var(--primary)", fontSize: 16 }}>{totalLearners.toLocaleString()}</strong> คนแล้ว
+              ขอบคุณผู้เรียนทั้งหมด <strong style={{ color: "var(--primary)", fontSize: 16 }}>{totalLearners.toLocaleString()}</strong> คนที่ร่วมเดินทางไปด้วยกัน 🙏
             </span>
           </div>
         )}
