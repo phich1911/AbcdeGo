@@ -68,6 +68,12 @@ export default async function Home() {
             มีเกม ดูดวง และข้อสอบจำลองจับเวลาเสมือนจริง
           </p>
 
+          {learnerCount > 0 && (
+            <p style={{ fontSize: 14, color: "var(--primary)", marginBottom: 32 }}>
+              ขอบคุณผู้เรียนทั้งหมด {learnerCount.toLocaleString()} คนที่ร่วมเดินทางไปด้วยกัน 🙏
+            </p>
+          )}
+
           <div className="flex gap-3 flex-wrap" style={{ marginBottom: 40 }}>
             <Link href="/courses" className="btn-primary" style={{ padding: "11px 24px", fontSize: 15 }}>
               เริ่มเรียนเลย →

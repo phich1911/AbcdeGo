@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getLeaderboard, getTotalLearners } from "@/lib/supabase";
+import { getLeaderboard } from "@/lib/supabase";
 import { AVATARS } from "@/lib/avatar";
 import { Trophy, Zap, Users } from "lucide-react";
 
@@ -22,7 +22,7 @@ export default function SiteStats() {
   useEffect(() => {
     const load = () => {
       getLeaderboard(10).then(setBoard).catch(() => setBoard([]));
-      fetch("/api/user-count").then(r => r.json()).then(d => setTotalLearners(d.count ?? 0)).catch(() => {});
+      fetch("/api/learner-count").then(r => r.json()).then(d => setTotalLearners(d.count ?? 0)).catch(() => {});
     };
     load();
     const t = setTimeout(load, 3000);
@@ -38,7 +38,7 @@ export default function SiteStats() {
           <div className="flex items-center gap-3 mb-6 px-4 py-3 rounded-2xl" style={{ background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.15)" }}>
             <Users size={18} style={{ color: "var(--primary)", flexShrink: 0 }} />
             <span style={{ fontSize: 14, color: "var(--text-muted)" }}>
-              ขอบคุณผู้เรียนทั้งหมด <strong style={{ color: "var(--primary)", fontSize: 16 }}>{totalLearners.toLocaleString()}</strong> คนที่ร่วมเดินทางไปด้วยกัน 🙏
+              มีผู้เรียนทั้งหมด <strong style={{ color: "var(--primary)", fontSize: 16 }}>{totalLearners.toLocaleString()}</strong> คนแล้ว
             </span>
           </div>
         )}
