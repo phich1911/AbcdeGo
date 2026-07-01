@@ -9,7 +9,6 @@ import Fuse from "fuse.js";
 
 const SLUG_TO_CATEGORY: Record<string, string> = {
   kp: "สอบ ก.พ.",
-  "kp-general": "ความรู้ความสามารถทั่วไป",
   "eng-m": "ภาษาอังกฤษ ม.ปลาย",
   "math-m": "คณิตศาสตร์ ม.ปลาย",
   "thai-m": "ภาษาไทย ม.ปลาย",
@@ -20,7 +19,6 @@ const SLUG_TO_CATEGORY: Record<string, string> = {
 
 const CATEGORY_SLUGS: Record<string, string> = {
   "สอบ ก.พ.": "kp",
-  "ความรู้ความสามารถทั่วไป": "kp-general",
   "ภาษาอังกฤษ ม.ปลาย": "eng-m",
   "คณิตศาสตร์ ม.ปลาย": "math-m",
   "ภาษาไทย ม.ปลาย": "thai-m",
@@ -31,7 +29,6 @@ const CATEGORY_SLUGS: Record<string, string> = {
 
 const CATEGORY_META: Record<string, { description: string }> = {
   "สอบ ก.พ.": { description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ." },
-  "ความรู้ความสามารถทั่วไป": { description: "อนุกรม เงื่อนไขสัญลักษณ์ เงื่อนไขภาษา ร้อยละและสมการ การอ่านตารางข้อมูลและกราฟ และภาษาไทย" },
   "ภาษาอังกฤษ ม.ปลาย": { description: "ไวยากรณ์ การอ่าน คำศัพท์ บทสนทนา และการเขียน สำหรับระดับ ม.4–ม.6" },
   "คณิตศาสตร์ ม.ปลาย": { description: "จำนวนและพีชคณิต เรขาคณิต สถิติ และแคลคูลัส สำหรับระดับ ม.4–ม.6" },
   "ภาษาไทย ม.ปลาย": { description: "หลักการใช้ภาษา ทักษะการสื่อสาร และวรรณคดีวรรณกรรม สำหรับระดับ ม.4–ม.6" },
@@ -59,7 +56,6 @@ const KP_SETS = [
 // Top-level categories shown on /courses
 const TOP_LEVEL = [
   { slug: "kp", label: "สอบ ก.พ.", description: "วิชาความสามารถทั่วไป ภาษาไทย และภาษาอังกฤษ สำหรับสอบ ก.พ.", cats: ["สอบ ก.พ."] },
-  { slug: "kp-general", label: "วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย)", description: "อนุกรม เงื่อนไขสัญลักษณ์ เงื่อนไขภาษา ร้อยละและสมการ การอ่านตารางข้อมูลและกราฟ และภาษาไทย", cats: ["ความรู้ความสามารถทั่วไป"] },
   {
     slug: "mplatai", label: "มัธยมศึกษาตอนปลาย (ม.4–6)",
     description: "ภาษาอังกฤษ คณิตศาสตร์ และภาษาไทย สำหรับระดับ ม.4–ม.6",
@@ -75,6 +71,11 @@ const CIVIL_GROUPS: Record<string, { label: string; icon: string; description: s
   amlo: { label: "สำนักงาน ปปง. (AMLO)", icon: "🏦", description: "พระราชบัญญัติป้องกันและปราบปรามการฟอกเงิน · กฎกระทรวงแบ่งส่วนราชการ" },
   dsi: { label: "กรมสอบสวนคดีพิเศษ (DSI)", icon: "🔍", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ" },
   moj: { label: "นักวิชาการยุติธรรม (สป.ยธ.)", icon: "🏛️", description: "กระทรวงยุติธรรม · สำนักงานปลัดกระทรวงยุติธรรม · นักวิชาการยุติธรรมปฏิบัติการ" },
+};
+
+// Standalone subject groups inside สอบ ก.พ. (not tied to a specific set)
+const KP_GROUPS: Record<string, { label: string; icon: string; description: string }> = {
+  general: { label: "วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย)", icon: "🧮", description: "อนุกรม เงื่อนไขสัญลักษณ์ เงื่อนไขภาษา ร้อยละและสมการ การอ่านตารางข้อมูลและกราฟ และภาษาไทย" },
 };
 
 // Sub-categories inside มัธยมศึกษาตอนปลาย
@@ -125,6 +126,7 @@ function CoursesInner() {
   const searchParams = useSearchParams();
   const catSlug = searchParams.get("cat");
   const setSlug = searchParams.get("set");
+  const subSlug = searchParams.get("sub");
   const activeCat = catSlug !== null ? (SLUG_TO_CATEGORY[catSlug] ?? null) : null;
   const [progresses, setProgresses] = useState<Record<string, number>>({});
   const [query, setQuery] = useState("");
@@ -199,9 +201,30 @@ function CoursesInner() {
     );
   }
 
+  // ก.พ. group sub-view (e.g. ?cat=kp&sub=general) — standalone subject, not tied to a set
+  if (catSlug === "kp" && setSlug === null && subSlug !== null) {
+    const groupMeta = KP_GROUPS[subSlug];
+    const courses = COURSES.filter((c) => c.category === "สอบ ก.พ." && c.group === subSlug);
+    return (
+      <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{groupMeta?.icon} {groupMeta?.label}</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{groupMeta?.description}</p>
+          </div>
+          <Link href="/courses?cat=kp" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← สอบ ก.พ.</Link>
+        </div>
+        <SearchBar query={query} setQuery={setQuery} />
+        <div className="grid md:grid-cols-2 gap-3">
+          {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+        </div>
+      </main>
+    );
+  }
+
   // ก.พ. set view — show courses inside a set
   if (catSlug === "kp" && setSlug !== null) {
-    const courses = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(setSlug));
+    const courses = COURSES.filter((c) => c.category === "สอบ ก.พ." && !c.group && (c.kpSet ?? 1) === Number(setSlug));
     return (
       <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
         <div className="flex items-center justify-between mb-5">
@@ -238,9 +261,23 @@ function CoursesInner() {
         </details>
         <SearchBar query={query} setQuery={setQuery} />
         <div className="grid sm:grid-cols-2 gap-4">
+          {Object.keys(KP_GROUPS).map((g) => {
+            const gm = KP_GROUPS[g];
+            const groupCourses = COURSES.filter((c) => c.category === "สอบ ก.พ." && c.group === g);
+            return (
+              <Link key={g} href={`/courses?cat=kp&sub=${g}`}
+                className="card-lg flex flex-col gap-3 p-5" style={{ textDecoration: "none" }}>
+                <span className="badge" style={{ fontSize: 11, width: "fit-content" }}>{groupCourses.length} วิชา</span>
+                <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)", margin: 0 }}>{gm.icon} {gm.label}</h2>
+                <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.6, margin: 0 }}>{gm.description}</p>
+                <div className="mt-auto flex items-center gap-1" style={{ fontSize: 12, color: "var(--primary)", fontWeight: 500 }}>
+                  <span>ดูวิชาทั้งหมด</span><span>→</span>
+                </div>
+              </Link>
+            );
+          })}
           {KP_SETS.map((set) => {
-            const setCourses = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(set.slug));
-            const count = new Set(setCourses.map((c) => c.group ?? c.id)).size;
+            const count = COURSES.filter((c) => c.category === "สอบ ก.พ." && !c.group && (c.kpSet ?? 1) === Number(set.slug)).length;
             const isLocked = (set as { locked?: boolean }).locked;
             if (isLocked) {
               return (
@@ -272,7 +309,6 @@ function CoursesInner() {
   }
 
   // ข้าราชการ — group sub-view (e.g. ?cat=civil&sub=amlo)
-  const subSlug = searchParams.get("sub");
   if (catSlug === "civil" && subSlug !== null) {
     const groupMeta = CIVIL_GROUPS[subSlug];
     const courses = COURSES.filter((c) => c.category === "ข้าราชการ" && (c as { group?: string }).group === subSlug);

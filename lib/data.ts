@@ -29,7 +29,7 @@ export type Step =
   | { type: "fill"; question: string; answer: string; hint: string; explanation?: string };
 
 export const COURSES: Course[] = [
-  // ===== วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย) — คอร์สแยกต่างหาก =====
+  // ===== วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย) — คอร์สแยกในหมวด สอบ ก.พ. =====
   {
     id: "kp-g-series",
     title: "อนุกรม (Number Series)",
@@ -39,8 +39,9 @@ export const COURSES: Course[] = [
     color: "#0891b2",
     totalLessons: 1,
     xpReward: 90,
-    tag: "ความสามารถทั่วไป",
-    category: "ความรู้ความสามารถทั่วไป",
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    group: "general",
   },
   {
     id: "kp-g-symbol",
@@ -50,8 +51,9 @@ export const COURSES: Course[] = [
     color: "#0891b2",
     totalLessons: 1,
     xpReward: 90,
-    tag: "ความสามารถทั่วไป",
-    category: "ความรู้ความสามารถทั่วไป",
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    group: "general",
   },
   {
     id: "kp-g-verbal",
@@ -61,8 +63,9 @@ export const COURSES: Course[] = [
     color: "#0891b2",
     totalLessons: 1,
     xpReward: 90,
-    tag: "ความสามารถทั่วไป",
-    category: "ความรู้ความสามารถทั่วไป",
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    group: "general",
   },
   {
     id: "kp-g-percent",
@@ -72,8 +75,9 @@ export const COURSES: Course[] = [
     color: "#0891b2",
     totalLessons: 1,
     xpReward: 90,
-    tag: "ความสามารถทั่วไป",
-    category: "ความรู้ความสามารถทั่วไป",
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    group: "general",
   },
   {
     id: "kp-g-data",
@@ -83,8 +87,9 @@ export const COURSES: Course[] = [
     color: "#0891b2",
     totalLessons: 1,
     xpReward: 90,
-    tag: "ความสามารถทั่วไป",
-    category: "ความรู้ความสามารถทั่วไป",
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    group: "general",
   },
   {
     id: "kp-g-thai-order",
@@ -94,8 +99,9 @@ export const COURSES: Course[] = [
     color: "#0891b2",
     totalLessons: 1,
     xpReward: 90,
-    tag: "ความสามารถทั่วไป",
-    category: "ความรู้ความสามารถทั่วไป",
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    group: "general",
   },
   {
     id: "kp-g-thai-word",
@@ -105,8 +111,9 @@ export const COURSES: Course[] = [
     color: "#0891b2",
     totalLessons: 1,
     xpReward: 90,
-    tag: "ความสามารถทั่วไป",
-    category: "ความรู้ความสามารถทั่วไป",
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    group: "general",
   },
   {
     id: "kp-g-thai-read",
@@ -116,8 +123,9 @@ export const COURSES: Course[] = [
     color: "#0891b2",
     totalLessons: 1,
     xpReward: 90,
-    tag: "ความสามารถทั่วไป",
-    category: "ความรู้ความสามารถทั่วไป",
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    group: "general",
   },
   {
     id: "kp-english",
