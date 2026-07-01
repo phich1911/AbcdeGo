@@ -187,7 +187,7 @@ export default function TimeTipsPage() {
       {/* CTA */}
       <div className="card" style={{ marginTop: 56, padding: "32px 28px", textAlign: "center" }}>
         <p style={{ fontSize: 15, fontWeight: 700, margin: "0 0 6px", color: "var(--text)" }}>ฝึกทำข้อสอบจริงด้วย e-Exam</p>
-        <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "0 0 16px" }}>สะสม XP ครบ 1,000 ปลดล็อคข้อสอบจำลอง ก.พ. 100 ข้อ ฟรี</p>
+        <p style={{ fontSize: 13, color: "var(--text-muted)", margin: "0 0 16px" }}>ข้อสอบจำลอง ก.พ. 100 ข้อ ฟรี — แค่ login ก็เข้าสอบได้เลย</p>
         <Link href="/e-exam" className="btn-primary" style={{ padding: "10px 24px", fontSize: 14 }}>
           ดู e-Exam →
         </Link>

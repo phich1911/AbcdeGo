@@ -14,7 +14,7 @@ export default function PrivacyPage() {
         <ul style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 2, paddingLeft: 20, marginTop: 8 }}>
           <li>อีเมลและชื่อที่แสดง (จากการสมัครด้วยอีเมล หรือ Google OAuth)</li>
           <li>ความคืบหน้าการเรียน: XP, บทเรียนที่เสร็จแล้ว, streak, วันที่ใช้งานล่าสุด</li>
-          <li>ประวัติการปลดล็อคข้อสอบ e-Exam (ชุดที่ปลดล็อคและวันที่)</li>
+          <li>ประวัติการทำข้อสอบ e-Exam (ชุดที่ทำและวันที่)</li>
           <li>ข้อมูลบางส่วนถูกบันทึกใน localStorage ของเบราว์เซอร์เพื่อใช้งานได้โดยไม่ต้องเชื่อมต่ออินเทอร์เน็ต</li>
         </ul>
       </div>

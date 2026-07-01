@@ -271,7 +271,7 @@ export default function TipsPage() {
           ฝึกทำข้อสอบจริงเลย
         </p>
         <p style={{ fontSize: 14, color: "var(--text-muted)", margin: "0 0 20px", lineHeight: 1.7 }}>
-          สะสม XP ครบ 1,000 คะแนนจากคอร์สเรียน แล้วปลดล็อคข้อสอบจำลอง ก.พ. เต็มชุด 100 ข้อ จับเวลา 180 นาที ฟรี
+          ข้อสอบจำลอง ก.พ. เต็มชุด 100 ข้อ จับเวลา 180 นาที ฟรี — แค่ login ก็เข้าสอบได้เลย
         </p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
           <Link href="/e-exam" className="btn-primary" style={{ padding: "10px 24px", fontSize: 14 }}>
