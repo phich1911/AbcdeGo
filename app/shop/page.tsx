@@ -36,7 +36,7 @@ export default function ShopPage() {
 
   async function openPaddleCheckout(priceId: string, email: string) {
     let discountCode: string | null = null;
-    if (xp >= 500) {
+    if (xp >= 1000) {
       try {
         const res = await fetch("/api/create-discount", {
           method: "POST",
@@ -67,7 +67,7 @@ export default function ShopPage() {
   const categories = ["ทั้งหมด", ...Array.from(new Set(PRODUCTS.map((p) => p.category)))];
   const filtered = selectedCat === "ทั้งหมด" ? PRODUCTS : PRODUCTS.filter((p) => p.category === selectedCat);
   const discount = calcDiscount(xp);
-  const xpToNext = discount < 50 ? 500 - (xp % 500) : 0;
+  const xpToNext = discount < 100 ? 1000 - (xp % 1000) : 0;
 
   return (
     <main style={{ maxWidth: 900, margin: "0 auto", padding: "80px 16px 48px" }}>
@@ -115,13 +115,13 @@ export default function ShopPage() {
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 200 }}>
-          {[500, 1000, 1500, 2000, 2500].map((threshold) => (
+          {[1000, 2500, 5000, 7500, 10000].map((threshold) => (
             <div key={threshold} style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 120, height: 6, borderRadius: 3, background: "var(--border)", overflow: "hidden" }}>
                 <div style={{ height: "100%", borderRadius: 3, background: xp >= threshold ? "var(--accent-green)" : "var(--primary)", width: `${Math.min((xp / threshold) * 100, 100)}%`, transition: "width 0.4s" }} />
               </div>
               <span style={{ fontSize: 12, color: xp >= threshold ? "var(--accent-green)" : "var(--text-muted)" }}>
-                {xp >= threshold ? "✓ " : ""} {threshold} XP = ลด {(threshold / 500) * 10} ฿
+                {xp >= threshold ? "✓ " : ""} {threshold.toLocaleString()} XP = ลด {Math.floor(threshold / 1000) * 10} ฿
               </span>
             </div>
           ))}

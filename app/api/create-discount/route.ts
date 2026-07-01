@@ -5,7 +5,7 @@ const PADDLE_API = "https://api.paddle.com";
 export async function POST(req: NextRequest) {
   const { xp } = await req.json();
 
-  const steps = Math.min(Math.floor((xp ?? 0) / 500), 5);
+  const steps = Math.min(Math.floor((xp ?? 0) / 1000), 10);
   const discountAmount = steps * 10;
 
   if (discountAmount <= 0) {

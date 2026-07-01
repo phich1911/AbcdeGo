@@ -13,9 +13,9 @@ export interface Product {
 
 export const PRODUCTS: Product[] = [];
 
-// XP discount: every 500 XP = 10 THB off, max 50 THB
+// XP discount: every 1,000 XP = 10 THB off, max 100 THB
 export function calcDiscount(xp: number): number {
-  const steps = Math.min(Math.floor(xp / 500), 5);
+  const steps = Math.min(Math.floor(xp / 1000), 10);
   return steps * 10;
 }
 
