@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
 
 const SUPABASE_URL = "https://eaxskmgekbdrmmczptmq.supabase.co";
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
+const RANK_BY_EXAM: Record<string, string> = {
+  "kp-mock-1": KP_MOCK_1.rankReward,
+};
+
 export async function GET(req: NextRequest) {
   const examId = req.nextUrl.searchParams.get("examId");
   if (!examId || !SERVICE_KEY) return NextResponse.json({ passers: [] });
+
+  const rank = RANK_BY_EXAM[examId] ?? null;
 
   const lessonId = `exam-${examId}`;
   const hdrs = { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` };
@@ -29,7 +36,7 @@ export async function GET(req: NextRequest) {
 
     const passers = ids.map((id) => {
       const entry = lb.find((l) => l.user_id === id);
-      return { name: entry?.name ?? "ผู้เรียน", avatar: entry?.avatar ?? null };
+      return { name: entry?.name ?? "ผู้เรียน", avatar: entry?.avatar ?? null, rank };
     });
 
     return NextResponse.json({ passers: passers.slice(0, 20) });

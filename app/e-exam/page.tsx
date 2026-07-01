@@ -29,7 +29,7 @@ const E_EXAMS: EExamProduct[] = [
   },
 ];
 
-type Passer = { name: string; avatar: string | null };
+type Passer = { name: string; avatar: string | null; rank: string | null };
 
 export default function EExamPage() {
   const router = useRouter();
@@ -95,7 +95,7 @@ export default function EExamPage() {
                       <p className="text-xs mt-1 font-semibold" style={{ color: "#ef4444" }}>⚠️ ยังไม่มีใครผ่านข้อสอบชุดนี้ — ลองเป็นคนแรกไหม?</p>
                     ) : (
                       <p className="text-xs mt-1" style={{ color: "var(--accent-green)" }}>
-                        ✓ ผู้สอบผ่าน ({examPassers.length}): {examPassers.map((p) => p.name).join(", ")}
+                        ✓ ผู้สอบผ่าน ({examPassers.length}): {examPassers.map((p) => p.rank ? `${p.name} (${p.rank})` : p.name).join(", ")}
                       </p>
                     )}
                   </div>
