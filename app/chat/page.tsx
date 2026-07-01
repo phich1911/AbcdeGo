@@ -12,7 +12,7 @@ export default function ChatPage() {
   }, [messages, bottomRef]);
 
   return (
-    <main className="flex flex-col" style={{ height: "100dvh", paddingTop: 64, maxWidth: 720, margin: "0 auto" }}>
+    <main className="flex flex-col" style={{ height: "100dvh", paddingTop: 64, maxWidth: 960, margin: "0 auto" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-3">
