@@ -4,7 +4,7 @@ import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
 import type { MockExam, ExamSection } from "@/lib/exam-data/kp-mock-1";
-import { completeLesson } from "@/lib/progress";
+import { completeLesson, pushProgressToCloud } from "@/lib/progress";
 import { syncLeaderboard, getUnlockedExams } from "@/lib/supabase";
 
 const EXAMS: Record<string, MockExam> = {
@@ -371,6 +371,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     if (isFullMode && allPassed) {
       const updated = completeLesson(`exam-${exam.id}`, exam.xpReward, { correct: answeredCount, total: totalQ });
       syncLeaderboard(updated.xp);
+      pushProgressToCloud();
     }
 
     // Save section pass to localStorage
