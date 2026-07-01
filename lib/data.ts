@@ -29,18 +29,20 @@ export type Step =
   | { type: "fill"; question: string; answer: string; hint: string; explanation?: string };
 
 export const COURSES: Course[] = [
+  // ===== วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย) — ชุดที่ 1 =====
   {
-    id: "kp-general",
-    title: "ความรู้ทั่วไป ชุดที่ 1",
-    description: "วิชาความสามารถทั่วไป ตรรกะ คณิตศาสตร์ และภาษาไทย สำหรับสอบ ก.พ.",
+    id: "kp-g-series",
+    title: "อนุกรม (Number Series)",
+    description: "หาความสัมพันธ์ของชุดตัวเลขและเติมตัวเลขถัดไป",
     icon: "→",
     icon3d: "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4dd.png",
     color: "#0891b2",
-    totalLessons: 8,
-    xpReward: 720,
+    totalLessons: 1,
+    xpReward: 90,
     tag: "ก.พ.",
     category: "สอบ ก.พ.",
     kpSet: 1,
+    group: "general",
     intro: `ระดับปริญญาตรี (ป.ตรี)
 สำหรับผู้ที่ใช้วุฒิปริญญาตรีสมัครสอบ จะต้องทดสอบทั้งหมด 3 หมวดวิชาหลัก (รวม 100 ข้อ 200 คะแนน) โดยมีโครงสร้างและเกณฑ์การสอบผ่าน ดังนี้ครับ
 
@@ -56,6 +58,97 @@ export const COURSES: Course[] = [
 3. วิชาความรู้และลักษณะการเป็นข้าราชการที่ดี (กฎหมาย) | 25 ข้อ 50 คะแนน
 เนื้อหา: กฎหมายพื้นฐานของข้าราชการ ได้แก่ พ.ร.บ.ระเบียบบริหารราชการแผ่นดิน, พ.ร.ฎ.บ้านเมืองที่ดี, พ.ร.บ.วิธีปฏิบัติราชการทางปกครอง, ประมวลจริยธรรมข้าราชการ, และกฎหมายอาญาความผิดต่อตำแหน่งหน้าที่
 เกณฑ์การสอบผ่าน: ต้องได้คะแนน 60% ขึ้นไป (คิดเป็น 30 คะแนนขึ้นไป)`,
+  },
+  {
+    id: "kp-g-symbol",
+    title: "เงื่อนไขสัญลักษณ์ (Symbol Logic)",
+    description: "อ่านเงื่อนไขที่ให้ด้วยเครื่องหมาย แล้วสรุปข้อเปรียบเทียบ",
+    icon: "→",
+    color: "#0891b2",
+    totalLessons: 1,
+    xpReward: 90,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    kpSet: 1,
+    group: "general",
+  },
+  {
+    id: "kp-g-verbal",
+    title: "เงื่อนไขภาษา (Verbal Logic)",
+    description: "หาข้อสรุปที่ต้องเป็นจริงเสมอจากเงื่อนไขที่เป็นประโยค",
+    icon: "→",
+    color: "#0891b2",
+    totalLessons: 1,
+    xpReward: 90,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    kpSet: 1,
+    group: "general",
+  },
+  {
+    id: "kp-g-percent",
+    title: "ร้อยละและสมการ",
+    description: "คำนวณร้อยละ กำไร-ขาดทุน และแก้สมการพื้นฐาน",
+    icon: "→",
+    color: "#0891b2",
+    totalLessons: 1,
+    xpReward: 90,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    kpSet: 1,
+    group: "general",
+  },
+  {
+    id: "kp-g-data",
+    title: "การอ่านตารางข้อมูลและกราฟ",
+    description: "วิเคราะห์และคำนวณจากตารางและกราฟข้อมูล",
+    icon: "→",
+    color: "#0891b2",
+    totalLessons: 1,
+    xpReward: 90,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    kpSet: 1,
+    group: "general",
+  },
+  {
+    id: "kp-g-thai-order",
+    title: "ภาษาไทย: การเรียงประโยค",
+    description: "เรียงข้อความให้เป็นประโยคหรือย่อหน้าที่ถูกต้อง",
+    icon: "→",
+    color: "#0891b2",
+    totalLessons: 1,
+    xpReward: 90,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    kpSet: 1,
+    group: "general",
+  },
+  {
+    id: "kp-g-thai-word",
+    title: "ภาษาไทย: การเลือกใช้คำ",
+    description: "เลือกใช้คำและลักษณนามให้ถูกต้องตามหลักภาษา",
+    icon: "→",
+    color: "#0891b2",
+    totalLessons: 1,
+    xpReward: 90,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    kpSet: 1,
+    group: "general",
+  },
+  {
+    id: "kp-g-thai-read",
+    title: "ภาษาไทย: การอ่านจับใจความ",
+    description: "สรุปใจความหลักและตีความเจตนาผู้เขียนจากบทความ",
+    icon: "→",
+    color: "#0891b2",
+    totalLessons: 1,
+    xpReward: 90,
+    tag: "ก.พ.",
+    category: "สอบ ก.พ.",
+    kpSet: 1,
+    group: "general",
   },
   {
     id: "kp-english",
@@ -305,7 +398,7 @@ export const LESSONS: Lesson[] = [
   // ===== ความรู้ทั่วไป ก.พ. =====
   {
     id: "kpg-1",
-    courseId: "kp-general",
+    courseId: "kp-g-series",
     title: "อนุกรม (Number Series)",
     order: 1,
     xpReward: 90,
@@ -346,9 +439,9 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "kpg-2",
-    courseId: "kp-general",
+    courseId: "kp-g-symbol",
     title: "เงื่อนไขสัญลักษณ์ (Symbol Logic)",
-    order: 2,
+    order: 1,
     xpReward: 90,
     steps: [
       {
@@ -381,9 +474,9 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "kpg-3",
-    courseId: "kp-general",
+    courseId: "kp-g-verbal",
     title: "เงื่อนไขภาษา (Verbal Logic)",
-    order: 3,
+    order: 1,
     xpReward: 90,
     steps: [
       {
@@ -416,9 +509,9 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "kpg-4",
-    courseId: "kp-general",
+    courseId: "kp-g-percent",
     title: "ร้อยละและสมการ",
-    order: 4,
+    order: 1,
     xpReward: 90,
     steps: [
       {
@@ -457,9 +550,9 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "kpg-5",
-    courseId: "kp-general",
+    courseId: "kp-g-data",
     title: "การอ่านตารางข้อมูลและกราฟ",
-    order: 5,
+    order: 1,
     xpReward: 90,
     steps: [
       {
@@ -492,9 +585,9 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "kpg-6",
-    courseId: "kp-general",
+    courseId: "kp-g-thai-order",
     title: "ภาษาไทย: การเรียงประโยค",
-    order: 6,
+    order: 1,
     xpReward: 90,
     steps: [
       {
@@ -527,9 +620,9 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "kpg-7",
-    courseId: "kp-general",
+    courseId: "kp-g-thai-word",
     title: "ภาษาไทย: การเลือกใช้คำ",
-    order: 7,
+    order: 1,
     xpReward: 90,
     steps: [
       {
@@ -568,9 +661,9 @@ export const LESSONS: Lesson[] = [
   },
   {
     id: "kpg-8",
-    courseId: "kp-general",
+    courseId: "kp-g-thai-read",
     title: "ภาษาไทย: การอ่านจับใจความ",
-    order: 8,
+    order: 1,
     xpReward: 90,
     steps: [
       {

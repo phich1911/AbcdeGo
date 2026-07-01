@@ -73,6 +73,11 @@ const CIVIL_GROUPS: Record<string, { label: string; icon: string; description: s
   moj: { label: "นักวิชาการยุติธรรม (สป.ยธ.)", icon: "🏛️", description: "กระทรวงยุติธรรม · สำนักงานปลัดกระทรวงยุติธรรม · นักวิชาการยุติธรรมปฏิบัติการ" },
 };
 
+// Groups inside a ก.พ. set
+const KP_GROUPS: Record<string, { label: string; icon: string; description: string }> = {
+  general: { label: "วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย)", icon: "🧮", description: "อนุกรม เงื่อนไขสัญลักษณ์ เงื่อนไขภาษา ร้อยละและสมการ การอ่านตารางข้อมูลและกราฟ และภาษาไทย" },
+};
+
 // Sub-categories inside มัธยมศึกษาตอนปลาย
 const MPLATAI_SUBS = [
   { slug: "eng-m", label: "ภาษาอังกฤษ", description: "ไวยากรณ์ การอ่าน คำศัพท์ บทสนทนา และการเขียน สำหรับระดับ ม.4–ม.6", cat: "ภาษาอังกฤษ ม.ปลาย" },
@@ -195,9 +200,33 @@ function CoursesInner() {
     );
   }
 
+  // ก.พ. group sub-view (e.g. ?cat=kp&set=1&sub=general)
+  const kpSubSlug = searchParams.get("sub");
+  if (catSlug === "kp" && setSlug !== null && kpSubSlug !== null) {
+    const groupMeta = KP_GROUPS[kpSubSlug];
+    const courses = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(setSlug) && c.group === kpSubSlug);
+    return (
+      <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: "var(--text)", marginBottom: 2 }}>{groupMeta?.icon} {groupMeta?.label}</h1>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{groupMeta?.description}</p>
+          </div>
+          <Link href={`/courses?cat=kp&set=${setSlug}`} style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>← ชุดที่ {setSlug}</Link>
+        </div>
+        <SearchBar query={query} setQuery={setQuery} />
+        <div className="grid md:grid-cols-2 gap-3">
+          {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+        </div>
+      </main>
+    );
+  }
+
   // ก.พ. set view — show courses inside a set
   if (catSlug === "kp" && setSlug !== null) {
-    const courses = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(setSlug));
+    const allCourses = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(setSlug));
+    const ungrouped = allCourses.filter((c) => !c.group);
+    const groupKeys = Array.from(new Set(allCourses.filter((c) => c.group).map((c) => c.group as string)));
     return (
       <main className="max-w-4xl mx-auto px-6 pb-16" style={{ paddingTop: 72 }}>
         <div className="flex items-center justify-between mb-5">
@@ -209,7 +238,43 @@ function CoursesInner() {
         </div>
         <SearchBar query={query} setQuery={setQuery} />
         <div className="grid md:grid-cols-2 gap-3">
-          {courses.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
+          {groupKeys.map((g) => {
+            const gm = KP_GROUPS[g];
+            const groupCourses = allCourses.filter((c) => c.group === g);
+            const totalLessons = groupCourses.reduce((s, c) => s + c.totalLessons, 0);
+            const totalXp = groupCourses.reduce((s, c) => s + c.xpReward, 0);
+            const avgPct = groupCourses.length > 0
+              ? Math.round(groupCourses.reduce((s, c) => s + (progresses[c.id] ?? 0), 0) / groupCourses.length)
+              : 0;
+            return (
+              <Link key={g} href={`/courses?cat=kp&set=${setSlug}&sub=${g}`}
+                className="card-lg flex flex-col gap-3 p-4 transition-colors hover:border-[color:var(--text-subtle)]"
+                style={{ textDecoration: "none" }}>
+                <div className="flex gap-1.5">
+                  <span className="badge" style={{ fontSize: 11 }}>ก.พ.</span>
+                  <span className="badge" style={{ fontSize: 11 }}>{groupCourses.length} วิชา</span>
+                </div>
+                <div>
+                  <h2 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 3 }}>{gm?.icon} {gm?.label}</h2>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>{gm?.description}</p>
+                </div>
+                <div className="mt-auto">
+                  <div className="flex justify-between mb-1.5" style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                    <span>ความก้าวหน้า</span>
+                    <span style={{ color: avgPct > 0 ? "var(--primary)" : undefined }}>{avgPct}%</span>
+                  </div>
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: `${avgPct}%` }} />
+                  </div>
+                  <div className="flex justify-between mt-3" style={{ fontSize: 12 }}>
+                    <span style={{ color: "var(--text-muted)" }}>{totalLessons} บทเรียน</span>
+                    <span style={{ color: "var(--accent)", fontWeight: 500 }}>{totalXp} XP</span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+          {ungrouped.map((c) => <CourseCard key={c.id} course={c} pct={progresses[c.id] ?? 0} />)}
         </div>
       </main>
     );
@@ -235,7 +300,8 @@ function CoursesInner() {
         <SearchBar query={query} setQuery={setQuery} />
         <div className="grid sm:grid-cols-2 gap-4">
           {KP_SETS.map((set) => {
-            const count = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(set.slug)).length;
+            const setCourses = COURSES.filter((c) => c.category === "สอบ ก.พ." && (c.kpSet ?? 1) === Number(set.slug));
+            const count = new Set(setCourses.map((c) => c.group ?? c.id)).size;
             const isLocked = (set as { locked?: boolean }).locked;
             if (isLocked) {
               return (
