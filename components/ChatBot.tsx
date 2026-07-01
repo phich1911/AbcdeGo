@@ -8,6 +8,9 @@ export default function ChatBot() {
   const [open, setOpen] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const { messages, input, setInput, loading, send, bottomRef } = useJarnGoChat();
+  const POPUP_VISIBLE = 8;
+  const visibleMessages = messages.slice(-POPUP_VISIBLE);
+  const hiddenCount = messages.length - visibleMessages.length;
 
   useEffect(() => {
     if (!open) return;
@@ -58,8 +61,17 @@ export default function ChatBot() {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-2.5" style={{ scrollbarWidth: "thin" }}>
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
+            {hiddenCount > 0 && (
+              <Link
+                href="/chat"
+                className="text-center hover:opacity-70"
+                style={{ fontSize: 11, color: "var(--text-muted)", textDecoration: "none" }}
+              >
+                ดูข้อความก่อนหน้า ({hiddenCount}) ในหน้าเต็ม →
+              </Link>
+            )}
+            {visibleMessages.map((msg, i) => (
+              <div key={hiddenCount + i} className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}>
                 <div
                   className="text-sm px-3 py-2 max-w-[85%] whitespace-pre-line leading-relaxed"
                   style={
@@ -68,7 +80,7 @@ export default function ChatBot() {
                       : { background: "var(--surface-2)", color: "var(--text)", border: "1px solid var(--border)", borderRadius: "8px 8px 8px 2px", fontSize: 13 }
                   }
                 >
-                  {msg.text || (loading && i === messages.length - 1 ? (
+                  {msg.text || (loading && i === visibleMessages.length - 1 ? (
                     <span style={{ opacity: 0.5 }}>กำลังพิมพ์...</span>
                   ) : "")}
                 </div>
