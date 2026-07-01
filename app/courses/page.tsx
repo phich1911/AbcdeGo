@@ -75,7 +75,7 @@ const CIVIL_GROUPS: Record<string, { label: string; icon: string; description: s
 
 // Standalone subject groups inside สอบ ก.พ. (not tied to a specific set)
 const KP_GROUPS: Record<string, { label: string; icon: string; description: string }> = {
-  general: { label: "วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย)", icon: "🧮", description: "อนุกรม เงื่อนไขสัญลักษณ์ เงื่อนไขภาษา ร้อยละและสมการ การอ่านตารางข้อมูลและกราฟ และภาษาไทย" },
+  general: { label: "วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย)", icon: "🧮", description: "อนุกรม อุปมาอุปไมย เงื่อนไขสัญลักษณ์ เงื่อนไขภาษา ร้อยละและสมการ การอ่านตารางข้อมูลและกราฟ และภาษาไทย" },
 };
 
 // Sub-categories inside มัธยมศึกษาตอนปลาย
