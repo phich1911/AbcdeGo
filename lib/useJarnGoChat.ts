@@ -7,7 +7,7 @@ import { getProgress } from "@/lib/progress";
 export type ChatMessage = { from: "user" | "bot"; text: string };
 
 const LIMIT_LOGGED_IN = 20;
-const LIMIT_GUEST = 3;
+const LIMIT_GUEST = 1;
 const CHAT_HISTORY_KEY = "jarnego_chat_history";
 const MAX_STORED = 40; // max messages kept for display
 const MAX_CONTEXT = 12; // max messages sent to the API as context, to control token cost
