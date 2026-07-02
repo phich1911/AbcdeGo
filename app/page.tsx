@@ -4,6 +4,7 @@ import { COURSES } from "@/lib/data";
 import { getPopularCourseIds } from "@/lib/popular-courses";
 import { getRegisteredUserCount } from "@/lib/registered-count";
 import { getLeaderboard } from "@/lib/supabase";
+import { ARTICLES } from "@/lib/articles";
 
 const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
 
@@ -171,6 +172,32 @@ export default async function Home() {
                   </div>
                 </Link>
               ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Articles */}
+      <section style={{ padding: "48px 24px", borderBottom: "1px solid var(--border)" }}>
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between mb-5">
+            <h2 style={{ fontSize: 16, fontWeight: 700, color: "var(--text)" }}>บทความแนะนำ</h2>
+            <Link href="/tips" style={{ fontSize: 13, color: "var(--primary)", textDecoration: "none" }}>ดูทั้งหมด →</Link>
+          </div>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {ARTICLES.slice(0, 3).map((article) => (
+              <Link key={article.href} href={article.href}
+                className="card-lg flex flex-col gap-3 p-4 transition-colors hover:border-[color:var(--text-subtle)]"
+                style={{ textDecoration: "none" }}>
+                <div className="flex items-center justify-between">
+                  <span className="badge" style={{ fontSize: 11 }}>{article.tag}</span>
+                  <span style={{ fontSize: 12, color: "var(--text-subtle)" }}>อ่าน {article.mins}</span>
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>{article.title}</h3>
+                  <p style={{ fontSize: 12, color: "var(--text-muted)", lineHeight: 1.5 }}>{article.desc}</p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

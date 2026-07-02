@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ARTICLES } from "@/lib/articles";
 
 export const metadata: Metadata = {
   title: "เทคนิคและบทความเตรียมสอบ — AbcdeGo",
@@ -10,41 +11,6 @@ export const metadata: Metadata = {
     description: "รวมบทความเทคนิคเตรียมสอบ ก.พ. TOEIC และอื่นๆ",
   },
 };
-
-const articles = [
-  {
-    href: "/tips/kp",
-    icon: "",
-    tag: "ก.พ.",
-    title: "เทคนิคทำข้อสอบ ก.พ. ครบทุกวิชา",
-    desc: "อนุกรม · คณิตศาสตร์ · ภาษาไทย · เงื่อนไขสัญลักษณ์ · ภาษาอังกฤษ · กฎหมายข้าราชการ · บริหารเวลา 180 นาที",
-    mins: "10 นาที",
-  },
-  {
-    href: "/tips/toeic",
-    icon: "",
-    tag: "TOEIC",
-    title: "TOEIC คืออะไร? ครบทุกอย่างในหน้าเดียว",
-    desc: "โครงสร้างข้อสอบ · คะแนนมาตรฐาน · เทคนิค Listening & Reading · วิธีเตรียมตัว",
-    mins: "8 นาที",
-  },
-  {
-    href: "/tips/time",
-    icon: "",
-    tag: "บริหารเวลา",
-    title: "สูตรโกงเวลา",
-    desc: "Flow State · นาฬิกาชีวภาพ · สูตรสัมพัทธภาพปรับใช้จริง",
-    mins: "6 นาที",
-  },
-  {
-    href: "/tips/interview",
-    icon: "",
-    tag: "สัมภาษณ์",
-    title: "เทคนิคการสอบสัมภาษณ์",
-    desc: "การแต่งกาย · ภาษากาย · ตอบคำถามยาก · Checklist ก่อนวันสัมภาษณ์",
-    mins: "7 นาที",
-  },
-];
 
 export default function TipsIndexPage() {
   return (
@@ -61,10 +27,9 @@ export default function TipsIndexPage() {
 
       {/* Article Cards */}
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        {articles.map((a) => (
+        {ARTICLES.map((a) => (
           <Link key={a.href} href={a.href} style={{ textDecoration: "none" }}>
             <div className="card" style={{ padding: "24px 28px", display: "flex", gap: 20, alignItems: "flex-start", cursor: "pointer", transition: "all 0.15s" }}>
-              <span style={{ fontSize: 36, lineHeight: 1, flexShrink: 0 }}>{a.icon}</span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                   <span style={{
