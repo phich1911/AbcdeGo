@@ -38,10 +38,10 @@ export default function ShopPage() {
     let discountCode: string | null = null;
     if (xp >= 1000) {
       try {
+        const session = await getSession();
         const res = await fetch("/api/create-discount", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ xp }),
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
         });
         const data = await res.json();
         discountCode = data.discountCode ?? null;

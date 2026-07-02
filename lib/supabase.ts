@@ -84,7 +84,7 @@ export async function syncLeaderboard(xp: number, oldName?: string) {
   try {
     const res = await fetch("/api/sync-leaderboard", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
       body: JSON.stringify({ name, xp, avatar, user_id: user.id }),
     });
     if (!res.ok) return { error: `HTTP ${res.status}: ${await res.text()}` };
@@ -218,7 +218,7 @@ export async function saveGameScore(game: string, score: number): Promise<boolea
   try {
     const res = await fetch("/api/save-game-score", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
       body: JSON.stringify({ game, score, user_id: user.id, display_name }),
     });
     return res.ok;

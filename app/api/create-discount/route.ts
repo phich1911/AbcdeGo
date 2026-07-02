@@ -1,11 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyUser } from "@/lib/auth-server";
 
 const PADDLE_API = "https://api.paddle.com";
+const SUPABASE_URL = "https://eaxskmgekbdrmmczptmq.supabase.co";
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 
 export async function POST(req: NextRequest) {
-  const { xp } = await req.json();
+  const user = await verifyUser(req);
+  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  if (!SERVICE_KEY) return NextResponse.json({ error: "no SERVICE_KEY" }, { status: 500 });
 
-  const steps = Math.min(Math.floor((xp ?? 0) / 1000), 10);
+  // Read the authenticated user's real XP server-side — never trust a client-supplied value.
+  const xpRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/user_progress?select=xp&user_id=eq.${encodeURIComponent(user.id)}`,
+    { headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` } }
+  );
+  const xpData = xpRes.ok ? await xpRes.json() : [];
+  const xp: number = xpData?.[0]?.xp ?? 0;
+
+  const steps = Math.min(Math.floor(xp / 1000), 10);
   const discountAmount = steps * 10;
 
   if (discountAmount <= 0) {

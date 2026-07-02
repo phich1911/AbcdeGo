@@ -570,10 +570,10 @@ export default function Navbar() {
                   try {
                     const session = await import("@/lib/supabase").then(m => m.getSession());
                     const user_id = session?.user?.id;
-                    if (!user_id) return;
+                    if (!user_id || !session?.access_token) return;
                     const res = await fetch("/api/delete-account", {
                       method: "POST",
-                      headers: { "Content-Type": "application/json" },
+                      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
                       body: JSON.stringify({ user_id }),
                     });
                     if (res.ok) {

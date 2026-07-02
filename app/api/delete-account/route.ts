@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyUser } from "@/lib/auth-server";
 
 const SUPABASE_URL = "https://eaxskmgekbdrmmczptmq.supabase.co";
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
@@ -12,8 +13,11 @@ const hdrs = () => ({
 export async function POST(req: NextRequest) {
   if (!SERVICE_KEY) return NextResponse.json({ error: "no SERVICE_KEY" }, { status: 500 });
 
-  const { user_id } = await req.json();
-  if (!user_id) return NextResponse.json({ error: "missing user_id" }, { status: 400 });
+  const caller = await verifyUser(req);
+  if (!caller) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  // Always delete the authenticated caller's own account — never a client-supplied user_id.
+  const user_id = caller.id;
 
   // Delete from leaderboard
   await fetch(`${SUPABASE_URL}/rest/v1/leaderboard?user_id=eq.${encodeURIComponent(user_id)}`, {

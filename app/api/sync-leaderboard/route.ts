@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyUser } from "@/lib/auth-server";
 
 const SUPABASE_URL = "https://eaxskmgekbdrmmczptmq.supabase.co";
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
@@ -13,9 +14,15 @@ const HEADERS = () => ({
 export async function POST(req: NextRequest) {
   if (!SERVICE_KEY) return NextResponse.json({ error: "no SERVICE_KEY" }, { status: 500 });
 
-  const { name, xp, avatar, user_id } = await req.json();
-  if (!name || xp == null || !user_id) return NextResponse.json({ error: "missing fields" }, { status: 400 });
+  const caller = await verifyUser(req);
+  if (!caller) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const { name, xp, avatar } = await req.json();
+  if (!name || xp == null) return NextResponse.json({ error: "missing fields" }, { status: 400 });
   if (typeof xp !== "number" || xp < 0 || xp > 500000) return NextResponse.json({ error: "invalid xp" }, { status: 400 });
+
+  // Always write under the authenticated caller's own id — never a client-supplied user_id.
+  const user_id = caller.id;
 
   const hdrs = HEADERS();
 
@@ -42,7 +49,7 @@ export async function POST(req: NextRequest) {
 
   if (!result.ok) {
     const body = await result.text();
-    return NextResponse.json({ error: body, action: exists ? "update" : "insert" }, { status: 500 });
+    return NextResponse.json({ error: body }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true, v2: true });

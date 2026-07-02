@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyUser } from "@/lib/auth-server";
 
 const SUPABASE_URL = "https://eaxskmgekbdrmmczptmq.supabase.co";
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
@@ -13,11 +14,17 @@ const hdrs = () => ({
 export async function POST(req: NextRequest) {
   if (!SERVICE_KEY) return NextResponse.json({ error: "no SERVICE_KEY" }, { status: 500 });
 
-  const { game, score, user_id, display_name } = await req.json();
-  if (!game || score == null || !user_id || !display_name)
+  const caller = await verifyUser(req);
+  if (!caller) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const { game, score, display_name } = await req.json();
+  if (!game || score == null || !display_name)
     return NextResponse.json({ error: "missing fields" }, { status: 400 });
   if (typeof score !== "number" || score < 0)
     return NextResponse.json({ error: "invalid score" }, { status: 400 });
+
+  // Always write under the authenticated caller's own id — never a client-supplied user_id.
+  const user_id = caller.id;
 
   // Get existing best score for this user+game
   const existRes = await fetch(
