@@ -44,6 +44,7 @@ export default function EExamPage() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [passers, setPassers] = useState<Record<string, Passer[]>>({});
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   useEffect(() => {
     getUser().then((u) => setUserEmail(u?.email ?? null));
@@ -59,6 +60,8 @@ export default function EExamPage() {
     if (!userEmail) { setAuthOpen(true); return; }
     router.push(`/exam/${product.examId}`);
   }
+
+  const category = E_EXAM_CATEGORIES.find((c) => c.name === activeCategory) ?? null;
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
@@ -76,11 +79,34 @@ export default function EExamPage() {
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>ข้อสอบจำลองฟรี — แค่ login ก็เข้าสอบได้เลย</p>
         </div>
 
-        {/* Category Cards */}
-        <div className="flex flex-col gap-5">
-          {E_EXAM_CATEGORIES.map((category) => (
+        {category === null ? (
+          /* Category Cards */
+          <div className="flex flex-col gap-4">
+            {E_EXAM_CATEGORIES.map((cat) => (
+              <button
+                key={cat.name}
+                onClick={() => setActiveCategory(cat.name)}
+                className="card-lg flex items-center justify-between gap-3 p-6 text-left w-full"
+              >
+                <div>
+                  <h2 className="font-bold" style={{ color: "var(--text)", fontSize: 18 }}>{cat.name}</h2>
+                  <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>{cat.exams.length} ชุดข้อสอบ</p>
+                </div>
+                <span style={{ color: "var(--primary)", fontSize: 20 }}>→</span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          /* Exam Sets Inside Category */
+          <div>
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="text-sm mb-4"
+              style={{ color: "var(--primary)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+            >
+              ← หมวดหมู่
+            </button>
             <div
-              key={category.name}
               className="rounded-xl p-6"
               style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
             >
@@ -126,8 +152,8 @@ export default function EExamPage() {
                 })}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        )}
 
         <p className="text-center text-xs mt-8" style={{ color: "var(--text-subtle)" }}>
           ข้อสอบเพิ่มเติมกำลังมาเร็วๆ นี้
