@@ -27,6 +27,9 @@ export const AVATARS: Avatar[] = [
   { id: "octopus", emoji: "🐙", bg: "#9333ea" },
 ];
 
+export const GM_EMAIL = "phich1911@gmail.com";
+export const GM_AVATAR: Avatar = { id: "gm", emoji: "GM", bg: "#ef4444" };
+
 const KEY = "user_avatar";
 
 export function getAvatar(): Avatar {

@@ -1,5 +1,5 @@
 import { getLeaderboard } from "@/lib/supabase";
-import { AVATARS } from "@/lib/avatar";
+import { AVATARS, GM_AVATAR } from "@/lib/avatar";
 
 export const metadata = {
   title: "Leaderboard — AbcdeGo",
@@ -60,7 +60,7 @@ export default async function LeaderboardPage() {
 
                 {/* Avatar */}
                 {(() => {
-                  const avatar = AVATARS.find((a) => a.id === entry.avatar);
+                  const avatar = entry.avatar === GM_AVATAR.id ? GM_AVATAR : AVATARS.find((a) => a.id === entry.avatar);
                   return (
                     <div style={{
                       width: 36, height: 36, borderRadius: "50%", flexShrink: 0,

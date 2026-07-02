@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { getProgress, syncProgressFromCloud, pushProgressToCloud } from "@/lib/progress";
 import { COURSES } from "@/lib/data";
 import { onAuthChange, signOut, getDisplayName, getUser, getSession, syncLeaderboard } from "@/lib/supabase";
-import { getAvatar } from "@/lib/avatar";
+import { getAvatar, GM_EMAIL, GM_AVATAR } from "@/lib/avatar";
 import AuthModal from "@/components/AuthModal";
 import DisplayNameModal from "@/components/DisplayNameModal";
 import Fuse from "fuse.js";
@@ -61,6 +61,7 @@ export default function Navbar() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [avatar, setAvatar] = useState(() => typeof window !== "undefined" ? getAvatar() : null);
+  const shownAvatar = userEmail === GM_EMAIL ? GM_AVATAR : avatar;
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [nameModalOpen, setNameModalOpen] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -323,10 +324,10 @@ export default function Navbar() {
                   onMouseLeave={() => { userMenuCloseTimer.current = setTimeout(() => setUserMenuOpen(false), 150); }}>
                   <button
                     className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:opacity-80"
-                    style={{ background: avatar?.bg ?? "var(--primary)", fontSize: 16 }}
+                    style={{ background: shownAvatar?.bg ?? "var(--primary)", fontSize: shownAvatar === GM_AVATAR ? 11 : 16 }}
                     title={userEmail}
                   >
-                    {avatar ? avatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
+                    {shownAvatar ? shownAvatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
                   </button>
                   {userMenuOpen && (
                     <div className="absolute top-full right-0 mt-1 rounded-lg overflow-hidden min-w-[200px]"
@@ -334,11 +335,11 @@ export default function Navbar() {
                       onMouseEnter={() => { if (userMenuCloseTimer.current) clearTimeout(userMenuCloseTimer.current); }}
                       onMouseLeave={() => { userMenuCloseTimer.current = setTimeout(() => setUserMenuOpen(false), 150); }}>
                       <div className="px-3 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
-                        <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 36, height: 36, background: avatar?.bg ?? "var(--primary)", fontSize: 20 }}>
-                          {avatar ? avatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
+                        <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 36, height: 36, background: shownAvatar?.bg ?? "var(--primary)", fontSize: shownAvatar === GM_AVATAR ? 14 : 20 }}>
+                          {shownAvatar ? shownAvatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                        {displayName && <p className="text-sm font-semibold truncate" style={{ color: "var(--text)" }}>{displayName}{userEmail === "phich1911@gmail.com" && <span style={{ color: "#ef4444", marginLeft: 4 }}>[GM]</span>}</p>}
+                        {displayName && <p className="text-sm font-semibold truncate" style={{ color: "var(--text)" }}>{displayName}{userEmail === GM_EMAIL && <span style={{ color: "#ef4444", marginLeft: 4 }}>[GM]</span>}</p>}
                         <p className="text-xs truncate" style={{ color: "var(--text-muted)" }}>{userEmail}</p>
                         <div className="flex flex-col gap-1 mt-2">
                           <span className="badge" style={{ color: "var(--accent)", borderColor: "rgba(240,136,62,0.3)", background: "rgba(240,136,62,0.08)", width: "fit-content" }}>⚡ {xp} XP</span>
@@ -448,8 +449,8 @@ export default function Navbar() {
             {userEmail ? (
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-2 px-2 py-1.5">
-                  <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 28, height: 28, background: avatar?.bg ?? "var(--primary)", fontSize: 16 }}>
-                    {avatar ? avatar.emoji : (displayName || userEmail)[0].toUpperCase()}
+                  <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 28, height: 28, background: shownAvatar?.bg ?? "var(--primary)", fontSize: shownAvatar === GM_AVATAR ? 11 : 16 }}>
+                    {shownAvatar ? shownAvatar.emoji : (displayName || userEmail)[0].toUpperCase()}
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold truncate" style={{ color: "var(--text)" }}>{displayName || userEmail}</p>

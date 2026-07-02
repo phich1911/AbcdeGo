@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient, User } from "@supabase/supabase-js";
+import { GM_EMAIL, GM_AVATAR } from "@/lib/avatar";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://eaxskmgekbdrmmczptmq.supabase.co";
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_bVnYGDvGfIiB1s26IUYo9A_vefPQl8R";
@@ -77,7 +78,9 @@ export async function syncLeaderboard(xp: number, oldName?: string) {
     user.user_metadata?.name ||
     user.email?.split("@")[0] ||
     "ผู้ใช้";
-  const avatar = typeof window !== "undefined" ? (localStorage.getItem("user_avatar") ?? null) : null;
+  const avatar = user.email === GM_EMAIL
+    ? GM_AVATAR.id
+    : typeof window !== "undefined" ? (localStorage.getItem("user_avatar") ?? null) : null;
   try {
     const res = await fetch("/api/sync-leaderboard", {
       method: "POST",
