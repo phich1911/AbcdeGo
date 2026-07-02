@@ -263,7 +263,7 @@ export default function Navbar() {
             <Link
               href="/e-exam"
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/e-exam" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/e-exam" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+              style={{ color: pathname === "/e-exam" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/e-exam" ? 600 : 400, letterSpacing: "0.05em" }}
             >
               e-Exam
             </Link>
@@ -429,7 +429,7 @@ export default function Navbar() {
             <Link href="/tips" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tips" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tips" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ความรู้</Link>
             <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ดูดวง</Link>
             <Link href="/game" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกม</Link>
-            <Link href="/e-exam" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/e-exam" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/e-exam" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>e-Exam</Link>
+            <Link href="/e-exam" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/e-exam" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/e-exam" ? 600 : 400, fontSize: 15, letterSpacing: "0.05em", textDecoration: "none" }}>e-Exam</Link>
             <Link href="/shop" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/shop" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/shop" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ร้านค้า</Link>
 <a href="https://airrok.com" target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: "var(--text-muted)", fontWeight: 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เครื่องมือ</a>
             <div style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
