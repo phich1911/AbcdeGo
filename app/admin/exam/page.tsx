@@ -3,11 +3,15 @@
 import { useEffect, useState } from "react";
 import { getSession } from "@/lib/supabase";
 import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
+import { KP_MOCK_2 } from "@/lib/exam-data/kp-mock-2";
+import type { MockExam } from "@/lib/exam-data/kp-mock-1";
 
 const ADMIN_EMAIL = "phich1911@gmail.com";
+const EXAMS: MockExam[] = [KP_MOCK_1, KP_MOCK_2];
 
 export default function AdminExamPage() {
   const [allowed, setAllowed] = useState<boolean | null>(null);
+  const [activeExam, setActiveExam] = useState(0);
   const [activeSection, setActiveSection] = useState(0);
   const [showAnswer, setShowAnswer] = useState<Record<number, boolean>>({});
 
@@ -20,7 +24,8 @@ export default function AdminExamPage() {
   if (allowed === null) return <div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังตรวจสอบสิทธิ์...</div>;
   if (!allowed) return <div style={{ padding: 80, textAlign: "center", color: "var(--accent-red)" }}>ไม่มีสิทธิ์เข้าถึงหน้านี้</div>;
 
-  const section = KP_MOCK_1.sections[activeSection];
+  const exam = EXAMS[activeExam];
+  const section = exam.sections[activeSection];
 
   function toggleAnswer(id: number) {
     setShowAnswer((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -40,12 +45,27 @@ export default function AdminExamPage() {
     <main style={{ maxWidth: 860, margin: "0 auto", padding: "80px 16px 64px" }}>
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}> Admin — ตรวจข้อสอบ</h1>
-        <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{KP_MOCK_1.title}</p>
+        <p style={{ fontSize: 13, color: "var(--text-muted)" }}>{exam.title}</p>
+      </div>
+
+      {/* Exam tabs */}
+      <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+        {EXAMS.map((e, i) => (
+          <button key={e.id} onClick={() => { setActiveExam(i); setActiveSection(0); setShowAnswer({}); }}
+            style={{
+              padding: "6px 16px", borderRadius: 980, fontSize: 13, fontWeight: 500,
+              cursor: "pointer", border: "1px solid var(--border)",
+              background: activeExam === i ? "var(--text)" : "var(--surface)",
+              color: activeExam === i ? "var(--bg)" : "var(--text-muted)",
+            }}>
+            {e.title}
+          </button>
+        ))}
       </div>
 
       {/* Section tabs */}
       <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
-        {KP_MOCK_1.sections.map((sec, i) => (
+        {exam.sections.map((sec, i) => (
           <button key={sec.id} onClick={() => { setActiveSection(i); setShowAnswer({}); }}
             style={{
               padding: "6px 16px", borderRadius: 980, fontSize: 13, fontWeight: 500,

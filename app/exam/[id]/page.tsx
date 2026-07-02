@@ -4,11 +4,13 @@ import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
 import type { MockExam, ExamSection } from "@/lib/exam-data/kp-mock-1";
+import { KP_MOCK_2 } from "@/lib/exam-data/kp-mock-2";
 import { completeLesson, pushProgressToCloud } from "@/lib/progress";
 import { syncLeaderboard } from "@/lib/supabase";
 
 const EXAMS: Record<string, MockExam> = {
   "kp-mock-1": KP_MOCK_1,
+  "kp-mock-2": KP_MOCK_2,
 };
 
 type Phase = "intro" | "mode" | "exam" | "results";

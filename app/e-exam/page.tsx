@@ -31,6 +31,14 @@ const E_EXAM_CATEGORIES: EExamCategory[] = [
         questionCount: 100,
         timeLimit: 180,
       },
+      {
+        id: "mock-kp-2",
+        examId: "kp-mock-2",
+        title: "ข้อสอบจำลอง ก.พ. ชุดที่ 2",
+        description: "ครบ 3 วิชา 100 ข้อ จับเวลา 180 นาที โจทย์ยากขึ้นกว่าชุดที่ 1",
+        questionCount: 100,
+        timeLimit: 180,
+      },
     ],
   },
 ];
