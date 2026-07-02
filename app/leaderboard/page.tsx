@@ -65,7 +65,7 @@ export default async function LeaderboardPage() {
                     <div style={{
                       width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
                       background: avatar?.bg ?? "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: avatar ? 20 : 14, fontWeight: 700, color: "#fff",
+                      fontSize: avatar === GM_AVATAR ? 14 : avatar ? 20 : 14, fontWeight: 700, color: avatar?.color ?? "#fff",
                     }}>
                       {avatar?.emoji ?? entry.name[0]?.toUpperCase()}
                     </div>

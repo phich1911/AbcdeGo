@@ -324,7 +324,7 @@ export default function Navbar() {
                   onMouseLeave={() => { userMenuCloseTimer.current = setTimeout(() => setUserMenuOpen(false), 150); }}>
                   <button
                     className="w-7 h-7 rounded-md flex items-center justify-center transition-colors hover:opacity-80"
-                    style={{ background: shownAvatar?.bg ?? "var(--primary)", fontSize: shownAvatar === GM_AVATAR ? 11 : 16 }}
+                    style={{ background: shownAvatar?.bg ?? "var(--primary)", color: shownAvatar?.color, fontSize: shownAvatar === GM_AVATAR ? 11 : 16 }}
                     title={userEmail}
                   >
                     {shownAvatar ? shownAvatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
@@ -335,7 +335,7 @@ export default function Navbar() {
                       onMouseEnter={() => { if (userMenuCloseTimer.current) clearTimeout(userMenuCloseTimer.current); }}
                       onMouseLeave={() => { userMenuCloseTimer.current = setTimeout(() => setUserMenuOpen(false), 150); }}>
                       <div className="px-3 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
-                        <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 36, height: 36, background: shownAvatar?.bg ?? "var(--primary)", fontSize: shownAvatar === GM_AVATAR ? 14 : 20 }}>
+                        <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 36, height: 36, background: shownAvatar?.bg ?? "var(--primary)", color: shownAvatar?.color, fontSize: shownAvatar === GM_AVATAR ? 14 : 20 }}>
                           {shownAvatar ? shownAvatar.emoji : (displayName || userEmail!)[0].toUpperCase()}
                         </div>
                         <div className="min-w-0">
@@ -449,7 +449,7 @@ export default function Navbar() {
             {userEmail ? (
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-2 px-2 py-1.5">
-                  <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 28, height: 28, background: shownAvatar?.bg ?? "var(--primary)", fontSize: shownAvatar === GM_AVATAR ? 11 : 16 }}>
+                  <div className="flex items-center justify-center rounded-full flex-shrink-0" style={{ width: 28, height: 28, background: shownAvatar?.bg ?? "var(--primary)", color: shownAvatar?.color, fontSize: shownAvatar === GM_AVATAR ? 11 : 16 }}>
                     {shownAvatar ? shownAvatar.emoji : (displayName || userEmail)[0].toUpperCase()}
                   </div>
                   <div className="min-w-0">

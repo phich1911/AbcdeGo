@@ -1,4 +1,4 @@
-export type Avatar = { id: string; emoji: string; bg: string };
+export type Avatar = { id: string; emoji: string; bg: string; color?: string };
 
 export const AVATARS: Avatar[] = [
   { id: "cat",     emoji: "🐱", bg: "#f59e0b" },
@@ -28,7 +28,7 @@ export const AVATARS: Avatar[] = [
 ];
 
 export const GM_EMAIL = "phich1911@gmail.com";
-export const GM_AVATAR: Avatar = { id: "gm", emoji: "GM", bg: "#ef4444" };
+export const GM_AVATAR: Avatar = { id: "gm", emoji: "GM", bg: "#ffffff", color: "#ef4444" };
 
 const KEY = "user_avatar";
 
