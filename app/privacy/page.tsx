@@ -3,7 +3,7 @@ export default function PrivacyPage() {
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "80px 24px 60px" }}>
       <h1 style={{ fontSize: 36, fontWeight: 800, color: "var(--text)", marginBottom: 8 }}>Privacy Policy</h1>
       <p style={{ fontSize: 15, color: "var(--text-muted)", marginBottom: 40, lineHeight: 1.7 }}>
-        อัปเดตล่าสุด: มิถุนายน 2569
+        อัปเดตล่าสุด: กรกฎาคม 2569
       </p>
 
       <div className="card-lg" style={{ padding: 32, marginBottom: 24 }}>
@@ -49,6 +49,7 @@ export default function PrivacyPage() {
           <li><strong>Supabase</strong> — ฐานข้อมูลและระบบ Authentication</li>
           <li><strong>Google OAuth</strong> — หากคุณเลือกเข้าสู่ระบบด้วย Google</li>
           <li><strong>Vercel</strong> — การ Host เว็บไซต์และ Analytics</li>
+          <li><strong>Google AdSense</strong> — เพื่อแสดงโฆษณาบนเว็บไซต์ (ดูรายละเอียดในหัวข้อที่ 5)</li>
         </ul>
       </div>
 
@@ -57,6 +58,21 @@ export default function PrivacyPage() {
         <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8 }}>
           เราใช้ Vercel Analytics เพื่อวิเคราะห์การใช้งานเว็บไซต์ในภาพรวม โดยไม่ระบุตัวตนผู้ใช้
           Session token ของ Supabase ถูกเก็บใน localStorage เพื่อรักษาสถานะการเข้าสู่ระบบ
+        </p>
+        <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8, marginTop: 12 }}>
+          เว็บไซต์นี้แสดงโฆษณาผ่าน <strong>Google AdSense</strong> ซึ่งเป็นบุคคลที่สาม (third-party vendor)
+          Google และพันธมิตรอาจใช้คุกกี้ (รวมถึง DoubleClick cookie) เพื่อแสดงโฆษณาให้ตรงกับความสนใจของคุณ
+          โดยอ้างอิงจากประวัติการเข้าชมเว็บไซต์นี้และเว็บไซต์อื่นบนอินเทอร์เน็ต
+        </p>
+        <p style={{ fontSize: 15, color: "var(--text-muted)", lineHeight: 1.8, marginTop: 12 }}>
+          คุณสามารถปิดการใช้งานโฆษณาแบบปรับตามความสนใจ (personalized ads) ของ Google ได้ที่{" "}
+          <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)" }}>
+            Google Ads Settings
+          </a>{" "}
+          หรือดูตัวเลือกเพิ่มเติมจากผู้ให้บริการโฆษณารายอื่นได้ที่{" "}
+          <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)" }}>
+            www.aboutads.info/choices
+          </a>
         </p>
       </div>
 
