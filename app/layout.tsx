@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="relative z-10 flex flex-col flex-1">
           {children}
         </div>
-        <footer style={{ textAlign: "center", padding: "24px 16px", borderTop: "1px solid var(--border)", marginTop: "auto" }}>
+        <footer className="pb-24 sm:pb-6" style={{ textAlign: "center", paddingTop: 24, paddingLeft: 16, paddingRight: 16, borderTop: "1px solid var(--border)", marginTop: "auto" }}>
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "6px 16px", marginBottom: 8 }}>
             {[
               { href: "/courses?cat=kp", label: "สอบ ก.พ." },
