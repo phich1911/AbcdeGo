@@ -10,24 +10,32 @@ interface EExamProduct {
   examId: string;
   title: string;
   description: string;
-  highlights: string[];
   questionCount: number;
   timeLimit: number;
-  badge: string;
 }
 
-const E_EXAMS: EExamProduct[] = [
+interface EExamCategory {
+  name: string;
+  exams: EExamProduct[];
+}
+
+const E_EXAM_CATEGORIES: EExamCategory[] = [
   {
-    id: "mock-kp-1",
-    examId: "kp-mock-1",
-    title: "ข้อสอบจำลอง ก.พ. ชุดที่ 1",
-    description: "ครบ 3 วิชา 100 ข้อ จับเวลา 180 นาที เหมือนสอบจริงทุกอย่าง",
-    badge: "ก.พ.",
-    questionCount: 100,
-    timeLimit: 180,
-    highlights: [],
+    name: "สอบ ก.พ.",
+    exams: [
+      {
+        id: "mock-kp-1",
+        examId: "kp-mock-1",
+        title: "ข้อสอบจำลอง ก.พ. ชุดที่ 1",
+        description: "ครบ 3 วิชา 100 ข้อ จับเวลา 180 นาที เหมือนสอบจริงทุกอย่าง",
+        questionCount: 100,
+        timeLimit: 180,
+      },
+    ],
   },
 ];
+
+const E_EXAMS = E_EXAM_CATEGORIES.flatMap((c) => c.exams);
 
 type Passer = { name: string; avatar: string | null; rank: string | null };
 
@@ -68,54 +76,57 @@ export default function EExamPage() {
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>ข้อสอบจำลองฟรี — แค่ login ก็เข้าสอบได้เลย</p>
         </div>
 
-        {/* Product Cards */}
+        {/* Category Cards */}
         <div className="flex flex-col gap-5">
-          {E_EXAMS.map((product) => {
-            const examPassers = passers[product.examId];
-            return (
-              <div
-                key={product.id}
-                className="rounded-xl p-6"
-                style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-              >
-                <div className="flex items-center gap-3">
-                  <span style={{ fontSize: 28 }}></span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "var(--primary)", color: "#fff" }}>
-                        {product.badge}
-                      </span>
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-green)", border: "1px solid rgba(34,197,94,0.3)" }}>
-                        ✓ เรียนฟรี
-                      </span>
-                    </div>
-                    <h2 className="font-bold mt-1" style={{ color: "var(--text)", fontSize: 17 }}>{product.title}</h2>
-                    <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{product.description}</p>
-                    {examPassers === undefined ? null : examPassers.length === 0 ? (
-                      <p className="text-xs mt-1 font-semibold" style={{ color: "#ef4444" }}>⚠️ ยังไม่มีใครผ่านข้อสอบชุดนี้ — ลองเป็นคนแรกไหม?</p>
-                    ) : (
-                      <div className="mt-1">
-                        <p className="text-xs" style={{ color: "var(--accent-green)" }}>
-                          ✓ ผู้สอบผ่าน ({examPassers.length}): {examPassers.map((p) => p.name).join(", ")}
-                        </p>
-                        {examPassers[0]?.rank && (
-                          <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
-                            🏅 ทุกคนปลดล็อกยศ &quot;{examPassers[0].rank}&quot;
-                          </p>
+          {E_EXAM_CATEGORIES.map((category) => (
+            <div
+              key={category.name}
+              className="rounded-xl p-6"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            >
+              <h2 className="font-bold mb-4" style={{ color: "var(--text)", fontSize: 18 }}>{category.name}</h2>
+              <div className="flex flex-col gap-3">
+                {category.exams.map((product) => {
+                  const examPassers = passers[product.examId];
+                  return (
+                    <div
+                      key={product.id}
+                      className="flex items-center gap-3 rounded-lg p-4"
+                      style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-green)", border: "1px solid rgba(34,197,94,0.3)" }}>
+                          ✓ เรียนฟรี
+                        </span>
+                        <h3 className="font-bold mt-1" style={{ color: "var(--text)", fontSize: 17 }}>{product.title}</h3>
+                        <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{product.description}</p>
+                        {examPassers === undefined ? null : examPassers.length === 0 ? (
+                          <p className="text-xs mt-1 font-semibold" style={{ color: "#ef4444" }}>⚠️ ยังไม่มีใครผ่านข้อสอบชุดนี้ — ลองเป็นคนแรกไหม?</p>
+                        ) : (
+                          <div className="mt-1">
+                            <p className="text-xs" style={{ color: "var(--accent-green)" }}>
+                              ✓ ผู้สอบผ่าน ({examPassers.length}): {examPassers.map((p) => p.name).join(", ")}
+                            </p>
+                            {examPassers[0]?.rank && (
+                              <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
+                                🏅 ทุกคนปลดล็อกยศ &quot;{examPassers[0].rank}&quot;
+                              </p>
+                            )}
+                          </div>
                         )}
                       </div>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleEnter(product)}
-                    className="btn-primary px-5 py-2 text-sm shrink-0"
-                  >
-                    เข้าสอบ →
-                  </button>
-                </div>
+                      <button
+                        onClick={() => handleEnter(product)}
+                        className="btn-primary px-5 py-2 text-sm shrink-0"
+                      >
+                        เข้าสอบ →
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
         <p className="text-center text-xs mt-8" style={{ color: "var(--text-subtle)" }}>
