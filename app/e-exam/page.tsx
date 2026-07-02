@@ -94,9 +94,16 @@ export default function EExamPage() {
                     {examPassers === undefined ? null : examPassers.length === 0 ? (
                       <p className="text-xs mt-1 font-semibold" style={{ color: "#ef4444" }}>⚠️ ยังไม่มีใครผ่านข้อสอบชุดนี้ — ลองเป็นคนแรกไหม?</p>
                     ) : (
-                      <p className="text-xs mt-1" style={{ color: "var(--accent-green)" }}>
-                        ✓ ผู้สอบผ่าน ({examPassers.length}): {examPassers.map((p) => p.rank ? `${p.name} (${p.rank})` : p.name).join(", ")}
-                      </p>
+                      <div className="mt-1">
+                        <p className="text-xs" style={{ color: "var(--accent-green)" }}>
+                          ✓ ผู้สอบผ่าน ({examPassers.length}): {examPassers.map((p) => p.name).join(", ")}
+                        </p>
+                        {examPassers[0]?.rank && (
+                          <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
+                            🏅 ทุกคนปลดล็อกยศ &quot;{examPassers[0].rank}&quot;
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
                   <button
