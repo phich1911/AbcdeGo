@@ -6,7 +6,7 @@ import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
 import type { MockExam, ExamSection } from "@/lib/exam-data/kp-mock-1";
 import { KP_MOCK_2 } from "@/lib/exam-data/kp-mock-2";
 import { completeLesson, pushProgressToCloud } from "@/lib/progress";
-import { syncLeaderboard } from "@/lib/supabase";
+import { syncLeaderboard, saveExamScore } from "@/lib/supabase";
 
 const EXAMS: Record<string, MockExam> = {
   "kp-mock-1": KP_MOCK_1,
@@ -558,6 +558,11 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
       const updated = completeLesson(`exam-${exam.id}`, exam.xpReward, { correct: answeredCount, total: totalQ });
       syncLeaderboard(updated.xp);
       pushProgressToCloud();
+    }
+
+    if (isFullMode) {
+      const totalCorrect = results.reduce((sum, r) => sum + r.correct, 0);
+      saveExamScore(exam.id, totalCorrect, totalQ);
     }
 
     // Save section pass to localStorage

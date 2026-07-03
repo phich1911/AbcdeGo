@@ -253,3 +253,39 @@ export async function getTopGameScore(game: string): Promise<{ display_name: str
     return null;
   }
 }
+
+// ── Exam Scores ────────────────────────────────────────────────────
+
+export async function saveExamScore(examId: string, score: number, total: number): Promise<boolean> {
+  const session = getStoredSession();
+  const user = session?.user;
+  if (!user?.id) return false;
+  const display_name =
+    user.user_metadata?.display_name ||
+    user.user_metadata?.full_name ||
+    user.email?.split("@")[0] ||
+    "ผู้ใช้";
+  try {
+    const res = await fetch("/api/save-exam-score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
+      body: JSON.stringify({ exam_id: examId, score, total, display_name }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function getExamLeaderboard(examId: string, limit = 5): Promise<{ display_name: string; score: number; total: number }[]> {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/exam_scores?select=display_name,score,total&exam_id=eq.${encodeURIComponent(examId)}&order=score.desc&limit=${limit}`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) return [];
+    return (await res.json()) ?? [];
+  } catch {
+    return [];
+  }
+}

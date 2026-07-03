@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getUser } from "@/lib/supabase";
+import { getUser, getExamLeaderboard } from "@/lib/supabase";
 import { getProgress } from "@/lib/progress";
 import AuthModal from "@/components/AuthModal";
 
@@ -49,12 +49,14 @@ const E_EXAM_CATEGORIES: EExamCategory[] = [
 const E_EXAMS = E_EXAM_CATEGORIES.flatMap((c) => c.exams);
 
 type Passer = { name: string; avatar: string | null; rank: string | null };
+type ExamScore = { display_name: string; score: number; total: number };
 
 export default function EExamPage() {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [passers, setPassers] = useState<Record<string, Passer[]>>({});
+  const [scoreBoards, setScoreBoards] = useState<Record<string, ExamScore[]>>({});
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [xp, setXp] = useState(0);
 
@@ -65,6 +67,9 @@ export default function EExamPage() {
       fetch(`/api/exam-passers?examId=${product.examId}`)
         .then((r) => r.json())
         .then((data) => setPassers((prev) => ({ ...prev, [product.examId]: data.passers ?? [] })))
+        .catch(() => {});
+      getExamLeaderboard(product.examId, 5)
+        .then((rows) => setScoreBoards((prev) => ({ ...prev, [product.examId]: rows })))
         .catch(() => {});
     });
   }, []);
@@ -164,6 +169,18 @@ export default function EExamPage() {
                                 🏅 ทุกคนปลดล็อกยศ &quot;{examPassers[0].rank}&quot;
                               </p>
                             )}
+                          </div>
+                        )}
+                        {!locked && scoreBoards[product.examId] && scoreBoards[product.examId].length > 0 && (
+                          <div className="mt-2 rounded-lg p-2.5" style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)" }}>
+                            <p className="text-xs font-semibold mb-1" style={{ color: "#f59e0b" }}>🏆 อันดับคะแนนสูงสุด</p>
+                            <div className="flex flex-col gap-0.5">
+                              {scoreBoards[product.examId].map((s, i) => (
+                                <p key={i} className="text-xs" style={{ color: "var(--text-muted)" }}>
+                                  {i + 1}. <strong style={{ color: "var(--text)" }}>{s.display_name}</strong> — {s.score}/{s.total}
+                                </p>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
