@@ -1,20 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getSession } from "@/lib/supabase";
-import { COURSES } from "@/lib/data";
+import { COURSES, getLessonsForCourse } from "@/lib/data";
 import type { Lesson } from "@/lib/data";
 
 const ADMIN_EMAIL = "phich1911@gmail.com";
 
-const SET2_COURSE_IDS = ["kp-general-2", "kp-english-2", "kp-law-2"];
+const SET_COURSE_IDS: Record<"1" | "2", string[]> = {
+  "1": ["kp-general-1", "kp-english", "kp-law"],
+  "2": ["kp-general-2", "kp-english-2", "kp-law-2"],
+};
 
-export default function AdminPreviewPage() {
+function AdminPreviewInner() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeSet: "1" | "2" = searchParams.get("set") === "1" ? "1" : "2";
+
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [activeCourse, setActiveCourse] = useState(SET2_COURSE_IDS[0]);
+  const [activeCourse, setActiveCourse] = useState(SET_COURSE_IDS[activeSet][0]);
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
   const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({});
-  const [allLessons, setAllLessons] = useState<Lesson[] | null>(null);
+  const [set2Lessons, setSet2Lessons] = useState<Lesson[] | null>(null);
 
   useEffect(() => {
     getSession().then((s) => {
@@ -25,20 +33,32 @@ export default function AdminPreviewPage() {
         headers: { Authorization: `Bearer ${s?.access_token ?? ""}` },
       })
         .then((r) => (r.ok ? r.json() : { lessons: [] }))
-        .then((data) => setAllLessons(data.lessons));
+        .then((data) => setSet2Lessons(data.lessons));
     });
   }, []);
 
+  useEffect(() => {
+    setActiveCourse(SET_COURSE_IDS[activeSet][0]);
+    setActiveLesson(null);
+  }, [activeSet]);
+
   if (allowed === null) return <div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังตรวจสอบสิทธิ์...</div>;
   if (!allowed) return <div style={{ padding: 80, textAlign: "center", color: "var(--accent-red)" }}>ไม่มีสิทธิ์เข้าถึงหน้านี้</div>;
-  if (!allLessons) return <div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังโหลดเนื้อหา...</div>;
+  if (activeSet === "2" && !set2Lessons) return <div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังโหลดเนื้อหา...</div>;
 
-  const courses = COURSES.filter((c) => SET2_COURSE_IDS.includes(c.id));
-  const lessons = allLessons.filter((l) => l.courseId === activeCourse).sort((a, b) => a.order - b.order);
+  const courses = COURSES.filter((c) => SET_COURSE_IDS[activeSet].includes(c.id));
+  const lessons =
+    activeSet === "1"
+      ? getLessonsForCourse(activeCourse)
+      : (set2Lessons ?? []).filter((l) => l.courseId === activeCourse).sort((a, b) => a.order - b.order);
   const lesson = activeLesson ? lessons.find((l) => l.id === activeLesson) : null;
 
   function toggleStep(key: string) {
     setExpandedSteps((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
+
+  function switchSet(set: "1" | "2") {
+    router.push(`/admin/preview?set=${set}`);
   }
 
   return (
@@ -47,8 +67,25 @@ export default function AdminPreviewPage() {
         <span className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full" style={{ background: "rgba(239,68,68,0.15)", color: "var(--accent-red)" }}>
            Admin Only
         </span>
-        <h1 className="text-3xl font-black mt-3 mb-1">Preview ชุดที่ 2</h1>
+        <h1 className="text-3xl font-black mt-3 mb-1">Preview ชุดที่ {activeSet}</h1>
         <p style={{ color: "var(--text-muted)" }} className="text-sm">ดูเนื้อหาทุกบทเรียน ก่อน unlock ให้ผู้ใช้</p>
+      </div>
+
+      {/* Set tabs */}
+      <div className="flex gap-2 mb-4">
+        {(["1", "2"] as const).map((set) => (
+          <button
+            key={set}
+            onClick={() => switchSet(set)}
+            className="px-4 py-2 rounded-full font-bold text-sm transition-all"
+            style={{
+              background: activeSet === set ? "var(--text)" : "var(--surface-2)",
+              color: activeSet === set ? "var(--bg)" : "var(--text-muted)",
+            }}
+          >
+            ก.พ. ชุดที่ {set}
+          </button>
+        ))}
       </div>
 
       {/* Course tabs */}
@@ -184,5 +221,13 @@ export default function AdminPreviewPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function AdminPreviewPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังโหลด...</div>}>
+      <AdminPreviewInner />
+    </Suspense>
   );
 }
