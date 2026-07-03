@@ -5,6 +5,7 @@ import { getPopularCourseIds } from "@/lib/popular-courses";
 import { getRegisteredUserCount } from "@/lib/registered-count";
 import { getLeaderboard } from "@/lib/supabase";
 import { ARTICLES } from "@/lib/articles";
+import { Crown } from "lucide-react";
 
 const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
 
@@ -72,10 +73,32 @@ export default async function Home() {
           </p>
 
           {learnerCount > 0 && (
-            <p style={{ fontSize: 14, color: "var(--primary)", marginBottom: 32 }}>
-              ขอบคุณผู้เรียนทั้งหมด {learnerCount.toLocaleString()} คนที่ร่วมเดินทางไปด้วยกัน 🙏
-              {topLeader && ` · 🏆 อันดับ 1 ตอนนี้: ${topLeader.name} (${topLeader.xp.toLocaleString()} XP)`}
-            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
+              <p style={{ fontSize: 14, color: "var(--primary)", margin: 0 }}>
+                ขอบคุณผู้เรียนทั้งหมด {learnerCount.toLocaleString()} คนที่ร่วมเดินทางไปด้วยกัน 🙏
+              </p>
+              {topLeader && (
+                <div
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                    padding: "6px 14px 6px 10px",
+                    borderRadius: 980,
+                    background: "linear-gradient(135deg, rgba(245,158,11,0.16), rgba(217,119,6,0.08))",
+                    border: "1px solid rgba(245,158,11,0.4)",
+                    boxShadow: "0 2px 12px rgba(245,158,11,0.15)",
+                  }}
+                >
+                  <Crown size={16} style={{ color: "#f59e0b" }} fill="#f59e0b" />
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>อันดับ 1</span>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: "#f59e0b" }}>{topLeader.name}</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)" }}>
+                    {topLeader.xp.toLocaleString()} XP
+                  </span>
+                </div>
+              )}
+            </div>
           )}
 
           <div className="flex gap-3 flex-wrap" style={{ marginBottom: 40 }}>
