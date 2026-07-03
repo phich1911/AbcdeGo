@@ -38,6 +38,45 @@ function savePassedSection(examId: string, sectionIndex: number) {
   }
 }
 
+const THAI_MONTHS = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+
+function formatThaiDateTime(d: Date) {
+  const day = d.getDate();
+  const month = THAI_MONTHS[d.getMonth()];
+  const year = d.getFullYear() + 543;
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${day} ${month} ${year} เวลา ${hh}:${mm} น.`;
+}
+
+// Character-based wrap — Thai script has no inter-word spaces to break on.
+function wrapTextChars(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const lines: string[] = [];
+  let line = "";
+  for (const ch of text) {
+    const test = line + ch;
+    if (line && ctx.measureText(test).width > maxWidth) {
+      lines.push(line);
+      line = ch;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+  ctx.fill();
+}
+
 export default function ExamPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -53,6 +92,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const [passedSections, setPassedSections] = useState<number[]>([]);
   const [lockedAnswers, setLockedAnswers] = useState<Record<number, boolean>>({});
   const [timedOut, setTimedOut] = useState(false);
+  const [resultTime, setResultTime] = useState<Date | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -151,6 +191,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   function handleSubmit() {
     if (timerRef.current) clearInterval(timerRef.current);
     setSubmitted(true);
+    setResultTime(new Date());
     setPhase("results");
   }
 
@@ -165,6 +206,176 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
       const passed = scorePercent >= sec.passingPercent;
       return { sec, correct, scorePercent, passed };
     });
+  }
+
+  function downloadResultImage() {
+    const results = calcResults();
+    const allPassed = results.every((r) => r.passed);
+    const dateStr = formatThaiDateTime(resultTime ?? new Date());
+
+    const W = 680;
+    const PAD = 40;
+    const measureCanvas = document.createElement("canvas");
+    const mctx = measureCanvas.getContext("2d");
+    if (!mctx) return;
+
+    const titleFont = "bold 22px sans-serif";
+    const rowFont = "bold 14px sans-serif";
+    const rowSubFont = "12px sans-serif";
+
+    mctx.font = titleFont;
+    const titleLines = wrapTextChars(mctx, exam.title, W - PAD * 2);
+
+    const tableX = PAD;
+    const tableW = W - PAD * 2;
+    const subjectColWidth = tableW - 170;
+
+    const lineH = 20;
+    const rowPaddingY = 16;
+    const rows = results.map(({ sec, correct, passed }) => {
+      mctx.font = rowFont;
+      const subjectLines = wrapTextChars(mctx, sec.title, subjectColWidth);
+      mctx.font = rowSubFont;
+      const got = Math.round((correct / sec.questionCount) * sec.totalScore);
+      const passScore = Math.round((sec.totalScore * sec.passingPercent) / 100);
+      const criteriaText = `เกณฑ์ผ่าน: ร้อยละ ${sec.passingPercent} (${passScore} คะแนนขึ้นไป)`;
+      const criteriaLines = wrapTextChars(mctx, criteriaText, subjectColWidth);
+      const height = subjectLines.length * lineH + criteriaLines.length * 15 + rowPaddingY * 2;
+      return { subjectLines, criteriaLines, full: sec.totalScore, got, passed, height };
+    });
+
+    const titleBlockHeight = titleLines.length * 28;
+    const topHeight = 20 + 76 + titleBlockHeight + 8 + 20 + 22 + 24;
+    const tableHeaderHeight = 40;
+    const tableRowsHeight = rows.reduce((a, r) => a + r.height, 0);
+    const badgeHeight = 32 + 56 + 32;
+    const footerHeight = 22 + 24;
+    const H = topHeight + tableHeaderHeight + tableRowsHeight + badgeHeight + footerHeight + PAD;
+
+    const scale = 2;
+    const canvas = document.createElement("canvas");
+    canvas.width = W * scale;
+    canvas.height = H * scale;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.scale(scale, scale);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "#e5e7eb";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, 0.5, W - 1, H - 1);
+
+    let y = 20;
+    ctx.textAlign = "center";
+    ctx.font = "48px sans-serif";
+    ctx.fillText("🏆", W / 2, y + 44);
+    y += 76;
+
+    ctx.fillStyle = "#111827";
+    ctx.font = titleFont;
+    titleLines.forEach((line) => {
+      ctx.fillText(line, W / 2, y);
+      y += 28;
+    });
+    y += 8;
+
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "14px sans-serif";
+    ctx.fillText("ผลการสอบ", W / 2, y);
+    y += 20;
+    ctx.fillText(dateStr, W / 2, y);
+    y += 30;
+
+    const colFullX = tableX + tableW - 130;
+    const colGotX = tableX + tableW - 40;
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#f3f4f6";
+    ctx.fillRect(tableX, y, tableW, tableHeaderHeight);
+    ctx.fillStyle = "#374151";
+    ctx.font = "bold 13px sans-serif";
+    ctx.fillText("วิชาที่สอบ", tableX + 12, y + 25);
+    ctx.textAlign = "center";
+    ctx.fillText("คะแนนเต็ม", colFullX, y + 25);
+    ctx.fillText("คะแนนที่ได้", colGotX, y + 25);
+    ctx.textAlign = "left";
+    y += tableHeaderHeight;
+
+    rows.forEach((row, i) => {
+      if (i % 2 === 1) {
+        ctx.fillStyle = "#fafafa";
+        ctx.fillRect(tableX, y, tableW, row.height);
+      }
+      let ry = y + rowPaddingY + lineH - 4;
+      ctx.fillStyle = "#111827";
+      ctx.font = rowFont;
+      row.subjectLines.forEach((line) => {
+        ctx.fillText(line, tableX + 12, ry);
+        ry += lineH;
+      });
+      ctx.fillStyle = row.passed ? "#16a34a" : "#dc2626";
+      ctx.font = rowSubFont;
+      row.criteriaLines.forEach((line) => {
+        ctx.fillText(line, tableX + 12, ry);
+        ry += 15;
+      });
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#374151";
+      ctx.font = "bold 16px sans-serif";
+      ctx.fillText(row.full.toFixed(2), colFullX, y + row.height / 2 + 5);
+      ctx.fillStyle = row.passed ? "#16a34a" : "#dc2626";
+      ctx.fillText(row.got.toFixed(2), colGotX, y + row.height / 2 + 5);
+      ctx.textAlign = "left";
+
+      y += row.height;
+      ctx.strokeStyle = "#e5e7eb";
+      ctx.beginPath();
+      ctx.moveTo(tableX, y);
+      ctx.lineTo(tableX + tableW, y);
+      ctx.stroke();
+    });
+
+    y += 24;
+
+    ctx.textAlign = "center";
+    const badgeColor = allPassed ? "#16a34a" : "#dc2626";
+    ctx.fillStyle = allPassed ? "rgba(22,163,74,0.1)" : "rgba(220,38,38,0.1)";
+    const badgeW = 200, badgeBoxH = 56;
+    roundRect(ctx, W / 2 - badgeW / 2, y, badgeW, badgeBoxH, 28);
+    ctx.fillStyle = badgeColor;
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText(allPassed ? "✓ ผ่าน" : "✗ ไม่ผ่าน", W / 2, y + 36);
+    y += badgeBoxH + 32;
+
+    ctx.fillStyle = "#9ca3af";
+    ctx.font = "12px sans-serif";
+    ctx.fillText("ทำข้อสอบฟรีที่", W / 2, y);
+    y += 22;
+    ctx.fillStyle = "#0ea5e9";
+    ctx.font = "bold 18px sans-serif";
+    ctx.fillText("AbcdeGo.com", W / 2, y);
+
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const fileName = `ผลสอบ-${exam.id}-${Date.now()}.png`;
+      const file = new File([blob], fileName, { type: "image/png" });
+      const nav = navigator as Navigator & {
+        canShare?: (data: { files: File[] }) => boolean;
+        share?: (data: { files: File[]; title?: string; text?: string }) => Promise<void>;
+      };
+      if (nav.canShare?.({ files: [file] }) && nav.share) {
+        nav.share({ files: [file], title: exam.title, text: allPassed ? "ผ่านข้อสอบจำลอง!" : "ผลสอบข้อสอบจำลอง" }).catch(() => {});
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    }, "image/png");
   }
 
   const answeredCount = Object.keys(answers).length;
@@ -436,6 +647,15 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
             </p>
           </div>
         )}
+
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+          <button
+            onClick={downloadResultImage}
+            style={{ padding: "10px 24px", borderRadius: 980, border: "none", background: "var(--accent-green)", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}
+          >
+            📸 บันทึก/แชร์ผลสอบ
+          </button>
+        </div>
 
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
           <button
