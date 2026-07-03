@@ -159,8 +159,8 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 h-full flex items-center gap-4">
           {/* Logo */}
           <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
-            <img src="/abcdego_no_slash.png" alt="AbcdeGo" className="logo-light" style={{ height: 36, width: "auto", objectFit: "contain" }} />
-            <img src="/abcdego_dark.png" alt="AbcdeGo" className="logo-dark" style={{ height: 36, width: "auto", objectFit: "contain" }} />
+            <img src="/abcdego_navbar_light.png" alt="AbcdeGo" className="navbar-logo-light" style={{ height: 36, width: "auto", objectFit: "contain" }} />
+            <img src="/abcdego_navbar_dark.png" alt="AbcdeGo" className="navbar-logo-dark" style={{ height: 36, width: "auto", objectFit: "contain" }} />
           </Link>
 
           <div style={{ width: 1, height: 20, background: "var(--border)", margin: "0 4px", flexShrink: 0 }} />

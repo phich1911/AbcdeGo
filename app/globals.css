@@ -199,3 +199,9 @@ html.light .hero-bg {
 .logo-light { display: block; }
 html:not(.light) .logo-dark { display: block; }
 html:not(.light) .logo-light { display: none; }
+
+/* Navbar logo — pre-colored per theme, no invert filter */
+.navbar-logo-dark { display: none; }
+.navbar-logo-light { display: block; }
+html:not(.light) .navbar-logo-dark { display: block; }
+html:not(.light) .navbar-logo-light { display: none; }
