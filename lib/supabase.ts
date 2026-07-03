@@ -277,6 +277,26 @@ export async function saveExamScore(examId: string, score: number, total: number
   }
 }
 
+// Whether the current user already has a locked score for this exam —
+// used to gate section practice mode (with instant answer reveal) behind
+// having taken the full exam blind at least once.
+export async function hasExamScore(examId: string): Promise<boolean> {
+  const session = getStoredSession();
+  const userId = session?.user?.id;
+  if (!userId) return false;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/exam_scores?select=score&user_id=eq.${encodeURIComponent(userId)}&exam_id=eq.${encodeURIComponent(examId)}&limit=1`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) return false;
+    const rows = await res.json();
+    return Array.isArray(rows) && rows.length > 0;
+  } catch {
+    return false;
+  }
+}
+
 export async function getExamLeaderboard(examId: string, limit = 5): Promise<{ display_name: string; score: number; total: number }[]> {
   try {
     const res = await fetch(

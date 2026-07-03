@@ -4,7 +4,7 @@ import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { PublicMockExam, PublicExamSection, ExamSectionResult } from "@/lib/exam-data/public-types";
 import { completeLesson, pushProgressToCloud } from "@/lib/progress";
-import { syncLeaderboard, saveExamScore } from "@/lib/supabase";
+import { syncLeaderboard, saveExamScore, hasExamScore } from "@/lib/supabase";
 
 type Phase = "loading" | "notfound" | "intro" | "mode" | "exam" | "results";
 // "full" = all sections, number = section index (0/1/2)
@@ -90,11 +90,17 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const [totalCorrect, setTotalCorrect] = useState(0);
   const [timedOut, setTimedOut] = useState(false);
   const [resultTime, setResultTime] = useState<Date | null>(null);
+  const [hasFullAttempt, setHasFullAttempt] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (id) setPassedSections(getPassedSections(id));
   }, [id]);
+
+  useEffect(() => {
+    if (!exam) return;
+    hasExamScore(exam.id).then(setHasFullAttempt);
+  }, [exam]);
 
   useEffect(() => {
     let cancelled = false;
@@ -490,7 +496,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         badge: passedSections.includes(i) ? "✓ ผ่านแล้ว" : "ฝึกรายวิชา",
         badgeColor: passedSections.includes(i) ? "rgba(52,199,89,0.12)" : "rgba(0,122,255,0.12)",
         value: i as ExamMode,
-        locked: false,
+        locked: !hasFullAttempt,
       })),
       {
         label: "ข้อสอบจำลองเต็มรูปแบบ",
@@ -511,6 +517,11 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>
             1 สินค้านี้ปลดล็อคทุกโหมดด้านล่าง
           </p>
+          {!hasFullAttempt && (
+            <p style={{ color: "var(--text-muted)", fontSize: 12, margin: "6px 0 0" }}>
+              🔒 ต้องสอบ &quot;เต็มรูปแบบ&quot; ให้จบก่อน 1 ครั้งถึงจะฝึกรายวิชาได้ — เพื่อให้ครั้งแรกของทุกคนวัดผลจริง ไม่เห็นเฉลยล่วงหน้า
+            </p>
+          )}
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
@@ -545,9 +556,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
                   </p>
                   <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
                     {opt.locked
-                      ? typeof opt.value === "number"
-                        ? `ต้องผ่านวิชาที่ ${opt.value} ก่อน`
-                        : "ต้องผ่านครบทั้ง 3 วิชาก่อน"
+                      ? "ต้องสอบ \"เต็มรูปแบบ\" ให้จบก่อน 1 ครั้ง (แบบไม่ดูเฉลย) ถึงจะฝึกรายวิชานี้ได้"
                       : opt.sub}
                   </p>
                 </div>
@@ -591,6 +600,9 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
     if (isFullMode) {
       saveExamScore(exam.id, totalCorrect, totalQ);
+      // Attempting a full run blind is what unlocks practice mode — flip it
+      // optimistically so "เปลี่ยนโหมด" reflects it without a reload.
+      if (!hasFullAttempt) setHasFullAttempt(true);
     }
 
     // Save section pass to localStorage
