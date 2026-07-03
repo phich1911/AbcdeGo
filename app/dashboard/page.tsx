@@ -33,6 +33,7 @@ export default function DashboardPage() {
   const [courseProgresses, setCourseProgresses] = useState<number[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [syncDone, setSyncDone] = useState(false);
+  const [showAllCourses, setShowAllCourses] = useState(false);
 
   useEffect(() => {
     const p = getProgress();
@@ -59,6 +60,11 @@ export default function DashboardPage() {
   }, []);
 
   const totalLessons = COURSES.reduce((sum, c) => sum + c.totalLessons, 0);
+  const startedCourses = COURSES
+    .map((course, i) => ({ course, pct: courseProgresses[i] ?? 0 }))
+    .filter(({ pct }) => pct > 0);
+  const VISIBLE_COURSES = 6;
+  const visibleCourses = showAllCourses ? startedCourses : startedCourses.slice(0, VISIBLE_COURSES);
   const level = Math.floor(xp / 100) + 1;
   const levelXp = xp % 100;
 
@@ -106,41 +112,47 @@ export default function DashboardPage() {
         {/* Course progress */}
         <h2 className="text-xl font-black mb-4">ความก้าวหน้าแต่ละวิชา</h2>
         <div className="flex flex-col gap-4">
-          {COURSES.map((course, i) => {
-            const pct = courseProgresses[i] ?? 0;
-            if (pct === 0) return null;
-            return (
-              <Link
-                key={course.id}
-                href={`/course/${course.id}`}
-                className="glass rounded-2xl p-5 flex items-center gap-5 transition-all hover:scale-[1.01]"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between mb-1">
-                    <h3 className="font-bold">{course.title}</h3>
-                    <span className="font-bold text-sm" style={{ color: pct === 100 ? "var(--accent-green)" : "var(--primary-light)" }}>
-                      {pct}%
-                    </span>
-                  </div>
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{
-                        width: `${pct}%`,
-                        background: pct === 100
-                          ? "linear-gradient(90deg, #10b981, #34d399)"
-                          : undefined,
-                      }}
-                    />
-                  </div>
-                  <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
-                    {course.totalLessons} บทเรียน · {course.xpReward} XP
-                  </p>
+          {visibleCourses.map(({ course, pct }) => (
+            <Link
+              key={course.id}
+              href={`/course/${course.id}`}
+              className="glass rounded-2xl p-5 flex items-center gap-5 transition-all hover:scale-[1.01]"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between mb-1">
+                  <h3 className="font-bold">{course.title}</h3>
+                  <span className="font-bold text-sm" style={{ color: pct === 100 ? "var(--accent-green)" : "var(--primary-light)" }}>
+                    {pct}%
+                  </span>
                 </div>
-              </Link>
-            );
-          })}
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${pct}%`,
+                      background: pct === 100
+                        ? "linear-gradient(90deg, #10b981, #34d399)"
+                        : undefined,
+                    }}
+                  />
+                </div>
+                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>
+                  {course.totalLessons} บทเรียน · {course.xpReward} XP
+                </p>
+              </div>
+            </Link>
+          ))}
         </div>
+
+        {!showAllCourses && startedCourses.length > VISIBLE_COURSES && (
+          <button
+            onClick={() => setShowAllCourses(true)}
+            className="w-full mt-4 py-3 rounded-2xl font-bold text-sm transition-colors hover:bg-white/5"
+            style={{ border: "1px solid var(--border)", color: "var(--primary-light)" }}
+          >
+            ดูทั้งหมด ({startedCourses.length} วิชา) →
+          </button>
+        )}
 
         {completedCount === 0 && (
           <div className="mt-10 text-center">
