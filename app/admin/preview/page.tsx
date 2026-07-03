@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getSession } from "@/lib/supabase";
-import { getLessonsForCourse, COURSES } from "@/lib/data";
+import { COURSES } from "@/lib/data";
 import type { Lesson } from "@/lib/data";
 
 const ADMIN_EMAIL = "phich1911@gmail.com";
@@ -14,18 +14,27 @@ export default function AdminPreviewPage() {
   const [activeCourse, setActiveCourse] = useState(SET2_COURSE_IDS[0]);
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
   const [expandedSteps, setExpandedSteps] = useState<Record<string, boolean>>({});
+  const [allLessons, setAllLessons] = useState<Lesson[] | null>(null);
 
   useEffect(() => {
     getSession().then((s) => {
-      setAllowed(s?.user?.email === ADMIN_EMAIL);
+      const isAdmin = s?.user?.email === ADMIN_EMAIL;
+      setAllowed(isAdmin);
+      if (!isAdmin) return;
+      fetch("/api/admin/set2-lessons", {
+        headers: { Authorization: `Bearer ${s?.access_token ?? ""}` },
+      })
+        .then((r) => (r.ok ? r.json() : { lessons: [] }))
+        .then((data) => setAllLessons(data.lessons));
     });
   }, []);
 
   if (allowed === null) return <div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังตรวจสอบสิทธิ์...</div>;
   if (!allowed) return <div style={{ padding: 80, textAlign: "center", color: "var(--accent-red)" }}>ไม่มีสิทธิ์เข้าถึงหน้านี้</div>;
+  if (!allLessons) return <div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังโหลดเนื้อหา...</div>;
 
   const courses = COURSES.filter((c) => SET2_COURSE_IDS.includes(c.id));
-  const lessons = getLessonsForCourse(activeCourse);
+  const lessons = allLessons.filter((l) => l.courseId === activeCourse).sort((a, b) => a.order - b.order);
   const lesson = activeLesson ? lessons.find((l) => l.id === activeLesson) : null;
 
   function toggleStep(key: string) {

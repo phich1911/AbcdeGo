@@ -2,29 +2,35 @@
 
 import { useEffect, useState } from "react";
 import { getSession } from "@/lib/supabase";
-import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
-import { KP_MOCK_2 } from "@/lib/exam-data/kp-mock-2";
 import type { MockExam } from "@/lib/exam-data/kp-mock-1";
 
 const ADMIN_EMAIL = "phich1911@gmail.com";
-const EXAMS: MockExam[] = [KP_MOCK_1, KP_MOCK_2];
 
 export default function AdminExamPage() {
   const [allowed, setAllowed] = useState<boolean | null>(null);
+  const [exams, setExams] = useState<MockExam[] | null>(null);
   const [activeExam, setActiveExam] = useState(0);
   const [activeSection, setActiveSection] = useState(0);
   const [showAnswer, setShowAnswer] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     getSession().then((s) => {
-      setAllowed(s?.user?.email === ADMIN_EMAIL);
+      const isAdmin = s?.user?.email === ADMIN_EMAIL;
+      setAllowed(isAdmin);
+      if (!isAdmin) return;
+      fetch("/api/admin/exam-data", {
+        headers: { Authorization: `Bearer ${s?.access_token ?? ""}` },
+      })
+        .then((r) => (r.ok ? r.json() : { exams: [] }))
+        .then((data) => setExams(data.exams));
     });
   }, []);
 
   if (allowed === null) return <div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังตรวจสอบสิทธิ์...</div>;
   if (!allowed) return <div style={{ padding: 80, textAlign: "center", color: "var(--accent-red)" }}>ไม่มีสิทธิ์เข้าถึงหน้านี้</div>;
+  if (!exams) return <div style={{ padding: 80, textAlign: "center", color: "var(--text-muted)" }}>กำลังโหลดข้อมูล...</div>;
 
-  const exam = EXAMS[activeExam];
+  const exam = exams[activeExam];
   const section = exam.sections[activeSection];
 
   function toggleAnswer(id: number) {
@@ -50,7 +56,7 @@ export default function AdminExamPage() {
 
       {/* Exam tabs */}
       <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
-        {EXAMS.map((e, i) => (
+        {exams.map((e, i) => (
           <button key={e.id} onClick={() => { setActiveExam(i); setActiveSection(0); setShowAnswer({}); }}
             style={{
               padding: "6px 16px", borderRadius: 980, fontSize: 13, fontWeight: 500,

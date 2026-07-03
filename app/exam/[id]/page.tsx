@@ -2,18 +2,11 @@
 
 import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
-import type { MockExam, ExamSection } from "@/lib/exam-data/kp-mock-1";
-import { KP_MOCK_2 } from "@/lib/exam-data/kp-mock-2";
+import type { PublicMockExam, PublicExamSection, ExamSectionResult } from "@/lib/exam-data/public-types";
 import { completeLesson, pushProgressToCloud } from "@/lib/progress";
 import { syncLeaderboard, saveExamScore } from "@/lib/supabase";
 
-const EXAMS: Record<string, MockExam> = {
-  "kp-mock-1": KP_MOCK_1,
-  "kp-mock-2": KP_MOCK_2,
-};
-
-type Phase = "intro" | "mode" | "exam" | "results";
+type Phase = "loading" | "notfound" | "intro" | "mode" | "exam" | "results";
 // "full" = all sections, number = section index (0/1/2)
 type ExamMode = "full" | number;
 
@@ -80,7 +73,8 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 export default function ExamPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const exam = EXAMS[id];
+  const [exam, setExam] = useState<PublicMockExam | null>(null);
+  const [examNotFound, setExamNotFound] = useState(false);
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [mode, setMode] = useState<ExamMode>("full");
@@ -91,6 +85,9 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   const [submitted, setSubmitted] = useState(false);
   const [passedSections, setPassedSections] = useState<number[]>([]);
   const [lockedAnswers, setLockedAnswers] = useState<Record<number, boolean>>({});
+  const [revealed, setRevealed] = useState<Record<number, { correctIndex: number; explanation: string }>>({});
+  const [examResults, setExamResults] = useState<ExamSectionResult[] | null>(null);
+  const [totalCorrect, setTotalCorrect] = useState(0);
   const [timedOut, setTimedOut] = useState(false);
   const [resultTime, setResultTime] = useState<Date | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -99,8 +96,21 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     if (id) setPassedSections(getPassedSections(id));
   }, [id]);
 
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/exam/${id}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled) return;
+        if (data) setExam(data);
+        else setExamNotFound(true);
+      })
+      .catch(() => { if (!cancelled) setExamNotFound(true); });
+    return () => { cancelled = true; };
+  }, [id]);
+
   // Derive which sections are active for the current mode
-  const activeSections: ExamSection[] = exam
+  const activeSections: PublicExamSection[] = exam
     ? mode === "full"
       ? exam.sections
       : [exam.sections[mode as number]]
@@ -131,8 +141,11 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, submitted, isSectionMode]);
 
-  if (!exam) {
+  if (examNotFound) {
     return <div className="p-10 text-center">ไม่พบข้อสอบนี้</div>;
+  }
+  if (!exam) {
+    return <div className="p-10 text-center" style={{ color: "var(--text-muted)" }}>กำลังโหลด...</div>;
   }
 
   const sectionOffsets = activeSections.reduce<number[]>((acc, sec, i) => {
@@ -141,7 +154,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
   }, []);
 
   const totalQ = activeSections.reduce((s, sec) => s + sec.questions.length, 0);
-  const currentSection: ExamSection = activeSections[sectionIdx];
+  const currentSection: PublicExamSection = activeSections[sectionIdx];
   const currentFlatIdx = (sectionOffsets[sectionIdx] ?? 0) + questionIdx;
   const currentQ = currentSection?.questions[questionIdx];
 
@@ -149,23 +162,36 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     setMode(selectedMode);
     setAnswers({});
     setLockedAnswers({});
+    setRevealed({});
+    setExamResults(null);
     setSectionIdx(0);
     setQuestionIdx(0);
     setSubmitted(false);
     setTimedOut(false);
     const secs =
       selectedMode === "full"
-        ? exam.totalTime * 60
-        : exam.sections[selectedMode as number].timeRecommended * 60;
+        ? exam!.totalTime * 60
+        : exam!.sections[selectedMode as number].timeRecommended * 60;
     setTimeLeft(secs);
     setPhase("exam");
   }
 
-  function handleAnswer(choice: number) {
+  async function handleAnswer(choice: number) {
     if (isSectionMode && lockedAnswers[currentFlatIdx]) return; // already locked
     setAnswers((prev) => ({ ...prev, [currentFlatIdx]: choice }));
     if (isSectionMode) {
       setLockedAnswers((prev) => ({ ...prev, [currentFlatIdx]: true }));
+      try {
+        const res = await fetch(`/api/exam/${exam!.id}/check`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sectionIndex: mode as number, questionIndex: questionIdx, choice }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setRevealed((prev) => ({ ...prev, [currentFlatIdx]: { correctIndex: data.correctIndex, explanation: data.explanation } }));
+        }
+      } catch {}
     }
   }
 
@@ -188,28 +214,28 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     }
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (timerRef.current) clearInterval(timerRef.current);
     setSubmitted(true);
     setResultTime(new Date());
+    try {
+      const res = await fetch(`/api/exam/${exam!.id}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode, answers }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setExamResults(data.results);
+        setTotalCorrect(data.totalCorrect);
+      }
+    } catch {}
     setPhase("results");
   }
 
-  function calcResults() {
-    return activeSections.map((sec, si) => {
-      const offset = sectionOffsets[si];
-      let correct = 0;
-      sec.questions.forEach((q, qi) => {
-        if (answers[offset + qi] === q.correct) correct++;
-      });
-      const scorePercent = Math.round((correct / sec.questionCount) * 100);
-      const passed = scorePercent >= sec.passingPercent;
-      return { sec, correct, scorePercent, passed };
-    });
-  }
-
   function downloadResultImage() {
-    const results = calcResults();
+    if (!examResults) return;
+    const results = examResults;
     const allPassed = results.every((r) => r.passed);
     const dateStr = formatThaiDateTime(resultTime ?? new Date());
 
@@ -224,7 +250,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     const rowSubFont = "12px sans-serif";
 
     mctx.font = titleFont;
-    const titleLines = wrapTextChars(mctx, exam.title, W - PAD * 2);
+    const titleLines = wrapTextChars(mctx, exam!.title, W - PAD * 2);
 
     const tableX = PAD;
     const tableW = W - PAD * 2;
@@ -232,16 +258,16 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
     const lineH = 20;
     const rowPaddingY = 16;
-    const rows = results.map(({ sec, correct, passed }) => {
+    const rows = results.map(({ title, correct, passed, questionCount, totalScore, passingPercent }) => {
       mctx.font = rowFont;
-      const subjectLines = wrapTextChars(mctx, sec.title, subjectColWidth);
+      const subjectLines = wrapTextChars(mctx, title, subjectColWidth);
       mctx.font = rowSubFont;
-      const got = Math.round((correct / sec.questionCount) * sec.totalScore);
-      const passScore = Math.round((sec.totalScore * sec.passingPercent) / 100);
-      const criteriaText = `เกณฑ์ผ่าน: ร้อยละ ${sec.passingPercent} (${passScore} คะแนนขึ้นไป)`;
+      const got = Math.round((correct / questionCount) * totalScore);
+      const passScore = Math.round((totalScore * passingPercent) / 100);
+      const criteriaText = `เกณฑ์ผ่าน: ร้อยละ ${passingPercent} (${passScore} คะแนนขึ้นไป)`;
       const criteriaLines = wrapTextChars(mctx, criteriaText, subjectColWidth);
       const height = subjectLines.length * lineH + criteriaLines.length * 15 + rowPaddingY * 2;
-      return { subjectLines, criteriaLines, full: sec.totalScore, got, passed, height };
+      return { subjectLines, criteriaLines, full: totalScore, got, passed, height };
     });
 
     const titleBlockHeight = titleLines.length * 28;
@@ -359,14 +385,14 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
     canvas.toBlob((blob) => {
       if (!blob) return;
-      const fileName = `ผลสอบ-${exam.id}-${Date.now()}.png`;
+      const fileName = `ผลสอบ-${exam!.id}-${Date.now()}.png`;
       const file = new File([blob], fileName, { type: "image/png" });
       const nav = navigator as Navigator & {
         canShare?: (data: { files: File[] }) => boolean;
         share?: (data: { files: File[]; title?: string; text?: string }) => Promise<void>;
       };
       if (nav.canShare?.({ files: [file] }) && nav.share) {
-        nav.share({ files: [file], title: exam.title, text: allPassed ? "ผ่านข้อสอบจำลอง!" : "ผลสอบข้อสอบจำลอง" }).catch(() => {});
+        nav.share({ files: [file], title: exam!.title, text: allPassed ? "ผ่านข้อสอบจำลอง!" : "ผลสอบข้อสอบจำลอง" }).catch(() => {});
       } else {
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -551,7 +577,10 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
 
   // ── RESULTS ────────────────────────────────────────────────────
   if (phase === "results") {
-    const results = calcResults();
+    if (!examResults) {
+      return <div className="p-10 text-center" style={{ color: "var(--text-muted)" }}>กำลังตรวจคำตอบ...</div>;
+    }
+    const results = examResults;
     const allPassed = results.every((r) => r.passed);
 
     if (isFullMode && allPassed) {
@@ -561,7 +590,6 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     }
 
     if (isFullMode) {
-      const totalCorrect = results.reduce((sum, r) => sum + r.correct, 0);
       saveExamScore(exam.id, totalCorrect, totalQ);
     }
 
@@ -620,13 +648,13 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
         )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
-          {results.map(({ sec, correct, scorePercent, passed }) => (
-            <div key={sec.id} className="card" style={{ padding: "16px 20px", borderColor: passed ? "rgba(52,199,89,0.3)" : "rgba(255,59,48,0.3)" }}>
+          {results.map(({ sectionId, title, correct, scorePercent, passed, questionCount, passingPercent }) => (
+            <div key={sectionId} className="card" style={{ padding: "16px 20px", borderColor: passed ? "rgba(52,199,89,0.3)" : "rgba(255,59,48,0.3)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
                 <div>
-                  <p style={{ margin: "0 0 2px", fontWeight: 700, fontSize: 14 }}>{sec.title}</p>
+                  <p style={{ margin: "0 0 2px", fontWeight: 700, fontSize: 14 }}>{title}</p>
                   <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
-                    ถูก {correct}/{sec.questionCount} ข้อ · เกณฑ์ผ่าน {sec.passingPercent}%
+                    ถูก {correct}/{questionCount} ข้อ · เกณฑ์ผ่าน {passingPercent}%
                   </p>
                 </div>
                 <div style={{ textAlign: "right" }}>
@@ -758,8 +786,9 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
             {currentQ?.choices.map((choice, ci) => {
               const selected = answers[currentFlatIdx] === ci;
               const locked = isSectionMode && lockedAnswers[currentFlatIdx];
-              const isCorrect = ci === currentQ.correct;
-              const showResult = locked;
+              const reveal = revealed[currentFlatIdx];
+              const isCorrect = reveal ? ci === reveal.correctIndex : false;
+              const showResult = locked && Boolean(reveal);
               let borderColor = "var(--border)";
               let bg = "var(--surface)";
               let color = "var(--text)";
@@ -791,14 +820,14 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
           </div>
 
           {/* Explanation — section mode only */}
-          {isSectionMode && lockedAnswers[currentFlatIdx] && currentQ?.explanation && (
+          {isSectionMode && lockedAnswers[currentFlatIdx] && revealed[currentFlatIdx]?.explanation && (
             <div style={{ marginTop: 16, padding: "12px 16px", borderRadius: 12, background: "rgba(0,122,255,0.06)", border: "1px solid rgba(0,122,255,0.2)", fontSize: 13, color: "var(--text-muted)", lineHeight: 1.7 }}>
-               <strong style={{ color: "var(--primary)" }}>เฉลย:</strong> {currentQ.explanation}
+               <strong style={{ color: "var(--primary)" }}>เฉลย:</strong> {revealed[currentFlatIdx]?.explanation}
             </div>
           )}
-          {isSectionMode && lockedAnswers[currentFlatIdx] && !currentQ?.explanation && (
+          {isSectionMode && lockedAnswers[currentFlatIdx] && revealed[currentFlatIdx] && !revealed[currentFlatIdx]?.explanation && (
             <div style={{ marginTop: 16, padding: "10px 14px", borderRadius: 12, background: "rgba(52,199,89,0.06)", border: "1px solid rgba(52,199,89,0.2)", fontSize: 13, color: "var(--accent-green)" }}>
-              ✓ คำตอบที่ถูกต้องคือข้อ {String.fromCharCode(65 + (currentQ?.correct ?? 0))}
+              ✓ คำตอบที่ถูกต้องคือข้อ {String.fromCharCode(65 + (revealed[currentFlatIdx]?.correctIndex ?? 0))}
             </div>
           )}
         </div>

@@ -48,6 +48,7 @@ const KP_SETS = [
   {
     slug: "2",
     label: "ชุดที่ 2",
+    locked: true,
     description: "อนุกรม เงื่อนไขสัญลักษณ์ ภาษาอังกฤษ (บทสนทนา/Reading) และกฎหมายราชการ",
     cats: ["สอบ ก.พ."],
   },

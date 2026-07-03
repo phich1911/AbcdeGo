@@ -1,5 +1,10 @@
 import type { ExamQuestion, ExamSection, MockExam } from "./kp-mock-1";
 
+// Contains the exam answer key — must never be imported from a "use client" file.
+if (typeof window !== "undefined") {
+  throw new Error("lib/exam-data/kp-mock-2 must only be imported on the server");
+}
+
 const section1: ExamSection = {
   id: "s1",
   title: "วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย)",

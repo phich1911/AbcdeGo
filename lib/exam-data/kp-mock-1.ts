@@ -1,3 +1,8 @@
+// Contains the exam answer key — must never be imported from a "use client" file.
+if (typeof window !== "undefined") {
+  throw new Error("lib/exam-data/kp-mock-1 must only be imported on the server");
+}
+
 export interface ExamQuestion {
   id: number;
   question: string;
