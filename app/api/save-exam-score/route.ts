@@ -26,16 +26,16 @@ export async function POST(req: NextRequest) {
   // Always write under the authenticated caller's own id — never a client-supplied user_id.
   const user_id = caller.id;
 
-  // Get existing best score for this user+exam
+  // A ranked score is locked on the first submission — retaking the exam
+  // (with memorized answers) never changes it, only the display name.
   const existRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/exam_scores?select=score&user_id=eq.${encodeURIComponent(user_id)}&exam_id=eq.${encodeURIComponent(exam_id)}&order=score.desc&limit=1`,
+    `${SUPABASE_URL}/rest/v1/exam_scores?select=score&user_id=eq.${encodeURIComponent(user_id)}&exam_id=eq.${encodeURIComponent(exam_id)}&limit=1`,
     { headers: hdrs() }
   );
   const existing = existRes.ok ? await existRes.json() : [];
-  const best: number = existing?.[0]?.score ?? -1;
 
-  if (score <= best) {
-    // Update display_name only
+  if (existing.length > 0) {
+    // Already has a locked score — update display_name only
     await fetch(
       `${SUPABASE_URL}/rest/v1/exam_scores?user_id=eq.${encodeURIComponent(user_id)}&exam_id=eq.${encodeURIComponent(exam_id)}`,
       { method: "PATCH", headers: hdrs(), body: JSON.stringify({ display_name }) }
@@ -43,11 +43,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, updated: "name_only" });
   }
 
-  // New best — delete old rows then insert
-  await fetch(
-    `${SUPABASE_URL}/rest/v1/exam_scores?user_id=eq.${encodeURIComponent(user_id)}&exam_id=eq.${encodeURIComponent(exam_id)}`,
-    { method: "DELETE", headers: hdrs() }
-  );
+  // First-ever submission for this user+exam — this becomes their locked score
   const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/exam_scores`, {
     method: "POST",
     headers: hdrs(),
@@ -59,5 +55,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: body }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, updated: "new_best" });
+  return NextResponse.json({ ok: true, updated: "locked_in" });
 }
