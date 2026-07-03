@@ -160,9 +160,6 @@ a.card-lg:hover, button.card-lg:hover {
 /* Divider */
 .divider { height: 1px; background: var(--border); }
 
-/* Deprecated helpers */
-.glow { box-shadow: none; }
-
 @keyframes bounce-in {
   0% { transform: scale(0.92); opacity: 0; }
   60% { transform: scale(1.03); }

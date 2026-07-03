@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { getProgress, syncProgressFromCloud, pushProgressToCloud } from "@/lib/progress";
 import { COURSES } from "@/lib/data";
-import { onAuthChange, signOut, getDisplayName, getUser, getSession, syncLeaderboard } from "@/lib/supabase";
+import { onAuthChange, signOut, getSession, syncLeaderboard } from "@/lib/supabase";
 import { getAvatar, GM_EMAIL, GM_AVATAR } from "@/lib/avatar";
 import AuthModal from "@/components/AuthModal";
 import DisplayNameModal from "@/components/DisplayNameModal";
@@ -33,29 +33,13 @@ const fuse = new Fuse(ALL_ITEMS, {
   threshold: 0.4,
 });
 
-const A = "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64";
-const COURSE_GROUPS = [
-  { label: "สอบ ก.พ.", slug: "kp", icon3d: `${A}/1f4dd.png` },
-  {
-    label: "มัธยมศึกษาตอนปลาย (ม.4–6)", slug: "mplatai", icon3d: `${A}/1f393.png`,
-    sub: [
-      { label: "ภาษาอังกฤษ", slug: "eng-m" },
-      { label: "คณิตศาสตร์", slug: "math-m" },
-      { label: "ภาษาไทย", slug: "thai-m" },
-    ],
-  },
-];
-
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [xp, setXp] = useState(0);
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [coursesOpen, setCoursesOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(true);
   const [authOpen, setAuthOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -67,10 +51,8 @@ export default function Navbar() {
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const coursesCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -141,22 +123,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setCoursesOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); openSearch(); }
       if (e.key === "Escape") closeSearch();
@@ -179,14 +145,6 @@ export default function Navbar() {
   const searchResults = searchQuery.trim()
     ? fuse.search(searchQuery).slice(0, 8).map((r) => r.item)
     : [];
-
-  const navLinkStyle = (active: boolean) => ({
-    color: active ? "var(--text)" : "var(--text-muted)",
-    fontSize: 14,
-    fontWeight: active ? 600 : 400,
-    textDecoration: "none",
-    transition: "color 0.15s",
-  });
 
   return (
     <>
