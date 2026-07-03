@@ -51,6 +51,8 @@ const E_EXAMS = E_EXAM_CATEGORIES.flatMap((c) => c.exams);
 type Passer = { name: string; avatar: string | null; rank: string | null };
 type ExamScore = { display_name: string; score: number; total: number };
 
+const VISIBLE_PASSERS = 8;
+
 export default function EExamPage() {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -58,6 +60,7 @@ export default function EExamPage() {
   const [passers, setPassers] = useState<Record<string, Passer[]>>({});
   const [scoreBoards, setScoreBoards] = useState<Record<string, ExamScore[]>>({});
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [expandedPassers, setExpandedPassers] = useState<Record<string, boolean>>({});
   const [xp, setXp] = useState(0);
 
   useEffect(() => {
@@ -162,7 +165,34 @@ export default function EExamPage() {
                         ) : (
                           <div className="mt-1">
                             <p className="text-xs" style={{ color: "var(--accent-green)" }}>
-                              ✓ ผู้สอบผ่าน ({examPassers.length}): {examPassers.map((p) => p.name).join(", ")}
+                              ✓ ผู้สอบผ่าน ({examPassers.length}):{" "}
+                              {(expandedPassers[product.examId] ? examPassers : examPassers.slice(0, VISIBLE_PASSERS))
+                                .map((p) => p.name)
+                                .join(", ")}
+                              {!expandedPassers[product.examId] && examPassers.length > VISIBLE_PASSERS && (
+                                <>
+                                  {" "}
+                                  <button
+                                    onClick={() => setExpandedPassers((prev) => ({ ...prev, [product.examId]: true }))}
+                                    className="font-semibold"
+                                    style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: "var(--accent-green)", textDecoration: "underline" }}
+                                  >
+                                    และอีก {examPassers.length - VISIBLE_PASSERS} คน →
+                                  </button>
+                                </>
+                              )}
+                              {expandedPassers[product.examId] && examPassers.length > VISIBLE_PASSERS && (
+                                <>
+                                  {" "}
+                                  <button
+                                    onClick={() => setExpandedPassers((prev) => ({ ...prev, [product.examId]: false }))}
+                                    className="font-semibold"
+                                    style={{ background: "none", border: "none", padding: 0, cursor: "pointer", color: "var(--accent-green)", textDecoration: "underline" }}
+                                  >
+                                    ย่อ ←
+                                  </button>
+                                </>
+                              )}
                             </p>
                             {examPassers[0]?.rank && (
                               <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>
