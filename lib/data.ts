@@ -1,5 +1,6 @@
 import { TOEIC_LESSONS } from "@/lib/toeic-data";
 import { TOEIC_READING_LESSONS } from "@/lib/toeic-reading-data";
+import { TOEIC_VOCAB_LESSONS } from "@/lib/toeic-vocab-data";
 
 export type Course = {
   id: string;
@@ -445,6 +446,17 @@ export const COURSES: Course[] = [
     color: "#7c3aed",
     totalLessons: 3,
     xpReward: 270,
+    tag: "TOEIC",
+    category: "TOEIC",
+  },
+  {
+    id: "toeic-vocab",
+    title: "TOEIC Vocabulary",
+    description: "คำศัพท์ TOEIC ที่ควรจำ แบ่งตามหมวด: ที่ทำงาน, การประชุม, การเดินทาง และธุรกิจ/การเงิน",
+    icon: "🔤",
+    color: "#059669",
+    totalLessons: 4,
+    xpReward: 360,
     tag: "TOEIC",
     category: "TOEIC",
   },
@@ -6803,6 +6815,7 @@ export const LESSONS: Lesson[] = [
   },
   ...TOEIC_LESSONS,
   ...TOEIC_READING_LESSONS,
+  ...TOEIC_VOCAB_LESSONS,
 ];
 
 export function getCourse(id: string): Course | undefined {
