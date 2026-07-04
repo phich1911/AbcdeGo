@@ -15,6 +15,7 @@ const SLUG_TO_CATEGORY: Record<string, string> = {
   "physics-m": "ฟิสิกส์ ม.ปลาย",
   "law": "กฎหมาย",
   "civil": "ข้าราชการ",
+  "toeic": "TOEIC",
 };
 
 const CATEGORY_SLUGS: Record<string, string> = {
@@ -25,6 +26,7 @@ const CATEGORY_SLUGS: Record<string, string> = {
   "ฟิสิกส์ ม.ปลาย": "physics-m",
   "กฎหมาย": "law",
   "ข้าราชการ": "civil",
+  "TOEIC": "toeic",
 };
 
 const CATEGORY_META: Record<string, { description: string }> = {
@@ -35,6 +37,7 @@ const CATEGORY_META: Record<string, { description: string }> = {
   "ฟิสิกส์ ม.ปลาย": { description: "กลศาสตร์ คลื่น ไฟฟ้า ความร้อน และฟิสิกส์สมัยใหม่ สำหรับระดับ ม.4–ม.6" },
   "กฎหมาย": { description: "รัฐธรรมนูญ กฎหมายแพ่ง กฎหมายอาญา และกฎหมายที่เกี่ยวข้องกับการสอบราชการ" },
   "ข้าราชการ": { description: "ความรู้เกี่ยวกับระบบราชการ จริยธรรม และการพัฒนาตนเองสำหรับข้าราชการ" },
+  "TOEIC": { description: "เตรียมสอบ TOEIC ทักษะ Listening และ Reading สำหรับการทำงานและสมัครงาน" },
 };
 
 // ก.พ. sets
@@ -63,7 +66,7 @@ const TOP_LEVEL = [
     cats: ["ภาษาอังกฤษ ม.ปลาย", "คณิตศาสตร์ ม.ปลาย", "ภาษาไทย ม.ปลาย", "ฟิสิกส์ ม.ปลาย"],
   },
   { slug: "law", label: "กฎหมายพื้นฐานที่ควรรู้", description: "รัฐธรรมนูญ กฎหมายแพ่ง กฎหมายอาญา และกฎหมายที่เกี่ยวข้องกับการสอบราชการ", cats: ["กฎหมาย"] },
-  { slug: "toeic", label: "TOEIC", description: "เตรียมสอบ TOEIC ทักษะ Listening และ Reading สำหรับการทำงานและสมัครงาน", cats: ["TOEIC"], comingSoon: true },
+  { slug: "toeic", label: "TOEIC", description: "เตรียมสอบ TOEIC ทักษะ Listening และ Reading สำหรับการทำงานและสมัครงาน", cats: ["TOEIC"] },
   { slug: "civil", label: "ข้าราชการ พนักงานราชการ ลูกจ้างชั่วคราว และพนักงานของรัฐ", description: "ความรู้เกี่ยวกับระบบราชการ จริยธรรม และการพัฒนาตนเองสำหรับข้าราชการ", cats: ["ข้าราชการ"] },
 ];
 

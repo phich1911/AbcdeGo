@@ -7,7 +7,8 @@ import { getLesson, getCourse, getLessonsForCourse, LESSONS } from "@/lib/data";
 import { completeLesson, pushProgressToCloud } from "@/lib/progress";
 import AuthModal from "@/components/AuthModal";
 import { getSession, onAuthChange, syncLeaderboard } from "@/lib/supabase";
-import { Lock, PartyPopper, Lightbulb, Zap } from "lucide-react";
+import { speakEnglish, stopSpeaking } from "@/lib/tts";
+import { Lock, PartyPopper, Lightbulb, Zap, Volume2 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 export default function LessonPage({ params }: { params: Promise<{ id: string }> }) {
@@ -62,6 +63,9 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
   const step = lesson.steps[stepIndex];
   const progress = Math.round((stepIndex / lesson.steps.length) * 100);
 
+  // Stop any in-flight speech when moving on so audio doesn't bleed into the next step.
+  useEffect(() => stopSpeaking, [stepIndex]);
+
   function nextStep() {
     setSelected(null);
     setFillInput("");
@@ -83,7 +87,7 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
     if (answered) return;
     setSelected(idx);
     setAnswered(true);
-    if (step.type === "quiz" && idx === step.correct) {
+    if ((step.type === "quiz" || step.type === "listening") && idx === step.correct) {
       setCorrect(true);
       if (!stepEarned) {
         setEarnedXp((x) => x + xpPerStep);
@@ -453,6 +457,96 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
                   </button>
                 )}
               </div>
+            </div>
+          )}
+
+          {step.type === "listening" && (
+            <div className="flex flex-col gap-5 animate-bounce-in">
+              <div
+                className="text-xs font-bold uppercase tracking-wider"
+                style={{ color: "var(--primary-light)" }}
+              >
+                TOEIC Listening · Part {step.part}
+              </div>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>{step.question}</p>
+
+              {step.imageSvg && (
+                <div
+                  className="rounded-xl overflow-hidden"
+                  style={{ border: "1px solid var(--border)" }}
+                  dangerouslySetInnerHTML={{ __html: step.imageSvg }}
+                />
+              )}
+
+              <button
+                onClick={() => speakEnglish(step.script)}
+                className="self-start flex items-center gap-2 px-5 py-3 rounded-full font-bold transition-all hover:scale-105"
+                style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--primary-light)" }}
+              >
+                <Volume2 size={18} /> ฟังเสียง
+              </button>
+
+              <div className="grid gap-3">
+                {step.choices.map((c, i) => {
+                  let bg = "var(--surface-2)";
+                  let border = "var(--border)";
+                  let color = "var(--text)";
+                  if (answered) {
+                    if (i === step.correct) {
+                      bg = "rgba(16,185,129,0.15)";
+                      border = "var(--accent-green)";
+                      color = "var(--accent-green)";
+                    } else if (i === selected && i !== step.correct) {
+                      bg = "rgba(239,68,68,0.15)";
+                      border = "var(--accent-red)";
+                      color = "var(--accent-red)";
+                    }
+                  }
+                  const hideText = step.spokenChoices && !answered;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => checkQuiz(i)}
+                      disabled={answered}
+                      className="text-left px-5 py-4 rounded-xl font-medium transition-all hover:scale-[1.01] disabled:cursor-default"
+                      style={{ background: bg, border: `1px solid ${border}`, color }}
+                    >
+                      <span className="font-bold mr-3" style={{ color: "var(--text-muted)" }}>
+                        {String.fromCharCode(65 + i)}.
+                      </span>
+                      {hideText ? <span style={{ opacity: 0.5 }}>(ฟังจากเสียง)</span> : c}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {answered && (
+                <div
+                  className="rounded-xl p-4 animate-bounce-in"
+                  style={{
+                    background: correct ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)",
+                    border: `1px solid ${correct ? "var(--accent-green)" : "var(--accent-red)"}`,
+                    color: correct ? "var(--accent-green)" : "var(--accent-red)",
+                  }}
+                >
+                  <p className="font-bold mb-1">
+                    {correct ? `✓ ถูกต้อง! +${xpPerStep} XP` : "✗ ยังไม่ถูก — ลองใหม่ได้เลย"}
+                  </p>
+                  <p className="text-sm opacity-90">{step.explanation}</p>
+                </div>
+              )}
+
+              {answered && (
+                <div className="flex gap-3 self-end">
+                  <button
+                    onClick={nextStep}
+                    className="px-8 py-3 rounded-full font-bold text-white glow transition-all hover:scale-105"
+                    style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-light))" }}
+                  >
+                    ต่อไป →
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -1,3 +1,5 @@
+import { TOEIC_LESSONS } from "@/lib/toeic-data";
+
 export type Course = {
   id: string;
   title: string;
@@ -26,7 +28,18 @@ export type Lesson = {
 export type Step =
   | { type: "info"; content: string; title: string }
   | { type: "quiz"; question: string; choices: string[]; correct: number; explanation: string }
-  | { type: "fill"; question: string; answer: string; hint: string; explanation?: string };
+  | { type: "fill"; question: string; answer: string; hint: string; explanation?: string }
+  | {
+      type: "listening";
+      part: 1 | 2 | 3 | 4;
+      question: string;
+      script: string;
+      imageSvg?: string;
+      choices: string[];
+      spokenChoices?: boolean;
+      correct: number;
+      explanation: string;
+    };
 
 export const COURSES: Course[] = [
   // ===== วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย) — คอร์สแยกในหมวด สอบ ก.พ. =====
@@ -410,6 +423,18 @@ export const COURSES: Course[] = [
     tag: "ม.ปลาย",
     category: "ภาษาอังกฤษ ม.ปลาย",
     intro: `การเขียน (Writing)\nระดับมัธยมปลาย ม.4 – ม.6\n\nเนื้อหาครอบคลุม\n• การเขียนย่อหน้า (Paragraph Writing): Topic Sentence, Supporting Details, Conclusion\n• โครงสร้าง Essay (Introduction, Body, Conclusion)\n• จดหมายทางการ (Formal Letter)\n• การเขียนเรื่องเล่า (Narrative Writing)`,
+  },
+  {
+    id: "toeic-listening",
+    title: "TOEIC Listening",
+    description: "ฝึกทักษะ Listening ให้คุ้นหูก่อนสอบ TOEIC จริง ครบ 4 Part: Photographs, Question-Response, Conversations และ Talks",
+    icon: "🎧",
+    color: "#0891b2",
+    totalLessons: 4,
+    xpReward: 360,
+    tag: "TOEIC",
+    category: "TOEIC",
+    intro: `TOEIC Listening Test\n\nข้อสอบฟังทั้งหมด 100 ข้อ แบ่งเป็น 4 Part\n\n► Part 1: Photographs (6 ข้อ)\nดูภาพแล้วเลือกประโยคที่อธิบายภาพได้ถูกต้องที่สุด\n\n► Part 2: Question-Response (25 ข้อ)\nฟังคำถามสั้นๆ แล้วเลือกคำตอบที่เหมาะสม — ไม่มีข้อความให้อ่านเลย ต้องฟังอย่างเดียว\n\n► Part 3: Conversations (39 ข้อ)\nฟังบทสนทนา 2-3 คน แล้วตอบคำถามข้อละ 3 ข้อ\n\n► Part 4: Talks (30 ข้อ)\nฟังบทพูดคนเดียว เช่น ประกาศหรือรายงานข่าว แล้วตอบคำถามข้อละ 3 ข้อ`,
   },
 ];
 
@@ -6764,6 +6789,7 @@ export const LESSONS: Lesson[] = [
       },
     ],
   },
+  ...TOEIC_LESSONS,
 ];
 
 export function getCourse(id: string): Course | undefined {
