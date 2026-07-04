@@ -17,11 +17,13 @@ export async function POST(req: NextRequest) {
   const caller = await verifyUser(req);
   if (!caller) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-  const { exam_id, score, total, display_name } = await req.json();
+  const { exam_id, score, total, display_name, passed } = await req.json();
   if (!exam_id || score == null || !total || !display_name)
     return NextResponse.json({ error: "missing fields" }, { status: 400 });
   if (typeof score !== "number" || score < 0 || typeof total !== "number" || total <= 0 || score > total)
     return NextResponse.json({ error: "invalid score" }, { status: 400 });
+  if (typeof passed !== "boolean")
+    return NextResponse.json({ error: "missing passed flag" }, { status: 400 });
 
   // Always write under the authenticated caller's own id — never a client-supplied user_id.
   const user_id = caller.id;
@@ -47,7 +49,7 @@ export async function POST(req: NextRequest) {
   const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/exam_scores`, {
     method: "POST",
     headers: hdrs(),
-    body: JSON.stringify({ user_id, exam_id, display_name, score, total }),
+    body: JSON.stringify({ user_id, exam_id, display_name, score, total, passed }),
   });
 
   if (!insertRes.ok) {

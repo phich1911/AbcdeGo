@@ -599,7 +599,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     }
 
     if (isFullMode) {
-      saveExamScore(exam.id, totalCorrect, totalQ);
+      saveExamScore(exam.id, totalCorrect, totalQ, allPassed);
       // Attempting a full run blind is what unlocks practice mode — flip it
       // optimistically so "เปลี่ยนโหมด" reflects it without a reload.
       if (!hasFullAttempt) setHasFullAttempt(true);
