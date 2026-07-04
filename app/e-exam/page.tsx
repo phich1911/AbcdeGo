@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getUser, getExamLeaderboard } from "@/lib/supabase";
 import { getProgress } from "@/lib/progress";
@@ -159,6 +160,10 @@ export default function EExamPage() {
                         {locked ? (
                           <p className="text-xs mt-1 font-semibold" style={{ color: "var(--accent)" }}>
                             ตอนนี้มี {xp.toLocaleString()} / {product.xpRequired!.toLocaleString()} XP — เก็บอีก {(product.xpRequired! - xp).toLocaleString()} XP เพื่อปลดล็อก (XP ไม่ถูกหัก)
+                            <br />
+                            <Link href="/courses" style={{ color: "var(--primary)", textDecoration: "underline" }}>
+                              หา XP ได้จากการเรียนบทเรียนในคอร์สเรียน →
+                            </Link>
                           </p>
                         ) : examPassers === undefined ? null : examPassers.length === 0 ? (
                           <p className="text-xs mt-1 font-semibold" style={{ color: "#ef4444" }}>⚠️ ยังไม่มีใครผ่านข้อสอบชุดนี้ — ลองเป็นคนแรกไหม?</p>
