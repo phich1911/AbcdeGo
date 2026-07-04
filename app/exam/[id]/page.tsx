@@ -239,11 +239,19 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     setPhase("results");
   }
 
-  function downloadResultImage() {
+  async function downloadResultImage() {
     if (!examResults) return;
     const results = examResults;
     const allPassed = results.every((r) => r.passed);
     const dateStr = formatThaiDateTime(resultTime ?? new Date());
+
+    const logoImg = new Image();
+    const logoLoaded = new Promise<void>((resolve) => {
+      logoImg.onload = () => resolve();
+      logoImg.onerror = () => resolve();
+    });
+    logoImg.src = "/abcdego_navbar_light.png";
+    await logoLoaded;
 
     const W = 680;
     const PAD = 40;
@@ -281,7 +289,7 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     const tableHeaderHeight = 40;
     const tableRowsHeight = rows.reduce((a, r) => a + r.height, 0);
     const badgeHeight = 32 + 56 + 32;
-    const footerHeight = 22 + 24;
+    const footerHeight = 14 + 26 + 20;
     const H = topHeight + tableHeaderHeight + tableRowsHeight + badgeHeight + footerHeight + PAD;
 
     const scale = 2;
@@ -384,10 +392,17 @@ export default function ExamPage({ params }: { params: Promise<{ id: string }> }
     ctx.fillStyle = "#9ca3af";
     ctx.font = "12px sans-serif";
     ctx.fillText("ทำข้อสอบฟรีที่", W / 2, y);
-    y += 22;
-    ctx.fillStyle = "#0ea5e9";
-    ctx.font = "bold 18px sans-serif";
-    ctx.fillText("AbcdeGo.com", W / 2, y);
+    y += 14;
+
+    if (logoImg.naturalWidth > 0) {
+      const logoH = 26;
+      const logoW = (logoImg.naturalWidth / logoImg.naturalHeight) * logoH;
+      ctx.drawImage(logoImg, W / 2 - logoW / 2, y, logoW, logoH);
+    } else {
+      ctx.fillStyle = "#0ea5e9";
+      ctx.font = "bold 18px sans-serif";
+      ctx.fillText("AbcdeGo.com", W / 2, y + 14);
+    }
 
     canvas.toBlob((blob) => {
       if (!blob) return;
