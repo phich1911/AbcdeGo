@@ -7,63 +7,84 @@ import type { Lesson } from "@/lib/data";
 const SVG_DESK_READING =
   "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
   "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<rect x='60' y='130' width='150' height='12' fill='#64748b'/>" +
-  "<rect x='70' y='142' width='10' height='40' fill='#64748b'/>" +
-  "<rect x='190' y='142' width='10' height='40' fill='#64748b'/>" +
-  "<circle cx='135' cy='75' r='20' fill='#1e293b'/>" +
-  "<rect x='115' y='95' width='40' height='45' rx='10' fill='#0891b2'/>" +
-  "<rect x='118' y='120' width='60' height='30' fill='#ffffff' stroke='#1e293b' stroke-width='2'/>" +
-  "<line x1='148' y1='120' x2='148' y2='150' stroke='#1e293b' stroke-width='2'/>" +
+  "<rect x='40' y='150' width='240' height='14' fill='#78716c'/>" +
+  "<rect x='55' y='164' width='10' height='30' fill='#78716c'/>" +
+  "<rect x='255' y='164' width='10' height='30' fill='#78716c'/>" +
+  "<circle cx='150' cy='68' r='22' fill='#1e293b'/>" +
+  "<rect x='128' y='90' width='44' height='55' rx='14' fill='#0891b2'/>" +
+  "<line x1='135' y1='118' x2='122' y2='146' stroke='#0891b2' stroke-width='11' stroke-linecap='round'/>" +
+  "<line x1='165' y1='118' x2='178' y2='146' stroke='#0891b2' stroke-width='11' stroke-linecap='round'/>" +
+  "<rect x='108' y='138' width='84' height='16' rx='2' fill='#ffffff' stroke='#1e293b' stroke-width='2'/>" +
+  "<line x1='150' y1='138' x2='150' y2='154' stroke='#1e293b' stroke-width='2'/>" +
+  "<line x1='115' y1='144' x2='140' y2='144' stroke='#94a3b8' stroke-width='2'/>" +
+  "<line x1='115' y1='149' x2='135' y2='149' stroke='#94a3b8' stroke-width='2'/>" +
+  "<line x1='160' y1='144' x2='185' y2='144' stroke='#94a3b8' stroke-width='2'/>" +
+  "<line x1='160' y1='149' x2='180' y2='149' stroke='#94a3b8' stroke-width='2'/>" +
   "</svg>";
 
 const SVG_HANDSHAKE =
   "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
   "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<circle cx='110' cy='70' r='18' fill='#1e293b'/>" +
-  "<rect x='92' y='88' width='36' height='60' rx='10' fill='#0891b2'/>" +
-  "<circle cx='210' cy='70' r='18' fill='#1e293b'/>" +
-  "<rect x='192' y='88' width='36' height='60' rx='10' fill='#ea580c'/>" +
-  "<line x1='128' y1='115' x2='192' y2='115' stroke='#1e293b' stroke-width='6' stroke-linecap='round'/>" +
-  "<rect x='60' y='170' width='200' height='10' fill='#94a3b8'/>" +
+  "<rect x='0' y='180' width='320' height='20' fill='#cbd5e1'/>" +
+  "<circle cx='105' cy='68' r='20' fill='#1e293b'/>" +
+  "<rect x='85' y='88' width='40' height='70' rx='12' fill='#0891b2'/>" +
+  "<line x1='120' y1='104' x2='158' y2='120' stroke='#0891b2' stroke-width='11' stroke-linecap='round'/>" +
+  "<circle cx='215' cy='68' r='20' fill='#1e293b'/>" +
+  "<rect x='195' y='88' width='40' height='70' rx='12' fill='#ea580c'/>" +
+  "<line x1='200' y1='104' x2='162' y2='120' stroke='#ea580c' stroke-width='11' stroke-linecap='round'/>" +
+  "<circle cx='160' cy='120' r='9' fill='#f1c27d'/>" +
   "</svg>";
 
 const SVG_WATERING =
   "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
   "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<rect x='0' y='170' width='320' height='30' fill='#86efac'/>" +
-  "<circle cx='120' cy='70' r='18' fill='#1e293b'/>" +
-  "<rect x='102' y='88' width='36' height='70' rx='10' fill='#f472b6'/>" +
-  "<rect x='140' y='110' width='40' height='20' rx='4' fill='#0891b2'/>" +
-  "<circle cx='230' cy='150' r='14' fill='#16a34a'/>" +
-  "<rect x='224' y='150' width='12' height='30' fill='#78350f'/>" +
-  "<circle cx='260' cy='140' r='10' fill='#16a34a'/>" +
-  "<rect x='255' y='140' width='10' height='40' fill='#78350f'/>" +
+  "<rect x='0' y='175' width='320' height='25' fill='#86efac'/>" +
+  "<circle cx='110' cy='63' r='18' fill='#1e293b'/>" +
+  "<rect x='92' y='81' width='36' height='60' rx='12' fill='#f472b6'/>" +
+  "<line x1='125' y1='98' x2='165' y2='108' stroke='#f472b6' stroke-width='10' stroke-linecap='round'/>" +
+  "<rect x='160' y='98' width='38' height='24' rx='6' fill='#0891b2'/>" +
+  "<path d='M198 106 L222 92 L228 98 L204 114 Z' fill='#0891b2'/>" +
+  "<path d='M170 88 Q178 74 187 88' stroke='#0891b2' stroke-width='5' fill='none'/>" +
+  "<circle cx='224' cy='106' r='2.5' fill='#38bdf8'/>" +
+  "<circle cx='229' cy='114' r='2.5' fill='#38bdf8'/>" +
+  "<circle cx='234' cy='122' r='2.5' fill='#38bdf8'/>" +
+  "<rect x='222' y='150' width='26' height='26' fill='#b45309'/>" +
+  "<circle cx='235' cy='140' r='13' fill='#16a34a'/>" +
+  "<circle cx='224' cy='131' r='9' fill='#16a34a'/>" +
+  "<circle cx='246' cy='131' r='9' fill='#16a34a'/>" +
   "</svg>";
 
 const SVG_STREET =
   "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
   "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<rect x='0' y='140' width='320' height='60' fill='#cbd5e1'/>" +
-  "<rect x='30' y='110' width='70' height='35' rx='8' fill='#0891b2'/>" +
-  "<circle cx='45' cy='148' r='9' fill='#1e293b'/>" +
-  "<circle cx='85' cy='148' r='9' fill='#1e293b'/>" +
-  "<rect x='140' y='110' width='70' height='35' rx='8' fill='#ea580c'/>" +
-  "<circle cx='155' cy='148' r='9' fill='#1e293b'/>" +
-  "<circle cx='195' cy='148' r='9' fill='#1e293b'/>" +
-  "<circle cx='260' cy='90' r='16' fill='#16a34a'/>" +
-  "<rect x='256' y='90' width='8' height='30' fill='#78350f'/>" +
+  "<rect x='0' y='150' width='320' height='50' fill='#94a3b8'/>" +
+  "<rect x='0' y='145' width='320' height='6' fill='#e2e8f0'/>" +
+  "<rect x='30' y='108' width='80' height='30' rx='8' fill='#0891b2'/>" +
+  "<path d='M45 108 L60 88 L95 88 L105 108 Z' fill='#0891b2'/>" +
+  "<rect x='58' y='92' width='30' height='16' fill='#bae6fd'/>" +
+  "<circle cx='48' cy='140' r='10' fill='#1e293b'/>" +
+  "<circle cx='92' cy='140' r='10' fill='#1e293b'/>" +
+  "<rect x='150' y='108' width='80' height='30' rx='8' fill='#ea580c'/>" +
+  "<path d='M165 108 L180 88 L215 88 L225 108 Z' fill='#ea580c'/>" +
+  "<rect x='178' y='92' width='30' height='16' fill='#fed7aa'/>" +
+  "<circle cx='168' cy='140' r='10' fill='#1e293b'/>" +
+  "<circle cx='212' cy='140' r='10' fill='#1e293b'/>" +
+  "<rect x='272' y='110' width='10' height='38' fill='#78350f'/>" +
+  "<circle cx='277' cy='95' r='24' fill='#16a34a'/>" +
   "</svg>";
 
 const SVG_MEETING =
   "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
   "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<ellipse cx='160' cy='130' rx='90' ry='30' fill='#94a3b8'/>" +
-  "<circle cx='100' cy='80' r='14' fill='#1e293b'/>" +
-  "<rect x='87' y='94' width='26' height='40' rx='8' fill='#0891b2'/>" +
-  "<circle cx='160' cy='70' r='14' fill='#1e293b'/>" +
-  "<rect x='147' y='84' width='26' height='40' rx='8' fill='#ea580c'/>" +
-  "<circle cx='220' cy='80' r='14' fill='#1e293b'/>" +
-  "<rect x='207' y='94' width='26' height='40' rx='8' fill='#16a34a'/>" +
+  "<ellipse cx='160' cy='140' rx='100' ry='28' fill='#a8a29e'/>" +
+  "<rect x='140' y='128' width='40' height='4' fill='#e2e8f0'/>" +
+  "<rect x='145' y='134' width='30' height='3' fill='#cbd5e1'/>" +
+  "<circle cx='90' cy='85' r='16' fill='#1e293b'/>" +
+  "<rect x='74' y='101' width='32' height='45' rx='10' fill='#0891b2'/>" +
+  "<circle cx='160' cy='75' r='16' fill='#1e293b'/>" +
+  "<rect x='144' y='91' width='32' height='45' rx='10' fill='#ea580c'/>" +
+  "<circle cx='230' cy='85' r='16' fill='#1e293b'/>" +
+  "<rect x='214' y='101' width='32' height='45' rx='10' fill='#16a34a'/>" +
   "</svg>";
 
 export const TOEIC_LESSONS: Lesson[] = [
