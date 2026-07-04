@@ -166,7 +166,7 @@ export default function Navbar() {
           <div style={{ width: 1, height: 20, background: "var(--border)", margin: "0 4px", flexShrink: 0 }} />
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-1 flex-1">
+          <div className="hidden md:flex items-center gap-1 flex-1 navbar-links">
 
             {/* HOME */}
             {/* COURSES link */}

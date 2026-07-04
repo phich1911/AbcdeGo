@@ -205,3 +205,9 @@ html:not(.light) .logo-light { display: none; }
 .navbar-logo-light { display: block; }
 html:not(.light) .navbar-logo-dark { display: block; }
 html:not(.light) .navbar-logo-light { display: none; }
+
+/* Thai text has no spaces, so browsers can wrap it between any two
+   characters — force nav labels onto one line even when slightly tight. */
+.navbar-links a, .navbar-links button {
+  white-space: nowrap;
+}
