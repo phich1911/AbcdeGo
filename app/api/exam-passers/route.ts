@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
       return { name: entry?.name ?? "ผู้เรียน", avatar: entry?.avatar ?? null, rank };
     });
 
-    return NextResponse.json({ passers: passers.slice(0, 20) });
+    return NextResponse.json({ passers: passers.slice(0, 200) });
   } catch {
     return NextResponse.json({ passers: [] });
   }
