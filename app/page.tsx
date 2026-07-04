@@ -3,7 +3,7 @@ import SiteStatsWrapper from "@/components/SiteStatsWrapper";
 import { COURSES } from "@/lib/data";
 import { getPopularCourseIds } from "@/lib/popular-courses";
 import { getRegisteredUserCount } from "@/lib/registered-count";
-import { getLeaderboard } from "@/lib/supabase";
+import { getLeaderboardServer } from "@/lib/leaderboard-cache";
 import { ARTICLES } from "@/lib/articles";
 import { Crown } from "lucide-react";
 
@@ -49,7 +49,7 @@ export default async function Home() {
   const [popularIds, learnerCount, topLeader] = await Promise.all([
     getPopularCourseIds(),
     getRegisteredUserCount(),
-    getLeaderboard(1).then((rows) => rows[0] ?? null),
+    getLeaderboardServer(1).then((rows) => rows[0] ?? null),
   ]);
 
   return (

@@ -1,4 +1,4 @@
-import { getLeaderboard } from "@/lib/supabase";
+import { getLeaderboardServer } from "@/lib/leaderboard-cache";
 import { AVATARS, GM_AVATAR } from "@/lib/avatar";
 
 export const metadata = {
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 const MEDAL = ["🥇", "🥈", "🥉"];
 
 export default async function LeaderboardPage() {
-  const entries = await getLeaderboard(100);
+  const entries = await getLeaderboardServer(100);
 
   return (
     <main style={{ maxWidth: 640, margin: "0 auto", padding: "80px 16px 48px" }}>

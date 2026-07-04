@@ -1,5 +1,6 @@
 import { createClient, SupabaseClient, User } from "@supabase/supabase-js";
 import { GM_EMAIL, GM_AVATAR } from "@/lib/avatar";
+import { dedupeLeaderboard, type LeaderboardRow } from "@/lib/leaderboard-dedupe";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://eaxskmgekbdrmmczptmq.supabase.co";
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_bVnYGDvGfIiB1s26IUYo9A_vefPQl8R";
@@ -38,9 +39,9 @@ function getStoredSession(): { access_token?: string; user?: User } | null {
 
 
 export async function getLeaderboard(limit = 10) {
-  // Fetch via our cached route (30s server-side cache) instead of hitting
-  // Supabase directly from every visitor's browser.
-  let data: { name: string; xp: number; avatar: string | null }[] = [];
+  // Client-side only: fetch via our cached route (30s server-side cache)
+  // instead of hitting Supabase directly from every visitor's browser.
+  let data: LeaderboardRow[] = [];
   try {
     const res = await fetch("/api/leaderboard");
     if (res.ok) data = await res.json();
@@ -48,16 +49,7 @@ export async function getLeaderboard(limit = 10) {
     return [];
   }
   if (!data || data.length === 0) return [];
-  const seen = new Map<string, { xp: number; avatar: string | null }>();
-  for (const row of data) {
-    if (!seen.has(row.name) || row.xp > seen.get(row.name)!.xp) {
-      seen.set(row.name, { xp: row.xp, avatar: row.avatar ?? null });
-    }
-  }
-  return Array.from(seen.entries())
-    .sort((a, b) => b[1].xp - a[1].xp)
-    .slice(0, limit)
-    .map(([name, { xp, avatar }]) => ({ name, xp, avatar }));
+  return dedupeLeaderboard(data, limit);
 }
 
 export async function submitScore(name: string, xp: number) {
