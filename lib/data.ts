@@ -34,7 +34,7 @@ export type Step =
       part: 1 | 2 | 3 | 4;
       question: string;
       script: string;
-      imageSvg?: string;
+      imageUrl?: string;
       choices: string[];
       spokenChoices?: boolean;
       correct: number;

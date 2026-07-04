@@ -4,88 +4,14 @@ import type { Lesson } from "@/lib/data";
 // lib/tts.ts (Web Speech API), so questions carry a spoken `script` plus
 // visible `question`/`choices` for rendering and review after answering.
 
-const SVG_DESK_READING =
-  "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
-  "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<rect x='40' y='150' width='240' height='14' fill='#78716c'/>" +
-  "<rect x='55' y='164' width='10' height='30' fill='#78716c'/>" +
-  "<rect x='255' y='164' width='10' height='30' fill='#78716c'/>" +
-  "<circle cx='150' cy='68' r='22' fill='#1e293b'/>" +
-  "<rect x='128' y='90' width='44' height='55' rx='14' fill='#0891b2'/>" +
-  "<line x1='135' y1='118' x2='122' y2='146' stroke='#0891b2' stroke-width='11' stroke-linecap='round'/>" +
-  "<line x1='165' y1='118' x2='178' y2='146' stroke='#0891b2' stroke-width='11' stroke-linecap='round'/>" +
-  "<rect x='108' y='138' width='84' height='16' rx='2' fill='#ffffff' stroke='#1e293b' stroke-width='2'/>" +
-  "<line x1='150' y1='138' x2='150' y2='154' stroke='#1e293b' stroke-width='2'/>" +
-  "<line x1='115' y1='144' x2='140' y2='144' stroke='#94a3b8' stroke-width='2'/>" +
-  "<line x1='115' y1='149' x2='135' y2='149' stroke='#94a3b8' stroke-width='2'/>" +
-  "<line x1='160' y1='144' x2='185' y2='144' stroke='#94a3b8' stroke-width='2'/>" +
-  "<line x1='160' y1='149' x2='180' y2='149' stroke='#94a3b8' stroke-width='2'/>" +
-  "</svg>";
-
-const SVG_HANDSHAKE =
-  "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
-  "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<rect x='0' y='180' width='320' height='20' fill='#cbd5e1'/>" +
-  "<circle cx='105' cy='68' r='20' fill='#1e293b'/>" +
-  "<rect x='85' y='88' width='40' height='70' rx='12' fill='#0891b2'/>" +
-  "<line x1='120' y1='104' x2='158' y2='120' stroke='#0891b2' stroke-width='11' stroke-linecap='round'/>" +
-  "<circle cx='215' cy='68' r='20' fill='#1e293b'/>" +
-  "<rect x='195' y='88' width='40' height='70' rx='12' fill='#ea580c'/>" +
-  "<line x1='200' y1='104' x2='162' y2='120' stroke='#ea580c' stroke-width='11' stroke-linecap='round'/>" +
-  "<circle cx='160' cy='120' r='9' fill='#f1c27d'/>" +
-  "</svg>";
-
-const SVG_WATERING =
-  "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
-  "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<rect x='0' y='175' width='320' height='25' fill='#86efac'/>" +
-  "<circle cx='110' cy='63' r='18' fill='#1e293b'/>" +
-  "<rect x='92' y='81' width='36' height='60' rx='12' fill='#f472b6'/>" +
-  "<line x1='125' y1='98' x2='165' y2='108' stroke='#f472b6' stroke-width='10' stroke-linecap='round'/>" +
-  "<rect x='160' y='98' width='38' height='24' rx='6' fill='#0891b2'/>" +
-  "<path d='M198 106 L222 92 L228 98 L204 114 Z' fill='#0891b2'/>" +
-  "<path d='M170 88 Q178 74 187 88' stroke='#0891b2' stroke-width='5' fill='none'/>" +
-  "<circle cx='224' cy='106' r='2.5' fill='#38bdf8'/>" +
-  "<circle cx='229' cy='114' r='2.5' fill='#38bdf8'/>" +
-  "<circle cx='234' cy='122' r='2.5' fill='#38bdf8'/>" +
-  "<rect x='222' y='150' width='26' height='26' fill='#b45309'/>" +
-  "<circle cx='235' cy='140' r='13' fill='#16a34a'/>" +
-  "<circle cx='224' cy='131' r='9' fill='#16a34a'/>" +
-  "<circle cx='246' cy='131' r='9' fill='#16a34a'/>" +
-  "</svg>";
-
-const SVG_STREET =
-  "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
-  "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<rect x='0' y='150' width='320' height='50' fill='#94a3b8'/>" +
-  "<rect x='0' y='145' width='320' height='6' fill='#e2e8f0'/>" +
-  "<rect x='30' y='108' width='80' height='30' rx='8' fill='#0891b2'/>" +
-  "<path d='M45 108 L60 88 L95 88 L105 108 Z' fill='#0891b2'/>" +
-  "<rect x='58' y='92' width='30' height='16' fill='#bae6fd'/>" +
-  "<circle cx='48' cy='140' r='10' fill='#1e293b'/>" +
-  "<circle cx='92' cy='140' r='10' fill='#1e293b'/>" +
-  "<rect x='150' y='108' width='80' height='30' rx='8' fill='#ea580c'/>" +
-  "<path d='M165 108 L180 88 L215 88 L225 108 Z' fill='#ea580c'/>" +
-  "<rect x='178' y='92' width='30' height='16' fill='#fed7aa'/>" +
-  "<circle cx='168' cy='140' r='10' fill='#1e293b'/>" +
-  "<circle cx='212' cy='140' r='10' fill='#1e293b'/>" +
-  "<rect x='272' y='110' width='10' height='38' fill='#78350f'/>" +
-  "<circle cx='277' cy='95' r='24' fill='#16a34a'/>" +
-  "</svg>";
-
-const SVG_MEETING =
-  "<svg viewBox='0 0 320 200' xmlns='http://www.w3.org/2000/svg'>" +
-  "<rect width='320' height='200' fill='#eef2f7'/>" +
-  "<ellipse cx='160' cy='140' rx='100' ry='28' fill='#a8a29e'/>" +
-  "<rect x='140' y='128' width='40' height='4' fill='#e2e8f0'/>" +
-  "<rect x='145' y='134' width='30' height='3' fill='#cbd5e1'/>" +
-  "<circle cx='90' cy='85' r='16' fill='#1e293b'/>" +
-  "<rect x='74' y='101' width='32' height='45' rx='10' fill='#0891b2'/>" +
-  "<circle cx='160' cy='75' r='16' fill='#1e293b'/>" +
-  "<rect x='144' y='91' width='32' height='45' rx='10' fill='#ea580c'/>" +
-  "<circle cx='230' cy='85' r='16' fill='#1e293b'/>" +
-  "<rect x='214' y='101' width='32' height='45' rx='10' fill='#16a34a'/>" +
-  "</svg>";
+// Part 1 photos are real CC-licensed photos (downloaded to public/toeic/),
+// swapped in after the original hand-drawn SVG scenes proved too abstract
+// to tell what action was even happening.
+//   p1-reading.jpg   — Bijay Chaurasia, CC BY-SA 4.0, Wikimedia Commons
+//   p1-handshake.jpg — perzon seo, CC BY 2.0, Wikimedia Commons
+//   p1-watering.jpg  — SuSanA Secretariat, CC BY 2.0, Wikimedia Commons
+//   p1-street.jpg    — CC BY-SA 4.0, Wikimedia Commons
+//   p1-meeting.jpg   — Amtec Photos, CC BY 2.0, Wikimedia Commons
 
 export const TOEIC_LESSONS: Lesson[] = [
   {
@@ -106,17 +32,17 @@ export const TOEIC_LESSONS: Lesson[] = [
         part: 1,
         question: "ฟังตัวเลือก A-D แล้วเลือกประโยคที่ตรงกับภาพมากที่สุด",
         script:
-          "Look at the picture. (A) The man is writing a letter. (B) The man is reading a book at his desk. (C) The man is sleeping on the desk. (D) The man is standing near the window.",
-        imageSvg: SVG_DESK_READING,
+          "Look at the picture. (A) The man is writing a letter. (B) The man is reading a newspaper. (C) The man is sleeping on a chair. (D) The man is fixing his shoe.",
+        imageUrl: "/toeic/p1-reading.jpg",
         choices: [
           "The man is writing a letter.",
-          "The man is reading a book at his desk.",
-          "The man is sleeping on the desk.",
-          "The man is standing near the window.",
+          "The man is reading a newspaper.",
+          "The man is sleeping on a chair.",
+          "The man is fixing his shoe.",
         ],
         spokenChoices: true,
         correct: 1,
-        explanation: "ภาพเป็นชายนั่งอ่านหนังสือที่โต๊ะ ตรงกับตัวเลือก (B) เท่านั้น",
+        explanation: "ภาพเป็นชายสูงอายุนั่งอ่านหนังสือพิมพ์ ตรงกับตัวเลือก (B) เท่านั้น",
       },
       {
         type: "listening",
@@ -124,7 +50,7 @@ export const TOEIC_LESSONS: Lesson[] = [
         question: "ฟังตัวเลือก A-D แล้วเลือกประโยคที่ตรงกับภาพมากที่สุด",
         script:
           "Look at the picture. (A) The people are shaking hands. (B) The people are eating lunch. (C) The people are arguing loudly. (D) The people are walking outside.",
-        imageSvg: SVG_HANDSHAKE,
+        imageUrl: "/toeic/p1-handshake.jpg",
         choices: [
           "The people are shaking hands.",
           "The people are eating lunch.",
@@ -140,17 +66,17 @@ export const TOEIC_LESSONS: Lesson[] = [
         part: 1,
         question: "ฟังตัวเลือก A-D แล้วเลือกประโยคที่ตรงกับภาพมากที่สุด",
         script:
-          "Look at the picture. (A) The woman is painting a fence. (B) The woman is watering the plants. (C) The woman is riding a bicycle. (D) The woman is reading a newspaper.",
-        imageSvg: SVG_WATERING,
+          "Look at the picture. (A) The children are riding bicycles. (B) The family is filling a watering can from a rain barrel. (C) The man is painting the wall. (D) The children are playing soccer.",
+        imageUrl: "/toeic/p1-watering.jpg",
         choices: [
-          "The woman is painting a fence.",
-          "The woman is watering the plants.",
-          "The woman is riding a bicycle.",
-          "The woman is reading a newspaper.",
+          "The children are riding bicycles.",
+          "The family is filling a watering can from a rain barrel.",
+          "The man is painting the wall.",
+          "The children are playing soccer.",
         ],
         spokenChoices: true,
         correct: 1,
-        explanation: "ภาพเป็นผู้หญิงถือกระป๋องรดน้ำต้นไม้ ตรงกับตัวเลือก (B)",
+        explanation: "ภาพเป็นครอบครัวกำลังตักน้ำใส่บัวรดน้ำจากถังเก็บน้ำฝนในสวน ตรงกับตัวเลือก (B)",
       },
       {
         type: "listening",
@@ -158,7 +84,7 @@ export const TOEIC_LESSONS: Lesson[] = [
         question: "ฟังตัวเลือก A-D แล้วเลือกประโยคที่ตรงกับภาพมากที่สุด",
         script:
           "Look at the picture. (A) The cars are parked along the street. (B) The street is empty of vehicles. (C) Workers are repairing the road. (D) The trees have been cut down.",
-        imageSvg: SVG_STREET,
+        imageUrl: "/toeic/p1-street.jpg",
         choices: [
           "The cars are parked along the street.",
           "The street is empty of vehicles.",
@@ -175,7 +101,7 @@ export const TOEIC_LESSONS: Lesson[] = [
         question: "ฟังตัวเลือก A-D แล้วเลือกประโยคที่ตรงกับภาพมากที่สุด",
         script:
           "Look at the picture. (A) The people are playing cards. (B) The room is empty. (C) The people are having a meeting around the table. (D) The people are cooking in the kitchen.",
-        imageSvg: SVG_MEETING,
+        imageUrl: "/toeic/p1-meeting.jpg",
         choices: [
           "The people are playing cards.",
           "The room is empty.",

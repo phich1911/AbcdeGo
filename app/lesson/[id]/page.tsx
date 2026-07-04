@@ -470,11 +470,13 @@ export default function LessonPage({ params }: { params: Promise<{ id: string }>
               </div>
               <p className="text-sm" style={{ color: "var(--text-muted)" }}>{step.question}</p>
 
-              {step.imageSvg && (
-                <div
-                  className="rounded-xl overflow-hidden"
-                  style={{ border: "1px solid var(--border)" }}
-                  dangerouslySetInnerHTML={{ __html: step.imageSvg }}
+              {step.imageUrl && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={step.imageUrl}
+                  alt="TOEIC Part 1 photograph"
+                  className="w-full rounded-xl object-cover"
+                  style={{ border: "1px solid var(--border)", maxHeight: 320 }}
                 />
               )}
 
