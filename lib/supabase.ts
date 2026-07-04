@@ -38,13 +38,11 @@ function getStoredSession(): { access_token?: string; user?: User } | null {
 
 
 export async function getLeaderboard(limit = 10) {
-  // Direct REST fetch — supabase-js client queries can hang on auth locks
+  // Fetch via our cached route (30s server-side cache) instead of hitting
+  // Supabase directly from every visitor's browser.
   let data: { name: string; xp: number; avatar: string | null }[] = [];
   try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/leaderboard?select=name,xp,avatar&order=xp.desc&limit=200`,
-      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
-    );
+    const res = await fetch("/api/leaderboard");
     if (res.ok) data = await res.json();
   } catch {
     return [];
@@ -65,6 +63,23 @@ export async function getLeaderboard(limit = 10) {
 export async function submitScore(name: string, xp: number) {
   const { error } = await getClient().from("leaderboard").insert({ name, xp });
   return !error;
+}
+
+const SYNCED_XP_KEY = "leaderboard_synced_xp";
+
+// Skips the network round-trip when the caller's XP already matches what
+// was last synced to the leaderboard, so it's safe to call on every mount.
+export async function syncLeaderboardIfChanged(xp: number) {
+  if (xp <= 0) return { ok: false, skipped: true };
+  if (typeof window !== "undefined") {
+    const last = localStorage.getItem(SYNCED_XP_KEY);
+    if (last === String(xp)) return { ok: false, skipped: true };
+  }
+  const result = await syncLeaderboard(xp);
+  if (result?.ok && typeof window !== "undefined") {
+    localStorage.setItem(SYNCED_XP_KEY, String(xp));
+  }
+  return result;
 }
 
 export async function syncLeaderboard(xp: number, oldName?: string) {

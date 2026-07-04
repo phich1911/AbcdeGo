@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { getProgress, syncProgressFromCloud, pushProgressToCloud } from "@/lib/progress";
 import { COURSES } from "@/lib/data";
-import { onAuthChange, signOut, getSession, syncLeaderboard } from "@/lib/supabase";
+import { onAuthChange, signOut, getSession, syncLeaderboardIfChanged } from "@/lib/supabase";
 import { getAvatar, GM_EMAIL, GM_AVATAR } from "@/lib/avatar";
 import AuthModal from "@/components/AuthModal";
 import DisplayNameModal from "@/components/DisplayNameModal";
@@ -84,8 +84,8 @@ export default function Navbar() {
         setDisplayName(user.user_metadata?.display_name ?? null);
         const currentXp = getProgress().xp;
         setXp(currentXp);
-        // Guaranteed leaderboard sync on every page load when logged in
-        if (currentXp > 0) syncLeaderboard(currentXp).then((r) => { if (r?.ok) window.dispatchEvent(new Event("leaderboard-updated")); });
+        // Only hits the network when XP has changed since the last sync
+        syncLeaderboardIfChanged(currentXp).then((r) => { if (r?.ok) window.dispatchEvent(new Event("leaderboard-updated")); });
       }
     });
 
@@ -99,7 +99,7 @@ export default function Navbar() {
         await pushProgressToCloud();
         const currentXp = getProgress().xp;
         setXp(currentXp);
-        if (currentXp > 0) syncLeaderboard(currentXp).then((r) => { if (r?.ok) window.dispatchEvent(new Event("leaderboard-updated")); });
+        syncLeaderboardIfChanged(currentXp).then((r) => { if (r?.ok) window.dispatchEvent(new Event("leaderboard-updated")); });
         if (!user.user_metadata?.display_name) {
           const provider = user.app_metadata?.provider;
           if (provider === "google" || provider === "facebook") {
