@@ -1,11 +1,6 @@
 import type { Lesson } from "@/lib/data";
 
-// Unreleased "ชุดที่ 2" lesson content — must never be imported from a
-// "use client" file. Only serve it through a session-verified admin API route.
-if (typeof window !== "undefined") {
-  throw new Error("lib/lesson-data/set2-lessons must only be imported on the server");
-}
-
+// "ก.พ. ชุดที่ 2" lesson content — released and part of the public LESSONS export.
 export const SET2_LESSONS: Lesson[] = [
   // ===== ก.พ. ชุดที่ 2 — ความรู้ทั่วไป =====
   {

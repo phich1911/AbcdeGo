@@ -1,6 +1,7 @@
 import { TOEIC_LESSONS } from "@/lib/toeic-data";
 import { TOEIC_READING_LESSONS } from "@/lib/toeic-reading-data";
 import { TOEIC_VOCAB_LESSONS } from "@/lib/toeic-vocab-data";
+import { SET2_LESSONS } from "@/lib/lesson-data/set2-lessons";
 
 export type Course = {
   id: string;
@@ -6816,6 +6817,7 @@ export const LESSONS: Lesson[] = [
   ...TOEIC_LESSONS,
   ...TOEIC_READING_LESSONS,
   ...TOEIC_VOCAB_LESSONS,
+  ...SET2_LESSONS,
 ];
 
 export function getCourse(id: string): Course | undefined {
