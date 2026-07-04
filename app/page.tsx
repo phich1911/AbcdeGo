@@ -91,6 +91,7 @@ export default async function Home() {
                   }}
                 >
                   <Crown size={16} style={{ color: "#f59e0b" }} fill="#f59e0b" />
+                  <span style={{ fontSize: 12, color: "var(--text-muted)" }}>อันดับ 1</span>
                   <span style={{ fontSize: 13, fontWeight: 800, color: "#f59e0b" }}>{topLeader.name}</span>
                   <span style={{ fontSize: 12, color: "var(--text-muted)" }}>ได้รับฉายา</span>
                   <span style={{ fontSize: 12, fontWeight: 700, color: "#f59e0b" }}>🔥 นำห่างจนต้องเช็คว่าโกงป่าว</span>
