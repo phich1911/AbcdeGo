@@ -47,6 +47,7 @@ export default function Navbar() {
   const [avatar, setAvatar] = useState(() => typeof window !== "undefined" ? getAvatar() : null);
   const shownAvatar = userEmail === GM_EMAIL ? GM_AVATAR : avatar;
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [funMenuOpen, setFunMenuOpen] = useState(false);
   const [nameModalOpen, setNameModalOpen] = useState(false);
   const [editProfileOpen, setEditProfileOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -54,6 +55,7 @@ export default function Navbar() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const userMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const funMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
@@ -177,21 +179,37 @@ export default function Navbar() {
               คอร์สเรียน
             </Link>
 
-            <Link
-              href="/tarot"
-              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/tarot" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
-            >
-              ดูดวง
-            </Link>
-
-            <Link
-              href="/game"
-              className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/game" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
-            >
-              เกม
-            </Link>
+            <div className="relative"
+              onMouseEnter={() => { if (funMenuCloseTimer.current) clearTimeout(funMenuCloseTimer.current); setFunMenuOpen(true); }}
+              onMouseLeave={() => { funMenuCloseTimer.current = setTimeout(() => setFunMenuOpen(false), 150); }}>
+              <button
+                className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
+                style={{ color: (pathname === "/tarot" || pathname === "/game") ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: (pathname === "/tarot" || pathname === "/game") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+              >
+                ความบันเทิง
+              </button>
+              {funMenuOpen && (
+                <div className="absolute top-full left-0 mt-1 rounded-lg overflow-hidden min-w-[140px]"
+                  style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" }}
+                  onMouseEnter={() => { if (funMenuCloseTimer.current) clearTimeout(funMenuCloseTimer.current); }}
+                  onMouseLeave={() => { funMenuCloseTimer.current = setTimeout(() => setFunMenuOpen(false), 150); }}>
+                  <Link href="/tarot" onClick={() => setFunMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm"
+                    style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, transition: "background 0.1s" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
+                    ดูดวง
+                  </Link>
+                  <Link href="/game" onClick={() => setFunMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-sm"
+                    style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, transition: "background 0.1s" }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
+                    เกม
+                  </Link>
+                </div>
+              )}
+            </div>
 
             <Link
               href="/news"
