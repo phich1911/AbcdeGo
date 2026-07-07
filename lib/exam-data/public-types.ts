@@ -6,6 +6,9 @@ export interface PublicExamQuestion {
   id: number;
   question: string;
   choices: string[];
+  imageUrl?: string;
+  audioScript?: string;
+  spokenChoices?: boolean;
 }
 
 export interface PublicExamSection {
@@ -17,6 +20,7 @@ export interface PublicExamSection {
   passingPercent: number;
   timeRecommended: number;
   questions: PublicExamQuestion[];
+  group?: "listening" | "reading";
 }
 
 export interface PublicMockExam {
@@ -26,6 +30,7 @@ export interface PublicMockExam {
   xpReward: number;
   rankReward: string;
   sections: PublicExamSection[];
+  scoringMode?: "toeic";
 }
 
 export interface ExamSectionResult {

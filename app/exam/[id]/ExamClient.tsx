@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { PublicMockExam, PublicExamSection, ExamSectionResult } from "@/lib/exam-data/public-types";
 import { completeLesson, pushProgressToCloud } from "@/lib/progress";
 import { syncLeaderboard, saveExamScore, hasExamScore } from "@/lib/supabase";
+import { speakEnglish, stopSpeaking } from "@/lib/tts";
 
 type Phase = "loading" | "notfound" | "intro" | "mode" | "exam" | "results";
 // "full" = all sections, number = section index (0/1/2)
@@ -59,6 +60,27 @@ function wrapTextChars(ctx: CanvasRenderingContext2D, text: string, maxWidth: nu
   return lines;
 }
 
+// TOEIC scaled score is always a multiple of 5, from 5 to 495 per section
+// (Listening/Reading), 10-990 total. There's no official public conversion
+// table, so this is a reasonable linear approximation for an estimate.
+function toeicScaled(correct: number, total: number): number {
+  if (total <= 0) return 5;
+  const pct = correct / total;
+  const raw = 5 + pct * 490;
+  return Math.min(495, Math.max(5, Math.round(raw / 5) * 5));
+}
+
+const TOEIC_BANDS = [
+  { min: 900, label: "Expert", desc: "เหมาะกับสายงานที่ใช้ภาษาอังกฤษเป็นหลัก" },
+  { min: 750, label: "Advanced", desc: "มาตรฐานบริษัทข้ามชาติและหน่วยงานรัฐชั้นนำ" },
+  { min: 550, label: "Intermediate", desc: "มาตรฐานทั่วไปสำหรับการสมัครงานส่วนใหญ่ในไทย" },
+  { min: 0, label: "Basic", desc: "ยังต้องพัฒนาเพิ่มเติมก่อนนำไปใช้สมัครงาน" },
+];
+
+function toeicBand(total: number) {
+  return TOEIC_BANDS.find((b) => total >= b.min)!;
+}
+
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -96,6 +118,12 @@ export default function ExamClient({ id }: { id: string }) {
     if (id) setPassedSections(getPassedSections(id));
   }, [id]);
 
+  // Stop any in-flight TTS audio when moving to a different question, or on unmount.
+  useEffect(() => {
+    stopSpeaking();
+    return () => stopSpeaking();
+  }, [sectionIdx, questionIdx]);
+
   useEffect(() => {
     if (!exam) return;
     hasExamScore(exam.id).then(setHasFullAttempt);
@@ -127,6 +155,7 @@ export default function ExamClient({ id }: { id: string }) {
       : exam?.sections[mode as number]?.timeRecommended ?? 0;
 
   const isSectionMode = mode !== "full";
+  const isToeic = exam?.scoringMode === "toeic";
 
   useEffect(() => {
     if (phase === "exam" && !submitted) {
@@ -242,6 +271,22 @@ export default function ExamClient({ id }: { id: string }) {
     if (!examResults) return;
     const results = examResults;
     const allPassed = results.every((r) => r.passed);
+    const isToeicImg = exam!.scoringMode === "toeic";
+    const toeicGroupsImg = isToeicImg
+      ? results.reduce(
+          (acc, r) => {
+            const sec = exam!.sections.find((s) => s.id === r.sectionId);
+            if (sec?.group) { acc[sec.group].correct += r.correct; acc[sec.group].total += r.questionCount; }
+            return acc;
+          },
+          { listening: { correct: 0, total: 0 }, reading: { correct: 0, total: 0 } }
+        )
+      : null;
+    const toeicTotalScoreImg = toeicGroupsImg
+      ? toeicScaled(toeicGroupsImg.listening.correct, toeicGroupsImg.listening.total) +
+        toeicScaled(toeicGroupsImg.reading.correct, toeicGroupsImg.reading.total)
+      : 0;
+    const toeicBandImg = isToeicImg ? toeicBand(toeicTotalScoreImg) : null;
     const dateStr = formatThaiDateTime(resultTime ?? new Date());
 
     const logoImg = new Image();
@@ -277,7 +322,9 @@ export default function ExamClient({ id }: { id: string }) {
       mctx.font = rowSubFont;
       const got = Math.round((correct / questionCount) * totalScore);
       const passScore = Math.round((totalScore * passingPercent) / 100);
-      const criteriaText = `เกณฑ์ผ่าน: ร้อยละ ${passingPercent} (${passScore} คะแนนขึ้นไป)`;
+      const criteriaText = isToeicImg
+        ? `ถูก ${correct}/${questionCount} ข้อ`
+        : `เกณฑ์ผ่าน: ร้อยละ ${passingPercent} (${passScore} คะแนนขึ้นไป)`;
       const criteriaLines = wrapTextChars(mctx, criteriaText, subjectColWidth);
       const height = subjectLines.length * lineH + criteriaLines.length * 15 + rowPaddingY * 2;
       return { subjectLines, criteriaLines, full: totalScore, got, passed, height };
@@ -287,7 +334,7 @@ export default function ExamClient({ id }: { id: string }) {
     const topHeight = 20 + 76 + titleBlockHeight + 8 + 20 + 22 + 24;
     const tableHeaderHeight = 40;
     const tableRowsHeight = rows.reduce((a, r) => a + r.height, 0);
-    const badgeHeight = 32 + 56 + 32;
+    const badgeHeight = 32 + (isToeicImg ? 64 : 56) + 32;
     const footerHeight = 14 + 26 + 20;
     const H = topHeight + tableHeaderHeight + tableRowsHeight + badgeHeight + footerHeight + PAD;
 
@@ -353,7 +400,7 @@ export default function ExamClient({ id }: { id: string }) {
         ctx.fillText(line, tableX + 12, ry);
         ry += lineH;
       });
-      ctx.fillStyle = row.passed ? "#16a34a" : "#dc2626";
+      ctx.fillStyle = isToeicImg ? "#0ea5e9" : row.passed ? "#16a34a" : "#dc2626";
       ctx.font = rowSubFont;
       row.criteriaLines.forEach((line) => {
         ctx.fillText(line, tableX + 12, ry);
@@ -364,7 +411,7 @@ export default function ExamClient({ id }: { id: string }) {
       ctx.fillStyle = "#374151";
       ctx.font = "bold 16px sans-serif";
       ctx.fillText(row.full.toFixed(2), colFullX, y + row.height / 2 + 5);
-      ctx.fillStyle = row.passed ? "#16a34a" : "#dc2626";
+      ctx.fillStyle = isToeicImg ? "#0ea5e9" : row.passed ? "#16a34a" : "#dc2626";
       ctx.fillText(row.got.toFixed(2), colGotX, y + row.height / 2 + 5);
       ctx.textAlign = "left";
 
@@ -379,14 +426,27 @@ export default function ExamClient({ id }: { id: string }) {
     y += 24;
 
     ctx.textAlign = "center";
-    const badgeColor = allPassed ? "#16a34a" : "#dc2626";
-    ctx.fillStyle = allPassed ? "rgba(22,163,74,0.1)" : "rgba(220,38,38,0.1)";
-    const badgeW = 200, badgeBoxH = 56;
-    roundRect(ctx, W / 2 - badgeW / 2, y, badgeW, badgeBoxH, 28);
-    ctx.fillStyle = badgeColor;
-    ctx.font = "bold 20px sans-serif";
-    ctx.fillText(allPassed ? "✓ ผ่าน" : "✗ ไม่ผ่าน", W / 2, y + 36);
-    y += badgeBoxH + 32;
+    if (isToeicImg && toeicBandImg) {
+      const badgeColor = "#0ea5e9";
+      ctx.fillStyle = "rgba(14,165,233,0.1)";
+      const badgeW = 240, badgeBoxH = 64;
+      roundRect(ctx, W / 2 - badgeW / 2, y, badgeW, badgeBoxH, 28);
+      ctx.fillStyle = badgeColor;
+      ctx.font = "bold 24px sans-serif";
+      ctx.fillText(`${toeicTotalScoreImg} คะแนน`, W / 2, y + 28);
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText(`ระดับ ${toeicBandImg.label}`, W / 2, y + 48);
+      y += badgeBoxH + 32;
+    } else {
+      const badgeColor = allPassed ? "#16a34a" : "#dc2626";
+      ctx.fillStyle = allPassed ? "rgba(22,163,74,0.1)" : "rgba(220,38,38,0.1)";
+      const badgeW = 200, badgeBoxH = 56;
+      roundRect(ctx, W / 2 - badgeW / 2, y, badgeW, badgeBoxH, 28);
+      ctx.fillStyle = badgeColor;
+      ctx.font = "bold 20px sans-serif";
+      ctx.fillText(allPassed ? "✓ ผ่าน" : "✗ ไม่ผ่าน", W / 2, y + 36);
+      y += badgeBoxH + 32;
+    }
 
     ctx.fillStyle = "#9ca3af";
     ctx.font = "12px sans-serif";
@@ -470,7 +530,7 @@ export default function ExamClient({ id }: { id: string }) {
                     วิชาที่ {i + 1}: {sec.title}
                   </p>
                   <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
-                    {sec.questionCount} ข้อ · {sec.totalScore} คะแนน · ผ่าน {sec.passingPercent}%
+                    {sec.questionCount} ข้อ{isToeic ? "" : ` · ${sec.totalScore} คะแนน · ผ่าน ${sec.passingPercent}%`}
                   </p>
                 </div>
                 <div style={{ textAlign: "right" }}>
@@ -506,7 +566,7 @@ export default function ExamClient({ id }: { id: string }) {
     const modeOptions: { label: string; sub: string; badge: string; badgeColor: string; value: ExamMode; locked: boolean }[] = [
       ...exam.sections.map((sec, i) => ({
         label: `วิชาที่ ${i + 1}: ${sec.shortTitle}`,
-        sub: `${sec.questionCount} ข้อ · ${sec.timeRecommended} นาที · ผ่าน ${sec.passingPercent}%`,
+        sub: `${sec.questionCount} ข้อ · ${sec.timeRecommended} นาที${isToeic ? "" : ` · ผ่าน ${sec.passingPercent}%`}`,
         badge: passedSections.includes(i) ? "✓ ผ่านแล้ว" : "ฝึกรายวิชา",
         badgeColor: passedSections.includes(i) ? "rgba(52,199,89,0.12)" : "rgba(0,122,255,0.12)",
         value: i as ExamMode,
@@ -514,7 +574,7 @@ export default function ExamClient({ id }: { id: string }) {
       })),
       {
         label: "ข้อสอบจำลองเต็มรูปแบบ",
-        sub: `ครบ 3 วิชา 100 ข้อ · ${exam.totalTime} นาที · รับ ${exam.xpReward.toLocaleString()} XP`,
+        sub: `ครบ ${exam.sections.length} วิชา ${exam.sections.reduce((s, sec) => s + sec.questionCount, 0)} ข้อ · ${exam.totalTime} นาที · รับ ${exam.xpReward.toLocaleString()} XP`,
         badge: "แนะนำ",
         badgeColor: "rgba(52,199,89,0.12)",
         value: "full" as ExamMode,
@@ -606,21 +666,40 @@ export default function ExamClient({ id }: { id: string }) {
     const results = examResults;
     const allPassed = results.every((r) => r.passed);
 
-    if (isFullMode && allPassed) {
+    // TOEIC has no per-section pass/fail — it's a proficiency measurement,
+    // not a test you can fail, so full-mode completion always awards XP.
+    const toeicGroups = isToeic
+      ? results.reduce(
+          (acc, r) => {
+            const sec = exam.sections.find((s) => s.id === r.sectionId);
+            if (sec?.group) { acc[sec.group].correct += r.correct; acc[sec.group].total += r.questionCount; }
+            return acc;
+          },
+          { listening: { correct: 0, total: 0 }, reading: { correct: 0, total: 0 } }
+        )
+      : null;
+    const toeicScaledListening = toeicGroups ? toeicScaled(toeicGroups.listening.correct, toeicGroups.listening.total) : 0;
+    const toeicScaledReading = toeicGroups ? toeicScaled(toeicGroups.reading.correct, toeicGroups.reading.total) : 0;
+    const toeicTotalScore = toeicScaledListening + toeicScaledReading;
+    const toeicBandInfo = isToeic && isFullMode ? toeicBand(toeicTotalScore) : null;
+
+    const earnedXp = isToeic ? isFullMode : allPassed;
+
+    if (isFullMode && earnedXp) {
       const updated = completeLesson(`exam-${exam.id}`, exam.xpReward, { correct: answeredCount, total: totalQ });
       syncLeaderboard(updated.xp);
       pushProgressToCloud();
     }
 
     if (isFullMode) {
-      saveExamScore(exam.id, totalCorrect, totalQ, allPassed);
+      saveExamScore(exam.id, totalCorrect, totalQ, isToeic ? true : allPassed);
       // Attempting a full run blind is what unlocks practice mode — flip it
       // optimistically so "เปลี่ยนโหมด" reflects it without a reload.
       if (!hasFullAttempt) setHasFullAttempt(true);
     }
 
     // Save section pass to localStorage
-    if (!isFullMode && allPassed) {
+    if (!isFullMode && (isToeic || allPassed)) {
       savePassedSection(id, mode as number);
       if (!passedSections.includes(mode as number)) {
         setPassedSections((prev) => [...prev, mode as number]);
@@ -632,9 +711,9 @@ export default function ExamClient({ id }: { id: string }) {
     return (
       <main style={{ maxWidth: 760, margin: "0 auto", padding: "80px 16px 48px" }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ fontSize: 56, marginBottom: 12 }}>{allPassed ? "" : timedOut ? "" : "✗"}</div>
-          <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px", color: allPassed ? "var(--accent-green)" : "#ff3b30" }}>
-            {allPassed ? (isFullMode ? "ผ่านการสอบ!" : "ผ่านวิชานี้!") : timedOut ? "หมดเวลา!" : "ไม่ผ่านเกณฑ์"}
+          <div style={{ fontSize: 56, marginBottom: 12 }}>{isToeic ? "📊" : allPassed ? "" : timedOut ? "" : "✗"}</div>
+          <h1 style={{ fontSize: 28, fontWeight: 800, letterSpacing: "-0.02em", margin: "0 0 6px", color: isToeic ? "var(--primary)" : allPassed ? "var(--accent-green)" : "#ff3b30" }}>
+            {isToeic ? (isFullMode ? "สอบเสร็จแล้ว!" : "ฝึกรายวิชานี้เสร็จแล้ว!") : allPassed ? (isFullMode ? "ผ่านการสอบ!" : "ผ่านวิชานี้!") : timedOut ? "หมดเวลา!" : "ไม่ผ่านเกณฑ์"}
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>
             ตอบแล้ว {answeredCount}/{totalQ} ข้อ
@@ -642,8 +721,33 @@ export default function ExamClient({ id }: { id: string }) {
           </p>
         </div>
 
-        {/* Full mode fail alert */}
-        {isFullMode && !allPassed && (
+        {/* TOEIC scaled score summary (full mode only — needs both Listening & Reading) */}
+        {isToeic && isFullMode && toeicBandInfo && (
+          <div className="card" style={{ padding: 24, marginBottom: 20, textAlign: "center" }}>
+            <p style={{ margin: "0 0 4px", fontSize: 13, color: "var(--text-muted)" }}>คะแนนโดยประมาณ (จาก 10-990)</p>
+            <p style={{ margin: "0 0 8px", fontSize: 40, fontWeight: 800, color: "var(--primary)" }}>{toeicTotalScore}</p>
+            <span style={{ display: "inline-block", padding: "4px 14px", borderRadius: 980, fontSize: 13, fontWeight: 700, background: "rgba(0,122,255,0.1)", color: "var(--primary)" }}>
+              ระดับ {toeicBandInfo.label}
+            </span>
+            <p style={{ margin: "8px 0 0", fontSize: 12, color: "var(--text-muted)" }}>{toeicBandInfo.desc}</p>
+            <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
+              <div>
+                <p style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "var(--text)" }}>{toeicScaledListening}</p>
+                <p style={{ margin: "2px 0 0", fontSize: 12, color: "var(--text-muted)" }}>Listening</p>
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: 20, fontWeight: 800, color: "var(--text)" }}>{toeicScaledReading}</p>
+                <p style={{ margin: "2px 0 0", fontSize: 12, color: "var(--text-muted)" }}>Reading</p>
+              </div>
+            </div>
+            <p style={{ margin: "12px 0 0", fontSize: 11, color: "var(--text-subtle)" }}>
+              * เป็นคะแนนประมาณการจากอัตราส่วนข้อถูก ไม่ใช่คะแนนสอบ TOEIC จริงจากศูนย์สอบ
+            </p>
+          </div>
+        )}
+
+        {/* Full mode fail alert — KP-style exams only */}
+        {!isToeic && isFullMode && !allPassed && (
           <div className="card" style={{ padding: 20, marginBottom: 20, background: "rgba(255,59,48,0.05)", borderColor: "rgba(255,59,48,0.3)", textAlign: "center" }}>
             <p style={{ margin: "0 0 6px", fontWeight: 800, fontSize: 16, color: "#ff3b30" }}>
               {timedOut ? " หมดเวลาก่อนทำครบ" : "✗ ยังไม่ผ่านเกณฑ์บางวิชา"}
@@ -654,7 +758,7 @@ export default function ExamClient({ id }: { id: string }) {
           </div>
         )}
 
-        {allPassed && isFullMode && (
+        {earnedXp && isFullMode && (
           <div className="card" style={{ padding: 20, marginBottom: 20, textAlign: "center", background: "rgba(52,199,89,0.06)", borderColor: "rgba(52,199,89,0.3)" }}>
             <p style={{ margin: "0 0 4px", fontWeight: 800, fontSize: 18, color: "var(--accent-green)" }}>
               +{exam.xpReward.toLocaleString()} XP
@@ -665,41 +769,43 @@ export default function ExamClient({ id }: { id: string }) {
           </div>
         )}
 
-        {allPassed && !isFullMode && sectionXp > 0 && (
+        {earnedXp && !isFullMode && sectionXp > 0 && (
           <div className="card" style={{ padding: 16, marginBottom: 20, textAlign: "center", background: "rgba(52,199,89,0.06)", borderColor: "rgba(52,199,89,0.3)" }}>
             <p style={{ margin: 0, fontSize: 14, color: "var(--text-muted)" }}>
-              ทำครบ 3 วิชาในโหมดเต็มรูปแบบเพื่อรับ <strong style={{ color: "var(--accent-green)" }}>{exam.xpReward.toLocaleString()} XP</strong>
+              ทำครบทุกวิชาในโหมดเต็มรูปแบบเพื่อรับ <strong style={{ color: "var(--accent-green)" }}>{exam.xpReward.toLocaleString()} XP</strong>
             </p>
           </div>
         )}
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 28 }}>
           {results.map(({ sectionId, title, correct, scorePercent, passed, questionCount, passingPercent }) => (
-            <div key={sectionId} className="card" style={{ padding: "16px 20px", borderColor: passed ? "rgba(52,199,89,0.3)" : "rgba(255,59,48,0.3)" }}>
+            <div key={sectionId} className="card" style={{ padding: "16px 20px", borderColor: isToeic ? "var(--border)" : passed ? "rgba(52,199,89,0.3)" : "rgba(255,59,48,0.3)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
                 <div>
                   <p style={{ margin: "0 0 2px", fontWeight: 700, fontSize: 14 }}>{title}</p>
                   <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
-                    ถูก {correct}/{questionCount} ข้อ · เกณฑ์ผ่าน {passingPercent}%
+                    ถูก {correct}/{questionCount} ข้อ{isToeic ? "" : ` · เกณฑ์ผ่าน ${passingPercent}%`}
                   </p>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <p style={{ margin: "0 0 2px", fontSize: 22, fontWeight: 800, color: passed ? "var(--accent-green)" : "var(--accent-red, #ff3b30)" }}>
+                  <p style={{ margin: "0 0 2px", fontSize: 22, fontWeight: 800, color: isToeic ? "var(--text)" : passed ? "var(--accent-green)" : "var(--accent-red, #ff3b30)" }}>
                     {scorePercent}%
                   </p>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: passed ? "var(--accent-green)" : "var(--accent-red, #ff3b30)" }}>
-                    {passed ? "✓ ผ่าน" : "✗ ไม่ผ่าน"}
-                  </span>
+                  {!isToeic && (
+                    <span style={{ fontSize: 12, fontWeight: 600, color: passed ? "var(--accent-green)" : "var(--accent-red, #ff3b30)" }}>
+                      {passed ? "✓ ผ่าน" : "✗ ไม่ผ่าน"}
+                    </span>
+                  )}
                 </div>
               </div>
               <div style={{ marginTop: 10, height: 6, borderRadius: 3, background: "var(--border)", overflow: "hidden" }}>
-                <div style={{ height: "100%", borderRadius: 3, width: `${scorePercent}%`, background: passed ? "var(--accent-green)" : "#ff3b30", transition: "width 0.6s" }} />
+                <div style={{ height: "100%", borderRadius: 3, width: `${scorePercent}%`, background: isToeic ? "var(--primary)" : passed ? "var(--accent-green)" : "#ff3b30", transition: "width 0.6s" }} />
               </div>
             </div>
           ))}
         </div>
 
-        {!allPassed && (
+        {!isToeic && !allPassed && (
           <div className="card" style={{ padding: 16, marginBottom: 20, background: "rgba(255,59,48,0.04)", borderColor: "rgba(255,59,48,0.2)" }}>
             <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>
                ลองทบทวนบทเรียนในคอร์สฟรีแล้วกลับมาสอบใหม่ได้เลย
@@ -808,6 +914,25 @@ export default function ExamClient({ id }: { id: string }) {
             {currentQ?.id}. {currentQ?.question}
           </p>
 
+          {currentQ?.imageUrl && (
+            <div style={{ display: "flex", justifyContent: "center", padding: 12, marginBottom: 20, background: "var(--bg)", borderRadius: 12 }}>
+              <img
+                src={currentQ.imageUrl}
+                alt=""
+                style={{ maxHeight: 360, maxWidth: "100%", objectFit: "contain", borderRadius: 8 }}
+              />
+            </div>
+          )}
+
+          {currentQ?.audioScript && (
+            <button
+              onClick={() => speakEnglish(currentQ.audioScript!)}
+              style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 980, border: "none", background: "var(--primary)", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer", marginBottom: 20 }}
+            >
+              ▶ ฟังเสียง
+            </button>
+          )}
+
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {currentQ?.choices.map((choice, ci) => {
               const selected = answers[currentFlatIdx] === ci;
@@ -815,6 +940,7 @@ export default function ExamClient({ id }: { id: string }) {
               const reveal = revealed[currentFlatIdx];
               const isCorrect = reveal ? ci === reveal.correctIndex : false;
               const showResult = locked && Boolean(reveal);
+              const hideText = currentQ.spokenChoices && !showResult;
               let borderColor = "var(--border)";
               let bg = "var(--surface)";
               let color = "var(--text)";
@@ -838,7 +964,7 @@ export default function ExamClient({ id }: { id: string }) {
                   <span style={{ fontWeight: 700, marginRight: 8, opacity: 0.6 }}>
                     {String.fromCharCode(65 + ci)}.
                   </span>
-                  {choice}
+                  {!hideText && choice}
                   {showResult && isCorrect && <span style={{ marginLeft: 8 }}>✓ </span>}
                 </button>
               );

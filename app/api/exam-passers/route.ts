@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { KP_MOCK_1 } from "@/lib/exam-data/kp-mock-1";
 import { KP_MOCK_2 } from "@/lib/exam-data/kp-mock-2";
+import { TOEIC_MOCK_1 } from "@/lib/exam-data/toeic-mock-1";
 
 const SUPABASE_URL = "https://eaxskmgekbdrmmczptmq.supabase.co";
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
@@ -8,6 +9,7 @@ const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 const RANK_BY_EXAM: Record<string, string> = {
   "kp-mock-1": KP_MOCK_1.rankReward,
   "kp-mock-2": KP_MOCK_2.rankReward,
+  "toeic-mock-1": TOEIC_MOCK_1.rankReward,
 };
 
 export async function GET(req: NextRequest) {

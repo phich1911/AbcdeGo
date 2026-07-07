@@ -9,6 +9,12 @@ export interface ExamQuestion {
   choices: string[];
   correct: number;
   explanation: string;
+  // TOEIC-only optional fields — a Part 1 photograph, the English text to
+  // speak via lib/tts.ts for listening questions, and whether choices should
+  // render as bare A/B/C/D labels (never printed on the real test, Part 1 & 2).
+  imageUrl?: string;
+  audioScript?: string;
+  spokenChoices?: boolean;
 }
 
 export interface ExamSection {
@@ -20,6 +26,9 @@ export interface ExamSection {
   passingPercent: number;
   timeRecommended: number;
   questions: ExamQuestion[];
+  // TOEIC-only: which scaled-score group (Listening/Reading) this section
+  // rolls up into. Used only when the exam's scoringMode is "toeic".
+  group?: "listening" | "reading";
 }
 
 export interface MockExam {
@@ -29,6 +38,10 @@ export interface MockExam {
   xpReward: number;
   rankReward: string;
   sections: ExamSection[];
+  // When set to "toeic", the exam has no per-section pass/fail — results
+  // instead show a TOEIC-style scaled score (10-990) and proficiency band,
+  // and full-mode completion always awards XP (there's nothing to "fail").
+  scoringMode?: "toeic";
 }
 
 const section1: ExamSection = {

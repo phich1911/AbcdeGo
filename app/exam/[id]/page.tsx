@@ -4,7 +4,7 @@ import ExamClient from "./ExamClient";
 // request. Hardcoded (not imported from lib/exam-data) since that module is
 // guarded to throw if ever pulled into the client-bundled ExamClient.
 export async function generateStaticParams() {
-  return [{ id: "kp-mock-1" }, { id: "kp-mock-2" }];
+  return [{ id: "kp-mock-1" }, { id: "kp-mock-2" }, { id: "toeic-mock-1" }];
 }
 
 export default async function ExamPage({ params }: { params: Promise<{ id: string }> }) {

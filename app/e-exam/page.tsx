@@ -15,6 +15,7 @@ interface EExamProduct {
   questionCount: number;
   timeLimit: number;
   xpRequired?: number;
+  comingSoon?: boolean;
 }
 
 interface EExamCategory {
@@ -45,6 +46,20 @@ const E_EXAM_CATEGORIES: EExamCategory[] = [
       },
     ],
   },
+  {
+    name: "สอบ TOEIC",
+    exams: [
+      {
+        id: "mock-toeic-1",
+        examId: "toeic-mock-1",
+        title: "ข้อสอบจำลอง TOEIC ชุดที่ 1",
+        description: "Listening + Reading ครบ 200 ข้อ จับเวลา 120 นาที เหมือนสอบจริงทุกอย่าง",
+        questionCount: 200,
+        timeLimit: 120,
+        comingSoon: true,
+      },
+    ],
+  },
 ];
 
 const E_EXAMS = E_EXAM_CATEGORIES.flatMap((c) => c.exams);
@@ -68,6 +83,7 @@ export default function EExamPage() {
     setXp(getProgress().xp);
     getUser().then((u) => setUserEmail(u?.email ?? null));
     E_EXAMS.forEach((product) => {
+      if (product.comingSoon) return;
       fetch(`/api/exam-passers?examId=${product.examId}`)
         .then((r) => r.json())
         .then((data) => setPassers((prev) => ({ ...prev, [product.examId]: data.passers ?? [] })))
@@ -79,6 +95,7 @@ export default function EExamPage() {
   }, []);
 
   function handleEnter(product: EExamProduct) {
+    if (product.comingSoon) return;
     if (product.xpRequired && xp < product.xpRequired) return;
     if (!userEmail) { setAuthOpen(true); return; }
     router.push(`/exam/${product.examId}`);
@@ -137,7 +154,8 @@ export default function EExamPage() {
               <div className="flex flex-col gap-3">
                 {category.exams.map((product) => {
                   const examPassers = passers[product.examId];
-                  const locked = !!product.xpRequired && xp < product.xpRequired;
+                  const xpLocked = !!product.xpRequired && xp < product.xpRequired;
+                  const locked = product.comingSoon || xpLocked;
                   return (
                     <div
                       key={product.id}
@@ -146,18 +164,28 @@ export default function EExamPage() {
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-green)", border: "1px solid rgba(34,197,94,0.3)" }}>
-                            ✓ เรียนฟรี
-                          </span>
+                          {product.comingSoon ? (
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "var(--surface-2)", color: "var(--text-muted)", border: "1px solid var(--border)" }}>
+                              🔒 เร็วๆ นี้
+                            </span>
+                          ) : (
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-green)", border: "1px solid rgba(34,197,94,0.3)" }}>
+                              ✓ เรียนฟรี
+                            </span>
+                          )}
                           {product.xpRequired && (
-                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: locked ? "rgba(240,136,62,0.15)" : "rgba(34,197,94,0.15)", color: locked ? "var(--accent)" : "var(--accent-green)", border: `1px solid ${locked ? "rgba(240,136,62,0.3)" : "rgba(34,197,94,0.3)"}` }}>
-                              {locked ? "🔒" : "✓"} ต้องมี {product.xpRequired.toLocaleString()} XP
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: xpLocked ? "rgba(240,136,62,0.15)" : "rgba(34,197,94,0.15)", color: xpLocked ? "var(--accent)" : "var(--accent-green)", border: `1px solid ${xpLocked ? "rgba(240,136,62,0.3)" : "rgba(34,197,94,0.3)"}` }}>
+                              {xpLocked ? "🔒" : "✓"} ต้องมี {product.xpRequired.toLocaleString()} XP
                             </span>
                           )}
                         </div>
                         <h3 className="font-bold mt-1" style={{ color: "var(--text)", fontSize: 17 }}>{product.title}</h3>
                         <p className="text-sm mt-0.5" style={{ color: "var(--text-muted)" }}>{product.description}</p>
-                        {locked ? (
+                        {product.comingSoon ? (
+                          <p className="text-xs mt-1 font-semibold" style={{ color: "var(--text-muted)" }}>
+                            ยังไม่เปิดให้สอบตอนนี้ — เร็วๆ นี้
+                          </p>
+                        ) : xpLocked ? (
                           <p className="text-xs mt-1 font-semibold" style={{ color: "var(--accent)" }}>
                             ตอนนี้มี {xp.toLocaleString()} / {product.xpRequired!.toLocaleString()} XP — เก็บอีก {(product.xpRequired! - xp).toLocaleString()} XP เพื่อปลดล็อก (XP ไม่ถูกหัก)
                             <br />
@@ -225,7 +253,7 @@ export default function EExamPage() {
                         className={locked ? "px-5 py-2 text-sm rounded-lg font-semibold shrink-0 cursor-not-allowed" : "btn-primary px-5 py-2 text-sm shrink-0"}
                         style={locked ? { background: "var(--surface-2)", color: "var(--text-muted)", border: "1px solid var(--border)" } : undefined}
                       >
-                        {locked ? "🔒 ล็อกอยู่" : "เข้าสอบ →"}
+                        {product.comingSoon ? "🔒 เร็วๆ นี้" : locked ? "🔒 ล็อกอยู่" : "เข้าสอบ →"}
                       </button>
                     </div>
                   );

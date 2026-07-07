@@ -1,11 +1,13 @@
 import { KP_MOCK_1 } from "./kp-mock-1";
 import { KP_MOCK_2 } from "./kp-mock-2";
+import { TOEIC_MOCK_1 } from "./toeic-mock-1";
 import type { ExamSection, MockExam } from "./kp-mock-1";
 import type { ExamSectionResult, PublicMockExam } from "./public-types";
 
 export const EXAMS: Record<string, MockExam> = {
   "kp-mock-1": KP_MOCK_1,
   "kp-mock-2": KP_MOCK_2,
+  "toeic-mock-1": TOEIC_MOCK_1,
 };
 
 export function getExam(id: string): MockExam | undefined {
@@ -21,6 +23,7 @@ export function getPublicExam(id: string): PublicMockExam | undefined {
     totalTime: exam.totalTime,
     xpReward: exam.xpReward,
     rankReward: exam.rankReward,
+    scoringMode: exam.scoringMode,
     sections: exam.sections.map((sec) => ({
       id: sec.id,
       title: sec.title,
@@ -29,7 +32,15 @@ export function getPublicExam(id: string): PublicMockExam | undefined {
       totalScore: sec.totalScore,
       passingPercent: sec.passingPercent,
       timeRecommended: sec.timeRecommended,
-      questions: sec.questions.map((q) => ({ id: q.id, question: q.question, choices: q.choices })),
+      group: sec.group,
+      questions: sec.questions.map((q) => ({
+        id: q.id,
+        question: q.question,
+        choices: q.choices,
+        imageUrl: q.imageUrl,
+        audioScript: q.audioScript,
+        spokenChoices: q.spokenChoices,
+      })),
     })),
   };
 }
