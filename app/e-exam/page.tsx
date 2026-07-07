@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { getUser, getExamLeaderboard } from "@/lib/supabase";
 import { getProgress } from "@/lib/progress";
 import AuthModal from "@/components/AuthModal";
+import { toeicOverallScore, toeicBand } from "@/lib/toeic-scoring";
 
 interface EExamProduct {
   id: string;
@@ -16,6 +17,7 @@ interface EExamProduct {
   timeLimit: number;
   xpRequired?: number;
   comingSoon?: boolean;
+  scoringMode?: "toeic";
 }
 
 interface EExamCategory {
@@ -57,6 +59,7 @@ const E_EXAM_CATEGORIES: EExamCategory[] = [
         questionCount: 200,
         timeLimit: 120,
         comingSoon: true,
+        scoringMode: "toeic",
       },
     ],
   },
@@ -238,11 +241,22 @@ export default function EExamPage() {
                           <div className="mt-2 rounded-lg p-2.5" style={{ background: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)" }}>
                             <p className="text-xs font-semibold mb-1" style={{ color: "#f59e0b" }}>🏆 อันดับคะแนนสูงสุด</p>
                             <div className="flex flex-col gap-0.5">
-                              {scoreBoards[product.examId].map((s, i) => (
-                                <p key={i} className="text-xs" style={{ color: "var(--text-muted)" }}>
-                                  {i + 1}. <strong style={{ color: "var(--text)" }}>{s.display_name}</strong> — {s.score}/{s.total}
-                                </p>
-                              ))}
+                              {scoreBoards[product.examId].map((s, i) => {
+                                if (product.scoringMode === "toeic") {
+                                  const scaled = toeicOverallScore(s.score, s.total);
+                                  const band = toeicBand(scaled);
+                                  return (
+                                    <p key={i} className="text-xs" style={{ color: "var(--text-muted)" }}>
+                                      {i + 1}. <strong style={{ color: "var(--text)" }}>{s.display_name}</strong> — {scaled} คะแนน ({band.label})
+                                    </p>
+                                  );
+                                }
+                                return (
+                                  <p key={i} className="text-xs" style={{ color: "var(--text-muted)" }}>
+                                    {i + 1}. <strong style={{ color: "var(--text)" }}>{s.display_name}</strong> — {s.score}/{s.total}
+                                  </p>
+                                );
+                              })}
                             </div>
                           </div>
                         )}

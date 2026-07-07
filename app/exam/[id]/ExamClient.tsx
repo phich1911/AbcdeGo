@@ -6,6 +6,7 @@ import type { PublicMockExam, PublicExamSection, ExamSectionResult } from "@/lib
 import { completeLesson, pushProgressToCloud } from "@/lib/progress";
 import { syncLeaderboard, saveExamScore, hasExamScore } from "@/lib/supabase";
 import { speakEnglish, stopSpeaking } from "@/lib/tts";
+import { toeicSectionScore, toeicBand } from "@/lib/toeic-scoring";
 
 type Phase = "loading" | "notfound" | "intro" | "mode" | "exam" | "results";
 // "full" = all sections, number = section index (0/1/2)
@@ -58,27 +59,6 @@ function wrapTextChars(ctx: CanvasRenderingContext2D, text: string, maxWidth: nu
   }
   if (line) lines.push(line);
   return lines;
-}
-
-// TOEIC scaled score is always a multiple of 5, from 5 to 495 per section
-// (Listening/Reading), 10-990 total. There's no official public conversion
-// table, so this is a reasonable linear approximation for an estimate.
-function toeicScaled(correct: number, total: number): number {
-  if (total <= 0) return 5;
-  const pct = correct / total;
-  const raw = 5 + pct * 490;
-  return Math.min(495, Math.max(5, Math.round(raw / 5) * 5));
-}
-
-const TOEIC_BANDS = [
-  { min: 900, label: "Expert", desc: "เหมาะกับสายงานที่ใช้ภาษาอังกฤษเป็นหลัก" },
-  { min: 750, label: "Advanced", desc: "มาตรฐานบริษัทข้ามชาติและหน่วยงานรัฐชั้นนำ" },
-  { min: 550, label: "Intermediate", desc: "มาตรฐานทั่วไปสำหรับการสมัครงานส่วนใหญ่ในไทย" },
-  { min: 0, label: "Basic", desc: "ยังต้องพัฒนาเพิ่มเติมก่อนนำไปใช้สมัครงาน" },
-];
-
-function toeicBand(total: number) {
-  return TOEIC_BANDS.find((b) => total >= b.min)!;
 }
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -283,8 +263,8 @@ export default function ExamClient({ id }: { id: string }) {
         )
       : null;
     const toeicTotalScoreImg = toeicGroupsImg
-      ? toeicScaled(toeicGroupsImg.listening.correct, toeicGroupsImg.listening.total) +
-        toeicScaled(toeicGroupsImg.reading.correct, toeicGroupsImg.reading.total)
+      ? toeicSectionScore(toeicGroupsImg.listening.correct, toeicGroupsImg.listening.total) +
+        toeicSectionScore(toeicGroupsImg.reading.correct, toeicGroupsImg.reading.total)
       : 0;
     const toeicBandImg = isToeicImg ? toeicBand(toeicTotalScoreImg) : null;
     const dateStr = formatThaiDateTime(resultTime ?? new Date());
@@ -678,8 +658,8 @@ export default function ExamClient({ id }: { id: string }) {
           { listening: { correct: 0, total: 0 }, reading: { correct: 0, total: 0 } }
         )
       : null;
-    const toeicScaledListening = toeicGroups ? toeicScaled(toeicGroups.listening.correct, toeicGroups.listening.total) : 0;
-    const toeicScaledReading = toeicGroups ? toeicScaled(toeicGroups.reading.correct, toeicGroups.reading.total) : 0;
+    const toeicScaledListening = toeicGroups ? toeicSectionScore(toeicGroups.listening.correct, toeicGroups.listening.total) : 0;
+    const toeicScaledReading = toeicGroups ? toeicSectionScore(toeicGroups.reading.correct, toeicGroups.reading.total) : 0;
     const toeicTotalScore = toeicScaledListening + toeicScaledReading;
     const toeicBandInfo = isToeic && isFullMode ? toeicBand(toeicTotalScore) : null;
 
