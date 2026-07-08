@@ -181,6 +181,38 @@ export default function Navbar() {
               คอร์สเรียน
             </Link>
 
+            <Link
+              href="/e-exam"
+              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              style={{ color: pathname === "/e-exam" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/e-exam" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/e-exam" ? 600 : 400, letterSpacing: "0.05em" }}
+            >
+              e-Exam
+            </Link>
+
+            <Link
+              href="/news"
+              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              style={{ color: pathname === "/news" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/news" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/news" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              ข่าวสาร
+            </Link>
+
+            <Link
+              href="/tips"
+              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              style={{ color: pathname === "/tips" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/tips" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/tips" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              ความรู้
+            </Link>
+
+            <Link
+              href="/shop"
+              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              style={{ color: pathname === "/shop" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/shop" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/shop" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+            >
+              ร้านค้า
+            </Link>
+
             <div className="relative"
               onMouseEnter={() => { if (funMenuCloseTimer.current) clearTimeout(funMenuCloseTimer.current); setFunMenuOpen(true); }}
               onMouseLeave={() => { funMenuCloseTimer.current = setTimeout(() => setFunMenuOpen(false), 150); }}>
@@ -191,7 +223,7 @@ export default function Navbar() {
                 ความบันเทิง
               </button>
               {funMenuOpen && (
-                <div className="absolute top-full left-0 mt-1 rounded-lg overflow-hidden min-w-[140px]"
+                <div className="absolute top-full right-0 mt-1 rounded-lg overflow-hidden min-w-[140px]"
                   style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 8px 24px rgba(0,0,0,0.4)" }}
                   onMouseEnter={() => { if (funMenuCloseTimer.current) clearTimeout(funMenuCloseTimer.current); }}
                   onMouseLeave={() => { funMenuCloseTimer.current = setTimeout(() => setFunMenuOpen(false), 150); }}>
@@ -212,38 +244,6 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-
-            <Link
-              href="/news"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
-              style={{ color: pathname === "/news" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/news" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/news" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
-            >
-              ข่าวสาร
-            </Link>
-
-            <Link
-              href="/tips"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
-              style={{ color: pathname === "/tips" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/tips" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/tips" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
-            >
-              ความรู้
-            </Link>
-
-            <Link
-              href="/e-exam"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
-              style={{ color: pathname === "/e-exam" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/e-exam" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/e-exam" ? 600 : 400, letterSpacing: "0.05em" }}
-            >
-              e-Exam
-            </Link>
-
-            <Link
-              href="/shop"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
-              style={{ color: pathname === "/shop" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/shop" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/shop" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
-            >
-              ร้านค้า
-            </Link>
             </div>
 
             {/* Search button */}
@@ -384,13 +384,13 @@ export default function Navbar() {
           <div className="md:hidden px-4 py-3 flex flex-col gap-0.5"
             style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}>
             <Link href="/courses" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontWeight: pathname.startsWith("/course") ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>คอร์สเรียน</Link>
+            <Link href="/e-exam" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/e-exam" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/e-exam" ? 600 : 400, fontSize: 15, letterSpacing: "0.05em", textDecoration: "none" }}>e-Exam</Link>
             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/dashboard" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/dashboard" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ความคืบหน้า</Link>
             <Link href="/news" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/news" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/news" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ข่าวสาร</Link>
             <Link href="/tips" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tips" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tips" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ความรู้</Link>
+            <Link href="/shop" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/shop" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/shop" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ร้านค้า</Link>
             <Link href="/tarot" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ดูดวง</Link>
             <Link href="/game" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>เกม</Link>
-            <Link href="/e-exam" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/e-exam" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/e-exam" ? 600 : 400, fontSize: 15, letterSpacing: "0.05em", textDecoration: "none" }}>e-Exam</Link>
-            <Link href="/shop" onClick={() => setMenuOpen(false)} className="px-2 py-2.5 rounded hover:bg-white/5" style={{ color: pathname === "/shop" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/shop" ? 600 : 400, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}>ร้านค้า</Link>
             <div style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
             <div className="flex items-center justify-between px-2 py-1.5">
               <span className="text-xs" style={{ color: "var(--text-muted)" }}>
