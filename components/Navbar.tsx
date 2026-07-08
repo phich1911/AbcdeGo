@@ -175,7 +175,7 @@ export default function Navbar() {
             <div className="flex items-center gap-1" style={{ background: "var(--primary)", borderRadius: 980, padding: 4 }}>
             {/* COURSES link */}
             <Link href="/courses"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              className="px-3 py-1.5 rounded-full transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
               style={{ color: pathname.startsWith("/course") ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname.startsWith("/course") ? "#fff" : "transparent", fontSize: 15, fontWeight: pathname.startsWith("/course") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}
             >
               คอร์สเรียน
@@ -183,7 +183,7 @@ export default function Navbar() {
 
             <Link
               href="/e-exam"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              className="px-3 py-1.5 rounded-full transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
               style={{ color: pathname === "/e-exam" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/e-exam" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/e-exam" ? 600 : 400, letterSpacing: "0.05em" }}
             >
               e-Exam
@@ -191,7 +191,7 @@ export default function Navbar() {
 
             <Link
               href="/news"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              className="px-3 py-1.5 rounded-full transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
               style={{ color: pathname === "/news" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/news" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/news" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
               ข่าวสาร
@@ -199,7 +199,7 @@ export default function Navbar() {
 
             <Link
               href="/tips"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              className="px-3 py-1.5 rounded-full transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
               style={{ color: pathname === "/tips" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/tips" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/tips" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
               ความรู้
@@ -207,7 +207,7 @@ export default function Navbar() {
 
             <Link
               href="/shop"
-              className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+              className="px-3 py-1.5 rounded-full transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
               style={{ color: pathname === "/shop" ? "var(--primary)" : "rgba(255,255,255,0.85)", background: pathname === "/shop" ? "#fff" : "transparent", fontSize: 14, fontWeight: pathname === "/shop" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
               ร้านค้า
@@ -217,7 +217,7 @@ export default function Navbar() {
               onMouseEnter={() => { if (funMenuCloseTimer.current) clearTimeout(funMenuCloseTimer.current); setFunMenuOpen(true); }}
               onMouseLeave={() => { funMenuCloseTimer.current = setTimeout(() => setFunMenuOpen(false), 150); }}>
               <button
-                className="px-3 py-1.5 rounded-full transition-colors hover:bg-white/15"
+                className="px-3 py-1.5 rounded-full transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[0_4px_10px_rgba(0,0,0,0.3)]"
                 style={{ color: (pathname === "/tarot" || pathname === "/game") ? "var(--primary)" : "rgba(255,255,255,0.85)", background: (pathname === "/tarot" || pathname === "/game") ? "#fff" : "transparent", fontSize: 14, fontWeight: (pathname === "/tarot" || pathname === "/game") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
               >
                 ความบันเทิง
