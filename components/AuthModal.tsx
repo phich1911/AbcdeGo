@@ -65,8 +65,8 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
 
         {/* Logo */}
         <div className="text-center mb-6">
-          <img src="/abcdego_no_slash.png" alt="AbcdeGo" className="logo-light" style={{ height: 32, width: "auto", objectFit: "contain", margin: "0 auto" }} />
-          <img src="/abcdego_dark.png" alt="AbcdeGo" className="logo-dark" style={{ height: 32, width: "auto", objectFit: "contain", margin: "0 auto" }} />
+          <img src="/abcdego_navbar_light.png" alt="AbcdeGo" className="navbar-logo-light" style={{ height: 32, width: "auto", objectFit: "contain", margin: "0 auto" }} />
+          <img src="/abcdego_navbar_dark.png" alt="AbcdeGo" className="navbar-logo-dark" style={{ height: 32, width: "auto", objectFit: "contain", margin: "0 auto" }} />
           <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Learn. Play. Level Up.</p>
         </div>
 
