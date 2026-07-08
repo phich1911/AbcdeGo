@@ -174,7 +174,7 @@ export default function Navbar() {
             {/* COURSES link */}
             <Link href="/courses"
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname.startsWith("/course") ? "var(--text)" : "var(--text-muted)", fontSize: 15, fontWeight: pathname.startsWith("/course") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}
+              style={{ color: pathname.startsWith("/course") ? "var(--primary)" : "var(--text-muted)", fontSize: 15, fontWeight: pathname.startsWith("/course") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em", textDecoration: "none" }}
             >
               คอร์สเรียน
             </Link>
@@ -184,7 +184,7 @@ export default function Navbar() {
               onMouseLeave={() => { funMenuCloseTimer.current = setTimeout(() => setFunMenuOpen(false), 150); }}>
               <button
                 className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-                style={{ color: (pathname === "/tarot" || pathname === "/game") ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: (pathname === "/tarot" || pathname === "/game") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+                style={{ color: (pathname === "/tarot" || pathname === "/game") ? "var(--primary)" : "var(--text-muted)", fontSize: 14, fontWeight: (pathname === "/tarot" || pathname === "/game") ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
               >
                 ความบันเทิง
               </button>
@@ -195,14 +195,14 @@ export default function Navbar() {
                   onMouseLeave={() => { funMenuCloseTimer.current = setTimeout(() => setFunMenuOpen(false), 150); }}>
                   <Link href="/tarot" onClick={() => setFunMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-sm"
-                    style={{ color: pathname === "/tarot" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, transition: "background 0.1s" }}
+                    style={{ color: pathname === "/tarot" ? "var(--primary)" : "var(--text-muted)", fontWeight: pathname === "/tarot" ? 600 : 400, transition: "background 0.1s" }}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
                     ดูดวง
                   </Link>
                   <Link href="/game" onClick={() => setFunMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-sm"
-                    style={{ color: pathname === "/game" ? "var(--text)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, transition: "background 0.1s" }}
+                    style={{ color: pathname === "/game" ? "var(--primary)" : "var(--text-muted)", fontWeight: pathname === "/game" ? 600 : 400, transition: "background 0.1s" }}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = ""; }}>
                     เกม
@@ -214,7 +214,7 @@ export default function Navbar() {
             <Link
               href="/news"
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/news" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/news" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+              style={{ color: pathname === "/news" ? "var(--primary)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/news" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
               ข่าวสาร
             </Link>
@@ -222,7 +222,7 @@ export default function Navbar() {
             <Link
               href="/tips"
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/tips" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/tips" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+              style={{ color: pathname === "/tips" ? "var(--primary)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/tips" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
               ความรู้
             </Link>
@@ -230,7 +230,7 @@ export default function Navbar() {
             <Link
               href="/e-exam"
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/e-exam" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/e-exam" ? 600 : 400, letterSpacing: "0.05em" }}
+              style={{ color: pathname === "/e-exam" ? "var(--primary)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/e-exam" ? 600 : 400, letterSpacing: "0.05em" }}
             >
               e-Exam
             </Link>
@@ -238,7 +238,7 @@ export default function Navbar() {
             <Link
               href="/shop"
               className="px-3 py-1.5 rounded-md transition-colors hover:bg-white/5"
-              style={{ color: pathname === "/shop" ? "var(--text)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/shop" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
+              style={{ color: pathname === "/shop" ? "var(--primary)" : "var(--text-muted)", fontSize: 14, fontWeight: pathname === "/shop" ? 600 : 400, textTransform: "uppercase", letterSpacing: "0.05em" }}
             >
               ร้านค้า
             </Link>
