@@ -176,21 +176,21 @@ a.card-lg:hover, button.card-lg:hover {
 .animate-bounce-in { animation: bounce-in 0.3s ease forwards; }
 .animate-shake { animation: shake 0.35s ease; }
 
-/* Hero gradient */
+/* Hero gradient — brand blue (navbar/XP) to brand orange (logo/XP badge) */
 .hero-bg {
   background: linear-gradient(135deg,
-    rgba(56,139,253,0.12) 0%,
-    rgba(139,92,246,0.10) 40%,
-    rgba(240,136,62,0.08) 80%,
-    rgba(30,40,60,0.0) 100%
+    rgba(56,139,253,0.16) 0%,
+    rgba(56,139,253,0.06) 35%,
+    rgba(240,136,62,0.06) 70%,
+    rgba(240,136,62,0.14) 100%
   );
 }
 html.light .hero-bg {
   background: linear-gradient(135deg,
-    rgba(254,243,199,0.7) 0%,
-    rgba(255,237,213,0.5) 25%,
-    rgba(237,233,254,0.6) 65%,
-    rgba(221,214,254,0.7) 100%
+    rgba(0,122,255,0.12) 0%,
+    rgba(0,122,255,0.04) 35%,
+    rgba(240,136,62,0.05) 70%,
+    rgba(240,136,62,0.12) 100%
   );
 }
 
