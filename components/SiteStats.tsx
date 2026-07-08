@@ -25,9 +25,8 @@ export default function SiteStats() {
       fetch("/api/user-count").then(r => r.json()).then(d => setTotalLearners(d.count ?? 0)).catch(() => {});
     };
     load();
-    const t = setTimeout(load, 3000);
     window.addEventListener("leaderboard-updated", load);
-    return () => { clearTimeout(t); window.removeEventListener("leaderboard-updated", load); };
+    return () => { window.removeEventListener("leaderboard-updated", load); };
   }, []);
 
   return (

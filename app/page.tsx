@@ -9,7 +9,7 @@ import { Crown } from "lucide-react";
 
 const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata = {
   title: "AbcdeGo",
