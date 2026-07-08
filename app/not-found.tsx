@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "ไม่พบหน้านี้ — AbcdeGo",
+  title: "ไม่พบหน้านี้",
 };
 
 export default function NotFound() {

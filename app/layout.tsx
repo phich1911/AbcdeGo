@@ -13,9 +13,30 @@ const notoSansThai = Noto_Sans_Thai({
   display: "swap",
 });
 
+const SITE_URL = "https://abcdego.com";
+const SITE_TITLE = "AbcdeGo — Learn. Play. Level Up.";
+const SITE_DESCRIPTION = "แพลตฟอร์มเรียนออนไลน์ฟรี ม.ปลาย + สอบราชการ ก.พ. / ภาค ข. สะสม XP แข่ง Leaderboard ทั่วประเทศ แลกสินค้าได้จริง มีเกม ดูดวง และข้อสอบจำลองจับเวลาเสมือนจริง";
+
 export const metadata: Metadata = {
-  title: "AbcdeGo — Learn. Play. Level Up.",
-  description: "แพลตฟอร์มการเรียนรู้แบบ gamified สำหรับนักศึกษาและผู้ใหญ่",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_TITLE, template: "%s | AbcdeGo" },
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "th_TH",
+    siteName: "AbcdeGo",
+    url: SITE_URL,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/opengraph-image"],
+  },
 };
 
 export const viewport: Viewport = {

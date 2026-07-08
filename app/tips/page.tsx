@@ -3,9 +3,10 @@ import Link from "next/link";
 import { ARTICLES } from "@/lib/articles";
 
 export const metadata: Metadata = {
-  title: "เทคนิคและบทความเตรียมสอบ — AbcdeGo",
+  title: "เทคนิคและบทความเตรียมสอบ",
   description:
     "รวมบทความเทคนิคเตรียมสอบ ก.พ. TOEIC ภาษาอังกฤษ คณิตศาสตร์ และอื่นๆ สำหรับผู้เตรียมสอบราชการและสอบวัดระดับ",
+  alternates: { canonical: "/tips" },
   openGraph: {
     title: "เทคนิคและบทความเตรียมสอบ — AbcdeGo",
     description: "รวมบทความเทคนิคเตรียมสอบ ก.พ. TOEIC และอื่นๆ",

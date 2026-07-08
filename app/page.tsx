@@ -12,8 +12,9 @@ const totalLessons = COURSES.reduce((s, c) => s + c.totalLessons, 0);
 export const revalidate = 60;
 
 export const metadata = {
-  title: "AbcdeGo",
+  title: { absolute: "AbcdeGo — Learn. Play. Level Up." },
   description: "แพลตฟอร์มเรียนออนไลน์ฟรี ม.ปลาย + สอบราชการ ก.พ. ภาค ข. สะสม XP แข่งอันดับทั่วประเทศ แลกส่วนลดสินค้า ข้อสอบจำลองจับเวลาเสมือนจริง",
+  alternates: { canonical: "/" },
 };
 
 const FEATURES = [

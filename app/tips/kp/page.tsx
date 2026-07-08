@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "เทคนิคทำข้อสอบ ก.พ. ครบทุกวิชา — AbcdeGo",
+  title: "เทคนิคทำข้อสอบ ก.พ. ครบทุกวิชา",
   description:
     "รวมเทคนิคทำข้อสอบ ก.พ. ทุกวิชา อนุกรมตัวเลข คณิตศาสตร์ ภาษาไทย ภาษาอังกฤษ กฎหมายข้าราชการ พร้อมวิธีบริหารเวลา 180 นาที ฉบับมือใหม่เข้าใจง่าย",
+  alternates: { canonical: "/tips/kp" },
   openGraph: {
     title: "เทคนิคทำข้อสอบ ก.พ. ครบทุกวิชา",
     description: "เทคนิคและวิธีทำข้อสอบ ก.พ. ทุกหมวด พร้อมตัวอย่างและเคล็ดลับที่ใช้ได้จริง",

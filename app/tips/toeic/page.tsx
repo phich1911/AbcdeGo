@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "TOEIC คืออะไร? โครงสร้าง คะแนน เทคนิคสอบ ฉบับครบจบในหน้าเดียว — AbcdeGo",
+  title: "TOEIC คืออะไร? โครงสร้าง คะแนน เทคนิคสอบ ฉบับครบจบในหน้าเดียว",
   description:
     "TOEIC คืออะไร สอบอะไรบ้าง โครงสร้าง Listening + Reading 200 ข้อ คะแนนเท่าไหร่ถึงผ่าน เทคนิคทำข้อสอบ TOEIC และวิธีเตรียมตัวสอบสำหรับมือใหม่",
+  alternates: { canonical: "/tips/toeic" },
   openGraph: {
     title: "TOEIC คืออะไร? ครบทุกอย่างในหน้าเดียว",
     description: "โครงสร้างข้อสอบ TOEIC คะแนนมาตรฐาน และเทคนิคทำข้อสอบ Listening + Reading",

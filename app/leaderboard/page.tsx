@@ -2,8 +2,9 @@ import { getLeaderboardServer } from "@/lib/leaderboard-cache";
 import { AVATARS, GM_AVATAR } from "@/lib/avatar";
 
 export const metadata = {
-  title: "Leaderboard — AbcdeGo",
+  title: "Leaderboard",
   description: "อันดับผู้เรียนสะสม XP สูงสุดทั่วประเทศ",
+  alternates: { canonical: "/leaderboard" },
 };
 
 export const dynamic = "force-dynamic";

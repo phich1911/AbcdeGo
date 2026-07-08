@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "เทคนิคการสอบสัมภาษณ์ — AbcdeGo",
+  title: "เทคนิคการสอบสัมภาษณ์",
   description:
     "รวมเทคนิคสอบสัมภาษณ์งานราชการและเอกชน การแต่งกาย การตอบคำถาม ภาษากาย และการเตรียมตัวก่อนวันสัมภาษณ์",
+  alternates: { canonical: "/tips/interview" },
   openGraph: {
     title: "เทคนิคการสอบสัมภาษณ์",
     description: "เตรียมตัวสัมภาษณ์งานอย่างมั่นใจ ตั้งแต่การแต่งกายไปจนถึงการตอบคำถามยาก",

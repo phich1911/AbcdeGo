@@ -1,6 +1,11 @@
 import { MetadataRoute } from "next";
-import { COURSES } from "@/lib/data";
+import { COURSES, LESSONS } from "@/lib/data";
 import { ARTICLES } from "@/lib/articles";
+
+// Hardcoded (not imported from lib/exam-data) since that module is guarded
+// to throw if ever pulled into a client-bundled file — matches the same
+// pattern used in app/exam/[id]/page.tsx.
+const EXAM_IDS = ["kp-mock-1", "kp-mock-2", "toeic-mock-1"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://abcdego.com";
@@ -20,7 +25,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/game`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/tarot`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/news`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.5 },
-    { url: `${base}/progress`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
     { url: `${base}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
   ];
@@ -39,5 +43,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...coursePages, ...articlePages];
+  const lessonPages: MetadataRoute.Sitemap = LESSONS.map((lesson) => ({
+    url: `${base}/lesson/${lesson.id}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
+  const examPages: MetadataRoute.Sitemap = EXAM_IDS.map((id) => ({
+    url: `${base}/exam/${id}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...coursePages, ...articlePages, ...lessonPages, ...examPages];
 }

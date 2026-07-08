@@ -898,7 +898,7 @@ export default function ExamClient({ id }: { id: string }) {
             <div style={{ display: "flex", justifyContent: "center", padding: 12, marginBottom: 20, background: "var(--bg)", borderRadius: 12 }}>
               <img
                 src={currentQ.imageUrl}
-                alt=""
+                alt={`ภาพประกอบข้อสอบข้อ ${currentQ.id}`}
                 style={{ maxHeight: 360, maxWidth: "100%", objectFit: "contain", borderRadius: 8 }}
               />
             </div>

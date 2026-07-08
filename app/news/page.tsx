@@ -1,8 +1,9 @@
 import { NEWS } from "@/lib/news";
 
 export const metadata = {
-  title: "ข่าวสาร — AbcdeGo",
+  title: "ข่าวสาร",
   description: "ข่าวประชาสัมพันธ์ ก.พ. การรับสมัครราชการ และอัปเดตสำคัญ",
+  alternates: { canonical: "/news" },
 };
 
 const TAG_COLOR: Record<string, string> = {
