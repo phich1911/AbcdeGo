@@ -16,12 +16,43 @@ const CATEGORY_META: Record<string, { label: string; description: string }> = {
   mplatai: { label: "มัธยมศึกษาตอนปลาย (ม.4–6)", description: "ภาษาอังกฤษ คณิตศาสตร์ ภาษาไทย และฟิสิกส์ สำหรับระดับ ม.4–ม.6" },
 };
 
-export async function generateMetadata({ searchParams }: { searchParams: Promise<{ cat?: string }> }): Promise<Metadata> {
-  const { cat } = await searchParams;
-  const meta = cat ? CATEGORY_META[cat] : null;
+const KP_SET_META: Record<string, { label: string; description: string }> = {
+  "1": { label: "สอบ ก.พ. — ชุดที่ 1", description: "ความรู้ทั่วไป ภาษาอังกฤษ และความรู้และลักษณะการเป็นข้าราชการที่ดี" },
+  "2": { label: "สอบ ก.พ. — ชุดที่ 2", description: "อนุกรม เงื่อนไขสัญลักษณ์ ภาษาอังกฤษ (บทสนทนา/Reading) และกฎหมายราชการ" },
+};
+
+const KP_SUB_META: Record<string, { label: string; description: string }> = {
+  general: { label: "วิชาความรู้ความสามารถทั่วไป (คณิตศาสตร์ & ภาษาไทย)", description: "อนุกรม อุปมาอุปไมย เงื่อนไขสัญลักษณ์ เงื่อนไขภาษา ร้อยละและสมการ การอ่านตารางข้อมูลและกราฟ และภาษาไทย" },
+};
+
+const CIVIL_SUB_META: Record<string, { label: string; description: string }> = {
+  amlo: { label: "สำนักงาน ปปง. (AMLO)", description: "พระราชบัญญัติป้องกันและปราบปรามการฟอกเงิน · กฎกระทรวงแบ่งส่วนราชการ" },
+  dsi: { label: "กรมสอบสวนคดีพิเศษ (DSI)", description: "พระราชบัญญัติการสอบสวนคดีพิเศษ พ.ศ. 2547 · คณะกรรมการ กคพ. · อำนาจพนักงานสอบสวนคดีพิเศษ" },
+  moj: { label: "นักวิชาการยุติธรรม (สป.ยธ.)", description: "กระทรวงยุติธรรม · สำนักงานปลัดกระทรวงยุติธรรม · นักวิชาการยุติธรรมปฏิบัติการ" },
+};
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ cat?: string; set?: string; sub?: string }>;
+}): Promise<Metadata> {
+  const { cat, set, sub } = await searchParams;
+
+  let meta: { label: string; description: string } | null = null;
+  const params = new URLSearchParams();
+  if (cat) params.set("cat", cat);
+  if (set) params.set("set", set);
+  if (sub) params.set("sub", sub);
+
+  if (cat === "kp" && set) meta = KP_SET_META[set] ?? null;
+  else if (cat === "kp" && sub) meta = KP_SUB_META[sub] ?? null;
+  else if (cat === "civil" && sub) meta = CIVIL_SUB_META[sub] ?? null;
+  else if (cat) meta = CATEGORY_META[cat] ?? null;
+
   const title = meta ? meta.label : "คอร์สเรียนทั้งหมด";
   const description = meta ? meta.description : "เลือกหมวดหมู่คอร์สเรียนฟรีที่คุณสนใจ — สอบ ก.พ., TOEIC, ม.ปลาย, กฎหมาย และข้าราชการ";
-  const canonical = cat ? `/courses?cat=${cat}` : "/courses";
+  const qs = params.toString();
+  const canonical = qs ? `/courses?${qs}` : "/courses";
   return {
     title,
     description,
