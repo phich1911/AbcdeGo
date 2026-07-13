@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// This route just proxies a streamed fetch to an LLM provider — no Node-only
+// APIs — so it runs on the Edge runtime instead of holding a Fluid/Node
+// serverless instance active for the whole streamed reply.
+export const runtime = "edge";
+
 const BASE_PROMPT = `คุณคือ JarnGo (อาจารย์โก) ผู้ช่วย AI ของเว็บไซต์ AbcdeGo (อ่านว่า "แอ็บซีดี้โก") แพลตฟอร์มเรียนออนไลน์ภาษาไทย
 ตอบเป็นภาษาไทยเสมอเท่านั้น ห้ามใช้ภาษาอื่นแม้แต่คำเดียว ห้ามใช้อักษรจีน อักษรญี่ปุ่น หรืออักษรเกาหลี แทนตัวเองว่า "อาจารย์" และเรียกผู้ใช้ว่า "เธอ" เสมอ เช่น "อาจารย์อธิบายให้นะ" "เธอลองทำแบบนี้ดู"
 
