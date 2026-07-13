@@ -7,7 +7,10 @@ export const metadata = {
   alternates: { canonical: "/leaderboard" },
 };
 
-export const dynamic = "force-dynamic";
+// Matches the 30s revalidate window on getCachedLeaderboardRows — no point
+// re-rendering the whole page on every request when the underlying data
+// only changes every 30s anyway.
+export const revalidate = 30;
 
 const MEDAL = ["🥇", "🥈", "🥉"];
 
